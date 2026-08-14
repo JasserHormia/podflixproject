@@ -1,26 +1,114 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Podflix brand palette */
+  --color-background: #0a0807; /* primary black — main bg */
+  --color-surface: #111009; /* lifted dark surface for cards */
+  --color-gold: #a98f74; /* primary accent — warm gold/tan */
+  --color-gold-muted: #5d513e; /* secondary brown accent */
+  --color-cream: #ebe0d6; /* light text / headings on dark bg */
+  --color-cream-soft: #e2d1bf; /* secondary light cream */
+  --color-teal: #23333b; /* secondary dark teal — contrast sections */
+  --color-text-primary: #ebe0d6;
+  --color-text-muted: #a98f74;
+  --color-border: #1e1a16;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Fluid display type ─────────────────────────────────────────────
+   clamp()-based sizes so headings scale continuously across viewports. */
+@utility text-hero {
+  font-size: clamp(2.75rem, 8.5vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+@utility text-section {
+  font-size: clamp(2rem, 4.8vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+@utility text-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  scrollbar-color: var(--color-gold-muted) var(--color-background);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-background);
+}
+
+/* Focus-visible — keyboard users get a clear gold ring */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Slim custom scrollbar (WebKit) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-muted);
+  border-radius: 9999px;
+  border: 2px solid var(--color-background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
