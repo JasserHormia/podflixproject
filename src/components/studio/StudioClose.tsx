@@ -20,7 +20,9 @@ export default function StudioClose() {
         quality={85}
         className="object-cover"
       />
-      <div aria-hidden className="absolute inset-0 bg-gold/70 mix-blend-multiply" />
+      {/* Dominant gold overlay so the dark text stays legible; the image
+          reads as faint texture beneath it. */}
+      <div aria-hidden className="absolute inset-0 bg-gold/80" />
 
       <motion.div
         className="relative z-10 px-6 text-center"
@@ -38,7 +40,7 @@ export default function StudioClose() {
 
         <Link
           href="/booking"
-          className="group relative mt-10 inline-block font-body text-xl font-bold text-background"
+          className="group relative mt-10 inline-block font-display text-xl font-black text-background transition-colors hover:text-background/70"
         >
           Book a Session →
           <span

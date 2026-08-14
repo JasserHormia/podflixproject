@@ -158,7 +158,7 @@ export default function Arrival() {
 
       {/* ── Scroll cue (bottom-left, vertical) ── */}
       <motion.div
-        className="absolute bottom-8 left-6 z-10 flex flex-col items-center gap-3 sm:left-10 lg:left-16"
+        className="absolute bottom-8 left-6 z-10 ml-4 flex flex-col items-center gap-3 sm:left-10 md:ml-8 lg:left-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: dockedNow ? 1 : 0 }}
         transition={{ duration: 0.8, ease: EASE_EXPO, delay: dockedNow ? 0.7 : 0 }}
