@@ -4,7 +4,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 
 const TICKER =
-  "3-Camera Setup · Professional Audio · Studio Operator · 10 Premium Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
+  "3-Camera Setup · Professional Audio · Studio Operator · 4 Premium Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
 
 const STATS = [
   { value: "4", label: "Premium studio sets" },

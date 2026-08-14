@@ -17,8 +17,8 @@ const FAQS = [
     a: "You receive all unedited footage from your session — multi-camera, full resolution, ready for your own editor or ours.",
   },
   {
-    q: "What are the 10 premium studio sets?",
-    a: "Podflix features 10 distinct set designs within the studio — you can switch between them freely during your session.",
+    q: "What are the 4 premium studio sets?",
+    a: "Podflix features 4 distinct set designs within the studio — you can switch between them freely during your session.",
   },
   {
     q: "How do I book and pay?",

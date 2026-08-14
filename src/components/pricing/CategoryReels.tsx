@@ -7,7 +7,7 @@ import IMAGES from "@/lib/images";
 import AnimatedSection, { AnimatedItem } from "@/components/AnimatedSection";
 
 const COMMON =
-  "Animated captions · Motion graphics · 3-cam production · 10 premium sets · Cinematic color grading";
+  "Animated captions · Motion graphics · 3-cam production · 4 premium sets · Cinematic color grading";
 
 type Pkg = {
   name: string;

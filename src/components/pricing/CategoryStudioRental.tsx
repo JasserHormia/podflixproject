@@ -23,7 +23,7 @@ const INCLUDES = [
   "Professional lighting",
   "Professional audio",
   "Studio operator",
-  "Raw footage delivery + 10 premium sets",
+  "Raw footage delivery + 4 premium sets",
 ];
 
 export default function CategoryStudioRental() {

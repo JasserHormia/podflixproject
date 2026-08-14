@@ -149,7 +149,13 @@ export default function Navbar() {
             <RecDot reduce={reduce} />
             <span className="text-[10px] uppercase tracking-[0.3em] text-cream/60">REC</span>
           </span>
-          <span className="text-xs uppercase tracking-[0.2em] text-cream">PODFLIX</span>
+          <Image
+            src={LOGO_SRC}
+            alt="Podflix"
+            width={100}
+            height={28}
+            className="h-7 w-auto object-contain"
+          />
           <span className="text-xs uppercase tracking-[0.2em] text-gold">MENU</span>
         </motion.button>
       </motion.div>

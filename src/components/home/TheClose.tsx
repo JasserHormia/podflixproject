@@ -31,7 +31,7 @@ export default function TheClose() {
 
         <Link
           href="/booking"
-          className="group relative mt-10 inline-block font-body text-xl font-bold text-background"
+          className="group relative mt-10 inline-block font-display text-xl font-black text-background"
         >
           Book a Session
           <span

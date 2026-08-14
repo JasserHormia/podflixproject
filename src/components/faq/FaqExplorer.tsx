@@ -217,7 +217,7 @@ export default function FaqExplorer() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-8 py-20 md:grid-cols-[35fr_65fr] md:gap-16 md:px-16">
         {/* Left — sticky navigational label + counter (desktop only) */}
         <div className="hidden md:block">
-          <div className="sticky top-1/3">
+          <div className="md:sticky md:top-1/3">
             <p className="text-[10px] uppercase tracking-[0.5em] text-gold/40">{stickyLabel}</p>
             <span aria-hidden className="my-6 block h-16 w-px bg-gold/30" />
             <p className="font-display text-xs text-cream/20">
