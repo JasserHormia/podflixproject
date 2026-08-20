@@ -28,8 +28,8 @@ export default function CategoryProduction() {
         className="relative min-h-[45vh] md:order-1 md:min-h-full"
       >
         <Image
-          src={IMAGES.gallery_2}
-          alt="Podcast recording in the studio"
+          src={IMAGES.duo_1}
+          alt="The Duo setup — two armchairs and boom microphones"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

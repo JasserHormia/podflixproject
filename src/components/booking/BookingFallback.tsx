@@ -55,8 +55,8 @@ export default function BookingFallback() {
         transition={{ duration: 0.8, ease: EASE_EXPO }}
       >
         <Image
-          src={IMAGES.card_session}
-          alt="A recording session in progress"
+          src={IMAGES.solo_2}
+          alt="Microphone on the Solo desk at Podflix"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

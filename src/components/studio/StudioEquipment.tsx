@@ -96,8 +96,8 @@ export default function StudioEquipment() {
         {/* RIGHT — full-height image bleeding into the column */}
         <div className="relative min-h-[50vh] md:min-h-full">
           <Image
-            src={IMAGES.card_studio}
-            alt="Inside the Podflix recording studio"
+            src={IMAGES.duo_2}
+            alt="The Duo setup in the navy panelled room"
             fill
             sizes="(min-width: 768px) 45vw, 100vw"
             quality={85}

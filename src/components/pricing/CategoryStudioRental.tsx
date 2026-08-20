@@ -23,7 +23,7 @@ const INCLUDES = [
   "Professional lighting",
   "Professional audio",
   "Studio operator",
-  "Raw footage delivery + 4 premium sets",
+  "Raw footage delivery · Solo, Duo & Quattro setups included",
 ];
 
 export default function CategoryStudioRental() {
@@ -129,8 +129,8 @@ export default function CategoryStudioRental() {
         className="relative min-h-[45vh] md:min-h-full"
       >
         <Image
-          src={IMAGES.hero_studio}
-          alt="Inside the Podflix recording studio"
+          src={IMAGES.solo_3}
+          alt="The Solo setup — boom microphone over an armchair"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

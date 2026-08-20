@@ -11,7 +11,7 @@ export default function PricingClose() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
       <Image
-        src={IMAGES.hero_recording}
+        src={IMAGES.quattro_3}
         alt=""
         fill
         sizes="100vw"

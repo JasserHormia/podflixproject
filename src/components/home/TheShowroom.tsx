@@ -15,11 +15,11 @@ const grainStyle = {
   backgroundSize: "120px 120px",
 };
 
-// Right column photo slots — order per spec.
+// Right column photo slots — one per setup, top to bottom.
 const SLOTS = [
-  { src: IMAGES.gallery_2, alt: "Podcast recording in session" },
-  { src: IMAGES.gallery_6, alt: "Two creators recording an interview" },
-  { src: IMAGES.gallery_4, alt: "Headphones resting on a studio desk" },
+  { src: IMAGES.duo_1, alt: "The Duo setup — two armchairs and boom microphones" },
+  { src: IMAGES.solo_1, alt: "The Solo setup — a host recording alone" },
+  { src: IMAGES.quattro_2, alt: "The Quattro setup — four armchairs arranged for a panel" },
 ];
 
 // Each column is ~half the viewport on desktop, full width on mobile.
@@ -45,8 +45,8 @@ export default function TheShowroom() {
           className="relative flex min-h-[60vh] items-end overflow-hidden bg-surface md:min-h-screen"
         >
           <Image
-            src={IMAGES.hero_studio}
-            alt="Inside the Podflix recording studio"
+            src={IMAGES.quattro_1}
+            alt="The Quattro setup — four seats and microphones around the studio table"
             fill
             sizes={SIZES}
             quality={85}
@@ -54,7 +54,7 @@ export default function TheShowroom() {
           />
           <div aria-hidden className="absolute inset-0 opacity-[0.06]" style={grainStyle} />
           <span className="relative p-6 font-display text-[14vw] font-black leading-none text-cream/20 sm:p-10 md:text-[9vw]">
-            The Studio
+            The Setups
           </span>
         </motion.div>
 

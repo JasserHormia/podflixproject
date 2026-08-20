@@ -13,7 +13,7 @@ export default function StudioClose() {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gold">
       {/* Image reads as texture beneath the dominant gold */}
       <Image
-        src={IMAGES.hero_recording}
+        src={IMAGES.quattro_2}
         alt=""
         fill
         sizes="100vw"

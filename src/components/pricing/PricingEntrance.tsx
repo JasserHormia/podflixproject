@@ -25,8 +25,8 @@ export default function PricingEntrance() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-background">
       <Image
-        src={IMAGES.hero_mic}
-        alt="Podflix studio microphone"
+        src={IMAGES.solo_5}
+        alt="A host recording at Podflix"
         fill
         priority
         sizes="100vw"

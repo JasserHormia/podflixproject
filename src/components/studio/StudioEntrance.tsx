@@ -25,8 +25,8 @@ export default function StudioEntrance() {
     <section className="relative min-h-screen overflow-hidden bg-background">
       {/* Full-bleed background */}
       <Image
-        src={IMAGES.hero_studio}
-        alt="Inside the Podflix recording studio"
+        src={IMAGES.quattro_1}
+        alt="The Quattro setup inside the Podflix studio"
         fill
         priority
         sizes="100vw"

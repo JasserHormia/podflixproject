@@ -11,7 +11,7 @@ export default function AboutClose() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gold">
       <Image
-        src={IMAGES.hero_recording}
+        src={IMAGES.duo_1}
         alt=""
         fill
         sizes="100vw"

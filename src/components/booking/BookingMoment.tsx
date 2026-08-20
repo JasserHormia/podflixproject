@@ -66,8 +66,8 @@ export default function BookingMoment() {
   return (
     <section className="relative min-h-[70vh] overflow-hidden bg-background">
       <Image
-        src={IMAGES.hero_studio}
-        alt="Inside the Podflix recording studio"
+        src={IMAGES.duo_3}
+        alt="The Duo setup at the Podflix studio table"
         fill
         priority
         sizes="100vw"

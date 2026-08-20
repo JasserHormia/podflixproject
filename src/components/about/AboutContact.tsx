@@ -135,8 +135,8 @@ export default function AboutContact() {
         transition={{ duration: 0.8, ease: EASE_EXPO }}
       >
         <Image
-          src={IMAGES.hero_mic}
-          alt="Podflix studio microphone"
+          src={IMAGES.solo_4}
+          alt="Microphone on the Solo desk at Podflix"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

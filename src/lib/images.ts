@@ -1,35 +1,44 @@
 /**
- * Site-wide image sources — Unsplash placeholders until real studio photos land.
+ * Site-wide image sources — real Podflix studio photography, delivered by the
+ * client and served from /public/assets/setups/.
  *
- * All URLs below were verified (HTTP 200) AND visually confirmed to be on-brand
- * podcast/studio/mic content. 5 slots from the requested set were unusable —
- * hero_recording & gallery_2 returned 404, and gallery_5 (gaming rig),
- * gallery_6 & card_session (dice in neon) were off-brand — so those were filled
- * from the verified on-brand pool instead.
+ * Keys are named after the seat configuration they show (Solo / Duo / Quattro)
+ * so slots read semantically at the call site. Every source is landscape 16:9,
+ * so any key is safe in any `fill` + `object-cover` slot.
+ *
+ * The delivered masters were 5504px PNGs (214MB total); they are stored here
+ * re-encoded to max-2560px JPEG (~7.8MB total) since nothing on the site
+ * renders above 2560 CSS px. next/image resizes down from these.
+ *
+ * Resolution note: solo_1, solo_2 and solo_4 came in at ~1700px, below the
+ * 2560 ceiling. Keep those three out of full-bleed 100vw hero slots.
  */
 
 const IMAGES = {
-  // Hero / large format
-  hero_mic: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1920&q=85&auto=format&fit=crop", // studio mic on stand
-  hero_studio: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1920&q=85&auto=format&fit=crop", // condenser mic, moody
-  hero_recording: "https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?w=1920&q=85&auto=format&fit=crop", // person recording (was 404 → on-brand fallback)
-
-  // Gallery / showroom
-  gallery_1: "https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?w=1200&q=85&auto=format&fit=crop", // person recording
-  gallery_2: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1200&q=85&auto=format&fit=crop", // studio mic (was 404 → on-brand fallback)
-  gallery_3: "https://images.unsplash.com/photo-1519874179391-3ebc752241dd?w=800&q=85&auto=format&fit=crop", // mic close-up, warm light
-  gallery_4: "https://images.unsplash.com/photo-1567596388756-f6d710c8fc07?w=1200&q=85&auto=format&fit=crop", // mic + headphones
-  gallery_5: "https://images.unsplash.com/photo-1519874179391-3ebc752241dd?w=800&q=85&auto=format&fit=crop", // mic close-up (was gaming rig → on-brand fallback)
-  gallery_6: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=85&auto=format&fit=crop", // condenser mic (was dice → on-brand fallback)
-
-  // Smaller / card format
-  card_mic: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=600&q=85&auto=format&fit=crop", // studio mic
-  card_studio: "https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?w=600&q=85&auto=format&fit=crop", // person recording
-  card_session: "https://images.unsplash.com/photo-1567596388756-f6d710c8fc07?w=600&q=85&auto=format&fit=crop", // mic + headphones (was dice → on-brand fallback)
+  // Solo setup
+  solo_1: "/assets/setups/solo/solo-01.jpg",
+  solo_2: "/assets/setups/solo/solo-02.jpg",
+  solo_3: "/assets/setups/solo/solo-03.jpg",
+  solo_4: "/assets/setups/solo/solo-04.jpg",
+  solo_5: "/assets/setups/solo/solo-05.jpg",
+  // Duo setup
+  duo_1: "/assets/setups/duo/duo-01.jpg",
+  duo_2: "/assets/setups/duo/duo-02.jpg",
+  duo_3: "/assets/setups/duo/duo-03.jpg",
+  // Quattro setup
+  quattro_1: "/assets/setups/quattro/quattro-01.jpg",
+  quattro_2: "/assets/setups/quattro/quattro-02.jpg",
+  // NOTE: quattro-03 was delivered byte-identical to quattro-02. The key is
+  // kept so slots assigned to it keep working, but the two are deliberately
+  // never shown in the same view. Pending a replacement frame from the client.
+  quattro_3: "/assets/setups/quattro/quattro-03.jpg",
 } as const;
 
 export type ImageKey = keyof typeof IMAGES;
 export default IMAGES;
 
-/** Path to the hero background reel (already placed in /public). */
-export const HERO_VIDEO = "/assets/videos/studio-reel.mp4";
+/** Hero background reels — desktop is landscape, mobile is the vertical cut. */
+export const VIDEOS = {
+  hero_desktop: "/assets/videos/hero-desktop.mp4",
+  hero_mobile: "/assets/videos/hero-mobile.mp4",
+} as const;

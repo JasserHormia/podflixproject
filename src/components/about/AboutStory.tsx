@@ -62,8 +62,8 @@ export default function AboutStory() {
         <div className="md:sticky md:top-[10%]">
           <div className="relative min-h-[50vh] overflow-hidden md:min-h-[80vh]">
             <Image
-              src={IMAGES.hero_recording}
-              alt="A creator recording at Podflix"
+              src={IMAGES.quattro_1}
+              alt="The Quattro setup inside the Podflix studio"
               fill
               sizes="(min-width: 768px) 35vw, 100vw"
               quality={85}

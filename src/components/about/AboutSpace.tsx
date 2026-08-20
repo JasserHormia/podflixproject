@@ -44,8 +44,8 @@ export default function AboutSpace() {
           className="flex flex-col"
         >
           <ImageTile
-            src={IMAGES.gallery_1}
-            alt="Podflix studio equipment"
+            src={IMAGES.solo_1}
+            alt="A host recording alone in the Solo setup"
             sizes={SIZES}
             className="aspect-video"
           />
@@ -59,8 +59,8 @@ export default function AboutSpace() {
             </p>
           </div>
           <ImageTile
-            src={IMAGES.gallery_3}
-            alt="Microphone close-up in warm light"
+            src={IMAGES.duo_2}
+            alt="The Duo setup in the navy panelled room"
             sizes={SIZES}
             className="aspect-square"
           />
@@ -75,8 +75,8 @@ export default function AboutSpace() {
           className="relative min-h-[60vh] md:min-h-full"
         >
           <ImageTile
-            src={IMAGES.gallery_5}
-            alt="The Podflix studio space"
+            src={IMAGES.quattro_3}
+            alt="The Quattro setup arranged for a panel"
             sizes={SIZES}
             className="absolute inset-0"
           />

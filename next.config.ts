@@ -5,14 +5,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  // Allow Unsplash placeholder images through next/image optimization.
+  // All imagery is now local (/public/assets) — no remote patterns needed.
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
     // Next 16 restricts next/image quality to [75] by default. The site standard
     // is q=85 (see src/lib/images.ts), so allowlist the qualities we use.
     qualities: [75, 85, 90, 100],

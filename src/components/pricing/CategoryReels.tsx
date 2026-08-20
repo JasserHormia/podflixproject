@@ -104,8 +104,8 @@ export default function CategoryReels() {
         className="relative min-h-[45vh] md:order-2 md:min-h-full"
       >
         <Image
-          src={IMAGES.card_session}
-          alt="A recording session in progress"
+          src={IMAGES.quattro_2}
+          alt="The Quattro setup — four armchairs arranged for a panel"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

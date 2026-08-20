@@ -18,7 +18,7 @@ const FAQS = [
   },
   {
     q: "What are the 4 premium studio sets?",
-    a: "Podflix features 4 distinct set designs within the studio — you can switch between them freely during your session.",
+    a: "Podflix offers multiple set configurations — Solo, Duo, and Quattro — switch freely between them during your session.",
   },
   {
     q: "How do I book and pay?",

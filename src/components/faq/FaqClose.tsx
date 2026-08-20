@@ -20,7 +20,7 @@ export default function FaqClose() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
       <Image
-        src={IMAGES.hero_studio}
+        src={IMAGES.quattro_1}
         alt=""
         fill
         sizes="100vw"
