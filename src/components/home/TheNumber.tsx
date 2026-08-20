@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 
-const STATS = ["1 Studio", "∞ Stories", "0 Excuses"];
+const STATS = ["3 Formats", "12 Themed Sets", "∞ Stories"];
 
 export default function TheNumber() {
   const reduce = useReducedMotion();

@@ -17,8 +17,8 @@ const FAQS = [
     a: "You receive all unedited footage from your session — multi-camera, full resolution, ready for your own editor or ours.",
   },
   {
-    q: "What are the 4 premium studio sets?",
-    a: "Podflix offers multiple set configurations — Solo, Duo, and Quattro — switch freely between them during your session.",
+    q: "What are the themed studio sets?",
+    a: "Podflix offers 12 distinct set designs across three formats — Solo, Duo, and Quattro. Switch freely between themes during your session.",
   },
   {
     q: "How do I book and pay?",

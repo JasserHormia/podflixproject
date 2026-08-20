@@ -13,22 +13,32 @@ type Setup = {
   index: string;
   name: string;
   blurb: string;
-  /** First entry is the default hero shot for the block. */
+  /** One shot per themed set design. First entry is the block's default. */
   shots: Shot[];
   /** true → content on the left, image on the right. */
   reverse: boolean;
 };
 
+/**
+ * Three formats, each offering several themed set designs. The theme count in
+ * the badge is derived from `shots.length`, so the copy can never drift from
+ * the number of frames actually shown. Totals 7 + 3 + 2 = the 12 themed sets
+ * quoted across the site.
+ */
 const SETUPS: Setup[] = [
   {
     index: "01",
     name: "Solo.",
     blurb:
-      "One voice. Full focus. Perfect for solo shows, monologues, and personal brands.",
+      "One voice. Full focus. 7 themed sets to match your brand — from minimal to bold.",
     shots: [
-      { src: IMAGES.solo_1, alt: "A host recording alone in the Solo setup" },
-      { src: IMAGES.solo_2, alt: "Microphone on the Solo desk, lit by warm slatted light" },
-      { src: IMAGES.solo_3, alt: "Boom microphone over the Solo armchair" },
+      { src: IMAGES.solo_1, alt: "Solo set in the navy panelled room" },
+      { src: IMAGES.solo_2, alt: "Solo desk set lit by warm slatted light" },
+      { src: IMAGES.solo_3, alt: "Solo armchair set with boom microphone and floor lamp" },
+      { src: IMAGES.solo_4, alt: "Solo desk set with patterned backlight and salt lamp" },
+      { src: IMAGES.solo_4b, alt: "Solo armchair set beneath a gold orb lamp" },
+      { src: IMAGES.solo_5, alt: "Solo desk set with a vertical light strip" },
+      { src: IMAGES.solo_5b, alt: "Solo table set against the slatted wall and bookshelf" },
     ],
     reverse: false,
   },
@@ -36,11 +46,11 @@ const SETUPS: Setup[] = [
     index: "02",
     name: "Duo.",
     blurb:
-      "Two chairs. Real conversation. Built for interviews and co-hosted shows.",
+      "Two chairs. Real conversation. 3 themed sets built for interviews and co-hosted shows.",
     shots: [
-      { src: IMAGES.duo_1, alt: "Two armchairs and boom microphones in the Duo setup" },
-      { src: IMAGES.duo_2, alt: "The Duo setup in the navy panelled room" },
-      { src: IMAGES.duo_3, alt: "The Duo setup at the studio table" },
+      { src: IMAGES.duo_1, alt: "Duo set with two armchairs and boom microphones" },
+      { src: IMAGES.duo_2, alt: "Duo set in the navy panelled room" },
+      { src: IMAGES.duo_3, alt: "Duo set at the studio table" },
     ],
     reverse: true,
   },
@@ -48,13 +58,13 @@ const SETUPS: Setup[] = [
     index: "03",
     name: "Quattro.",
     blurb:
-      "Four seats. Full panel energy. Roundtables, podcasts with guests, and team shows.",
-    // Only two distinct Quattro frames were delivered — quattro-03 is
-    // byte-identical to quattro-02, so pairing them here would render the same
-    // thumbnail twice. Add the third shot back when the client supplies one.
+      "Four seats. Full panel energy. 2 cinematic sets for roundtables and group shows.",
+    // Two frames, matching Quattro's two themes — the delivered quattro-03 is
+    // byte-identical to quattro-02, so listing it would duplicate a thumbnail
+    // and contradict the badge.
     shots: [
-      { src: IMAGES.quattro_1, alt: "Four seats and microphones around the Quattro table" },
-      { src: IMAGES.quattro_2, alt: "Four armchairs arranged for a Quattro panel" },
+      { src: IMAGES.quattro_1, alt: "Quattro set around the studio table" },
+      { src: IMAGES.quattro_2, alt: "Quattro set with four armchairs arranged for a panel" },
     ],
     reverse: false,
   },
@@ -143,17 +153,29 @@ function SetupBlock({ setup }: { setup: Setup }) {
           {setup.blurb}
         </motion.p>
 
-        {/* Thumbnail strip — includes the default shot so you can always
-            get back to it. */}
-        <motion.div variants={item} className="mt-2 flex flex-wrap gap-3">
+        <motion.div variants={item}>
+          <span className="inline-block border border-gold/30 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-gold">
+            {setup.shots.length} Themes Available
+          </span>
+        </motion.div>
+
+        {/* One thumbnail per theme. Scrolls horizontally when the row overflows
+            its column — Solo's seven never fit. The active shot stays in the
+            strip so you can always get back to it. */}
+        <motion.div
+          variants={item}
+          className="-mx-8 mt-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-8 pb-3 md:-mx-12 md:px-12"
+        >
           {setup.shots.map((shot, i) => (
             <button
               key={shot.src}
               type="button"
               onClick={() => setActive(i)}
               aria-pressed={i === active}
-              aria-label={`Show ${setup.name.replace(".", "")} view ${i + 1}`}
-              className={`relative aspect-video w-32 shrink-0 overflow-hidden rounded-sm ring-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+              aria-label={`Show ${setup.name.replace(".", "")} theme ${i + 1} of ${
+                setup.shots.length
+              }`}
+              className={`relative aspect-video w-32 shrink-0 snap-start overflow-hidden rounded-sm ring-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
                 i === active
                   ? "opacity-100 ring-gold"
                   : "opacity-50 ring-cream/10 hover:opacity-80 hover:ring-cream/30"
@@ -187,7 +209,7 @@ export default function StudioSetups() {
           duration={0.9}
         />
         <p className="mt-6 text-sm uppercase tracking-[0.3em] text-gold">
-          Three configurations. One standard: cinematic.
+          Three formats. Twelve themed sets. One standard: cinematic.
         </p>
       </div>
 

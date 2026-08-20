@@ -4,10 +4,10 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 
 const TICKER =
-  "3-Camera Setup · Professional Audio · Studio Operator · 4 Premium Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
+  "3-Camera Setup · Professional Audio · Studio Operator · 12 Themed Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
 
 const STATS = [
-  { value: "4", label: "Premium studio sets" },
+  { value: "12", label: "Themed studio sets" },
   { value: "4K", label: "Cinema quality output" },
   { value: "AED 650", label: "Starting price per hour" },
 ];

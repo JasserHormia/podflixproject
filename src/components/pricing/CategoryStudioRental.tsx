@@ -23,7 +23,7 @@ const INCLUDES = [
   "Professional lighting",
   "Professional audio",
   "Studio operator",
-  "Raw footage delivery · Solo, Duo & Quattro setups included",
+  "Raw footage delivery · 12 themed sets across Solo, Duo & Quattro",
 ];
 
 export default function CategoryStudioRental() {
