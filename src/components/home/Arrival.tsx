@@ -106,9 +106,11 @@ export default function Arrival() {
         </motion.div>
       </div>
 
-      {/* ── Hero content: fades/rises in once the wordmark has docked ── */}
+      {/* ── Hero content: fades/rises in once the wordmark has docked ──
+           Left padding is held wider than the SCROLL cue's lane (left-3 /
+           md:left-5 plus its ~16px glyph) so the headline never reaches it. */}
       <motion.div
-        className="relative z-10 flex min-h-screen flex-col justify-center px-6 sm:px-10 lg:px-16"
+        className="relative z-10 flex min-h-screen flex-col justify-center pr-6 pl-12 sm:pr-10 md:pl-20 lg:pr-16 lg:pl-24"
         variants={contentVariants}
         initial="hidden"
         animate={dockedNow ? "visible" : "hidden"}
@@ -158,7 +160,7 @@ export default function Arrival() {
 
       {/* ── Scroll cue (bottom-left, vertical) ── */}
       <motion.div
-        className="absolute bottom-28 left-6 z-10 ml-4 flex flex-col items-center gap-3 sm:left-10 md:bottom-8 md:ml-8 lg:left-16"
+        className="absolute bottom-24 left-3 z-20 flex flex-col items-center gap-3 md:bottom-10 md:left-5"
         initial={{ opacity: 0 }}
         animate={{ opacity: dockedNow ? 1 : 0 }}
         transition={{ duration: 0.8, ease: EASE_EXPO, delay: dockedNow ? 0.7 : 0 }}
