@@ -1,50 +1,145 @@
 "use client";
 
-import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef, useSyncExternalStore } from "react";
+import Image from "next/image";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import IMAGES from "@/lib/images";
+import TextWipe from "@/components/ui/TextWipe";
+import MagneticButton from "@/components/ui/MagneticButton";
+
+// Warm gold gradient — top-lit, falling to a deeper tone at the base.
+const GOLD_WASH =
+  "linear-gradient(180deg, #B29877 0%, #A98F74 45%, #967D63 100%)";
+
+// Same fractal-noise grain used elsewhere on the site — paper/film texture.
+const NOISE = encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(#n)' opacity='0.5'/></svg>`
+);
+const grainStyle = {
+  backgroundImage: `url("data:image/svg+xml,${NOISE}")`,
+  backgroundSize: "120px 120px",
+};
+
+/** SSR-safe md+ check — the watermark parallax is desktop-only. */
+function useIsDesktop() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia("(min-width: 768px)");
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(min-width: 768px)").matches,
+    () => false
+  );
+}
 
 export default function TheClose() {
   const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // This is the last section on the page, so it never scrolls back out of the
+  // viewport — an "end start" range would leave half the drift unreachable.
+  // "end end" completes exactly as the section finishes scrolling into view.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end end"],
+  });
+  // Wordmark drifts ~60px upward as the section arrives.
+  const watermarkY = useTransform(scrollYProgress, [0, 1], [60, 0]);
+  const parallax = isDesktop && !reduce;
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gold">
-      {/* Oversized wordmark bleeding off the bottom edge */}
-      <span
+    <section
+      ref={sectionRef}
+      // `isolate` keeps the blend modes below from reaching earlier sections.
+      className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-52 pt-24 md:pb-28"
+      style={{ background: GOLD_WASH }}
+    >
+      {/* Ghost photo — barely there, just enough to break the flat field */}
+      <Image
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-[18%] select-none text-center font-display text-[20vw] font-black leading-none text-background/20"
+        src={IMAGES.duo_1}
+        alt=""
+        fill
+        sizes="100vw"
+        quality={75}
+        className="pointer-events-none absolute inset-0 select-none object-cover opacity-[0.07] mix-blend-multiply"
+      />
+
+      {/* Grain */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
+        style={grainStyle}
+      />
+
+      {/* Oversized wordmark bleeding off the bottom edge */}
+      <motion.span
+        aria-hidden
+        style={parallax ? { y: watermarkY } : undefined}
+        className="pointer-events-none absolute inset-x-0 bottom-[-3vw] select-none text-center font-display text-[28vw] font-black leading-none text-background/[0.08] md:text-[20vw]"
       >
         PODFLIX
-      </span>
+      </motion.span>
 
-      {/* Center statement + underline-draw CTA */}
-      <motion.div
-        className="relative z-10 px-6 text-center"
-        initial={reduce ? false : { opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.9, ease: EASE_EXPO }}
-      >
-        <h2 className="font-display text-5xl font-black leading-tight text-background md:text-7xl">
-          Your story starts today.
-        </h2>
+      {/* ── Centre stack ── */}
+      <div className="relative z-10 w-full max-w-4xl text-center">
+        <TextWipe
+          text={["Your story", "starts today."]}
+          as="h2"
+          inline
+          className="font-display text-[clamp(52px,8vw,120px)] font-black leading-[0.85] text-background"
+          stagger={0.18}
+          duration={0.9}
+        />
 
-        <Link
-          href="/booking"
-          className="group relative mt-10 inline-block font-display text-xl font-black text-background"
+        <motion.p
+          className="mt-6 font-body text-lg text-background/60"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.8, ease: EASE_EXPO, delay: 0.35 }}
         >
-          Book a Session
-          <span
-            aria-hidden
-            className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-background transition-transform duration-500 ease-out group-hover:scale-x-100"
-          />
-        </Link>
-      </motion.div>
+          Solo, Duo, or Quattro — your set is ready.
+        </motion.p>
 
-      {/* Corner attribution — replaces the footer on home */}
-      <p className="absolute bottom-6 right-6 z-10 text-xs text-background/40 sm:right-10">
-        © 2026 Podflix · MCFLIX Agency
-      </p>
+        <motion.div
+          // items-stretch lets the button fill the column on phones; from sm up
+          // it collapses back to its natural width.
+          className="mt-12 flex flex-col items-stretch sm:items-center"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.8, ease: EASE_EXPO, delay: 0.5 }}
+        >
+          <MagneticButton
+            href="/booking"
+            className="group mx-auto block w-full max-w-sm rounded-none bg-background px-12 py-6 text-center font-display text-sm font-semibold uppercase tracking-[0.2em] text-cream transition-[background-color,transform] duration-300 hover:scale-[1.02] hover:bg-[#111009] sm:w-auto"
+          >
+            Book a Session
+            <span
+              aria-hidden
+              className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+            >
+              →
+            </span>
+          </MagneticButton>
+
+          <p className="mt-6 text-xs uppercase tracking-widest text-background/50">
+            Free cancellation up to 24h · Sessions from AED 650
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ── Section meta — stacked above the mobile chrome, split on md+ ── */}
+      <div className="absolute inset-x-0 bottom-40 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-background/50 md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
+        <p>© 2026 Podflix · MCFLIX Agency</p>
+        {/* The WhatsApp pill occupies ~182px from the right edge on md+, so the
+            reserve has to exceed that plus the container's own px-10. */}
+        <p className="md:pr-48">Dubai · Business Bay</p>
+      </div>
     </section>
   );
 }
