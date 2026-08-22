@@ -10,7 +10,9 @@ export default function BookingFallback() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="grid min-h-[50vh] grid-cols-1 bg-background md:grid-cols-2">
+    // overflow-hidden clips the columns' ±60px entry offset — without it the
+    // page scrolls sideways until this section animates in.
+    <section className="grid min-h-[50vh] grid-cols-1 overflow-hidden bg-background md:grid-cols-2">
       {/* LEFT — the soft off-ramp */}
       <motion.div
         className="flex flex-col justify-center px-8 py-20 md:px-16"
