@@ -16,8 +16,21 @@ const TAGS = {
 type TagName = keyof typeof TAGS;
 
 /**
- * Clip-path text wipe. Each segment is revealed left→right by animating
- * clipPath from inset(0 100% 0 0) → inset(0 0% 0 0), staggered.
+ * Extra room below each segment so descenders (y, g, p, j) live inside the
+ * element's border box instead of hanging outside it — headings here run at
+ * leading 0.82–0.9, which pulls the box in tighter than the glyphs. The
+ * negative margin cancels the padding so line spacing is unchanged.
+ */
+const DESCENDER_SAFE = "pb-[0.15em] -mb-[0.15em]";
+
+/**
+ * Clip-path text wipe. Each segment is revealed left→right by animating the
+ * inset's right edge from 100% → 0%, staggered.
+ *
+ * Top and bottom insets stay negative for the whole animation, so the clip
+ * region always extends past the box vertically and descenders are never cut —
+ * a plain inset(0 0 0 0) end state clips them permanently at these leadings.
+ *
  * - `text` string → single segment. Array → one segment each.
  * - `inline` renders segments inline (per-word wipes); otherwise stacked lines.
  * Respects reduced motion (renders statically).
@@ -52,7 +65,7 @@ export default function TextWipe({
         {inline
           ? segments.join(" ")
           : segments.map((s, i) => (
-              <span key={i} className={`block ${segmentClassName}`}>
+              <span key={i} className={`block ${DESCENDER_SAFE} ${segmentClassName}`}>
                 {s}
               </span>
             ))}
@@ -65,9 +78,9 @@ export default function TextWipe({
     visible: { transition: { staggerChildren: stagger } },
   };
   const seg: Variants = {
-    hidden: { clipPath: "inset(0 100% 0 0)" },
+    hidden: { clipPath: "inset(-40% 100% -40% 0%)" },
     visible: {
-      clipPath: "inset(0 0% 0 0)",
+      clipPath: "inset(-40% 0% -40% 0%)",
       transition: { duration, ease: EASE_EXPO },
     },
   };
@@ -84,7 +97,7 @@ export default function TextWipe({
         <Fragment key={i}>
           <motion.span
             variants={seg}
-            className={`${inline ? "inline-block" : "block"} ${segmentClassName}`}
+            className={`${inline ? "inline-block" : "block"} ${DESCENDER_SAFE} ${segmentClassName}`}
           >
             {s}
           </motion.span>

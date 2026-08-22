@@ -87,7 +87,7 @@ export default function TheClose() {
       {/* ── Centre stack ── */}
       <div className="relative z-10 w-full max-w-4xl text-center">
         <TextWipe
-          text={["Your story", "starts today."]}
+          text={["Your Story", "Starts Today."]}
           as="h2"
           inline
           className="font-display text-[clamp(52px,8vw,120px)] font-black leading-[0.85] text-background"
