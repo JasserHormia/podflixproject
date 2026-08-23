@@ -11,8 +11,8 @@ const GUARANTEES = [
   },
   {
     mark: "24h",
-    title: "Free Cancellation",
-    desc: "Cancel or reschedule up to 24 hours before.",
+    title: "Free Reschedule",
+    desc: "Reschedule free up to 24 hours before your session.",
   },
   {
     mark: "∞",

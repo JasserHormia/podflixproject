@@ -4,10 +4,9 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 
 const INCLUSIONS = [
-  { name: "Soundproofed Recording Room", detail: "Total acoustic isolation" },
-  { name: "Professional Lighting Rig", detail: "Cinema-grade Aputure setup" },
+  { name: "Acoustically Treated Room", detail: "Controlled recording environment" },
+  { name: "Professional Lighting Rig", detail: "Cinema-grade Amaran setup" },
   { name: "4-Channel Mic Setup", detail: "Shure SM7B for every guest" },
-  { name: "Live Streaming Ready", detail: "Multi-platform in one click" },
   { name: "Recording Engineer", detail: "Available on request" },
   { name: "Studio Headphones", detail: "Beyerdynamic DT 770 Pro ×4" },
   { name: "Refreshments", detail: "Because great stories need fuel" },

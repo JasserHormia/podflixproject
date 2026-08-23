@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import Grain from "@/components/ui/Grain";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { jsonLd, localBusinessSchema } from "@/lib/schema";
 
 // Display / headings — closest free match to Myriad Variable Concept.
 const displayFont = Plus_Jakarta_Sans({
@@ -79,6 +80,11 @@ export default function RootLayout({
       className={`${displayFont.variable} ${bodyFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-text-primary">
+        {/* LocalBusiness structured data — applies to every route. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(localBusinessSchema) }}
+        />
         <SmoothScrollProvider>
           <ScrollProgress />
           <Grain />

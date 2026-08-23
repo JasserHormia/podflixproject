@@ -9,7 +9,7 @@ import StudioClose from "@/components/studio/StudioClose";
 export const metadata: Metadata = {
   title: "The Studio",
   description:
-    "Dubai's premier podcast production studio. Solo, Duo and Quattro setups, cinema-grade cameras, Shure SM7B mics, and end-to-end production — every session includes full equipment access.",
+    "Dubai's premier podcast production studio. Solo, Duo and Quattro setups, three cinema-grade cameras, Shure mics, and end-to-end production — every session includes full equipment access.",
 };
 
 export default function StudioPage() {

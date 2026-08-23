@@ -18,7 +18,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "Can I reschedule or cancel my session?",
-        a: "[PLACEHOLDER — Yes. Reschedule or cancel free of charge up to 24 hours before your session.]",
+        a: "[PLACEHOLDER — Reschedule free up to 24 hours before. Within 24 hours an AED 200 fee applies as booking credit; cancellations are case by case.]",
       },
       {
         q: "Is there a minimum booking duration?",
@@ -36,7 +36,7 @@ const CATEGORIES: Category[] = [
     questions: [
       {
         q: "What equipment is available in the studio?",
-        a: "[PLACEHOLDER — Shure SM7B mics, a Sony FX3 cinema camera, a Rodecaster Pro II, and full Aputure lighting — all included.]",
+        a: "[PLACEHOLDER — Up to four Shure microphones, three Sony FX3 cinema cameras, a Rodecaster Pro II, and Amaran lighting — all included.]",
       },
       {
         q: "How many people can join a session?",
@@ -48,7 +48,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "Is the studio soundproofed?",
-        a: "[PLACEHOLDER — Yes. Fully treated and isolated, so your audio stays clean and distraction-free.]",
+        a: "[PLACEHOLDER — The room is acoustically treated for a controlled recording environment.]",
       },
     ],
   },
@@ -58,7 +58,7 @@ const CATEGORIES: Category[] = [
     questions: [
       {
         q: "Do you offer video production?",
-        a: "[PLACEHOLDER — Yes — multi-camera video anchored by a Sony FX3 for a true cinematic look.]",
+        a: "[PLACEHOLDER — Yes — three-camera video on Sony FX3 bodies for a true cinematic look.]",
       },
       {
         q: "Can you edit my podcast after recording?",
@@ -66,7 +66,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "Can I live stream directly from the studio?",
-        a: "[PLACEHOLDER — Yes, the studio is streaming-ready to any platform in one click.]",
+        a: "[PLACEHOLDER — Live streaming is not currently offered.]",
       },
       {
         q: "What formats do you deliver the final content in?",

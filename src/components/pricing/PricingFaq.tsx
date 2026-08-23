@@ -25,8 +25,8 @@ const FAQS = [
     a: "Book online, select your package, and we'll send a secure payment link via WhatsApp. Powered by Network International.",
   },
   {
-    q: "Is there a cancellation policy?",
-    a: "Free cancellation up to 24 hours before your session. Within 24 hours, a 50% fee applies.",
+    q: "Can I reschedule or cancel my session?",
+    a: "Reschedule free of charge up to 24 hours before your session. Within 24 hours, an AED 200 fee applies as booking credit. Cancellations are handled case by case.",
   },
   {
     q: "Can I book for more than 12 hours?",

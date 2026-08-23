@@ -8,7 +8,7 @@ import BookingClose from "@/components/booking/BookingClose";
 export const metadata: Metadata = {
   title: "Book a Session",
   description:
-    "Reserve your studio at Podflix, Dubai. Pick your format, choose your set, and lock your session — instant confirmation, free cancellation up to 24h.",
+    "Reserve your studio at Podflix, Dubai. Pick your format, choose your set, and lock your session — instant confirmation, free reschedule up to 24h.",
 };
 
 export default function BookingPage() {

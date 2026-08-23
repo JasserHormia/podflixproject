@@ -6,10 +6,10 @@ import { EASE_EXPO } from "@/lib/motion";
 import IMAGES from "@/lib/images";
 
 const EQUIPMENT = [
-  { name: "Shure SM7B", spec: "×4 Microphones" },
+  { name: "Shure Microphones", spec: "Up to ×4" },
   { name: "Rodecaster Pro II", spec: "Professional Mixer" },
-  { name: "Sony FX3", spec: "Cinema Camera" },
-  { name: "Aputure 300x", spec: "LED Lighting" },
+  { name: "Sony FX3", spec: "×3 Cinema Cameras" },
+  { name: "Amaran Lighting", spec: "LED Lighting" },
   { name: "Acoustic Panels", spec: "Full Room Treatment" },
   { name: "4K HDMI", spec: "Capture Cards" },
   { name: "1Gbps WiFi", spec: "High-Speed Internet" },
