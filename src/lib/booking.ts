@@ -79,6 +79,8 @@ export type Session = {
   price: number;
   duration: string;
   category: SessionCategory;
+  /** SimplyBook.me service id — deep-links the embed straight to its calendar. */
+  sbId: number;
   description: string;
   includes: string[];
   /** Null where the session ships no edit, so no revision policy applies. */
@@ -100,6 +102,7 @@ export const SESSIONS: Session[] = [
     price: 590,
     duration: "1 Hour",
     category: "studio",
+    sbId: 2,
     description:
       "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
     includes: [
@@ -122,6 +125,7 @@ export const SESSIONS: Session[] = [
     price: 1090,
     duration: "1 Hour",
     category: "production",
+    sbId: 3,
     description:
       "A complete podcast recording and editing experience for a professional, polished final episode.",
     includes: [
@@ -148,6 +152,7 @@ export const SESSIONS: Session[] = [
     price: 1750,
     duration: "1 Hour",
     category: "production",
+    sbId: 4,
     description:
       "Everything you need to turn one podcast recording into long-form and short-form content.",
     includes: [
@@ -168,6 +173,7 @@ export const SESSIONS: Session[] = [
     price: 2500,
     duration: "1 Hour",
     category: "production",
+    sbId: 5,
     description:
       "A highly creative, visually refined podcast production designed for creators, brands and personalities who want their episode to stand out.",
     includes: [
@@ -196,6 +202,7 @@ export const SESSIONS: Session[] = [
     price: 3800,
     duration: "1 Hour",
     category: "production",
+    sbId: 6,
     recommended: true,
     description:
       "Our highest-level production package: a signature podcast episode transformed into premium long-form and short-form content.",
@@ -221,6 +228,7 @@ export const SESSIONS: Session[] = [
     price: 2500,
     duration: "5 Hours",
     category: "studio",
+    sbId: 7,
     priceNote: "AED 500/hour",
     description:
       "For creators, brands and podcasts that want to record multiple episodes or content pieces in one booking.",
@@ -294,6 +302,9 @@ export const FROM_PRICE = Math.min(...SESSIONS.map((s) => s.price));
 export const FROM_PRODUCTION_PRICE = Math.min(
   ...sessionsIn("production").map((s) => s.price)
 );
+
+/** SimplyBook.me tenant. The booking embed deep-links into this host. */
+export const SB_BASE = "https://podflixpodcast.simplybook.me";
 
 /** Currency prefix — kept here so no component hardcodes it. */
 export const CURRENCY = "AED";

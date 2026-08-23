@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import MagneticButton from "@/components/ui/MagneticButton";
+import SimplybookEmbed from "@/components/booking/SimplybookEmbed";
 import {
   ADDONS,
   FORMATS,
@@ -39,7 +39,6 @@ export default function BookingFlow() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [addons, setAddons] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
 
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
@@ -86,7 +85,6 @@ export default function BookingFlow() {
     setSessionId(null);
     setAddons([]);
     setExpanded(null);
-    setSent(false);
   };
 
   const whatsappHref = () => {
@@ -104,11 +102,6 @@ export default function BookingFlow() {
       `Total: ${formatPrice(total)}`,
     ].join("\n");
     return `${SOCIAL.whatsapp}?text=${encodeURIComponent(body)}`;
-  };
-
-  const sendToWhatsApp = () => {
-    window.open(whatsappHref(), "_blank", "noopener,noreferrer");
-    setSent(true);
   };
 
   // ── Step transition ──
@@ -139,7 +132,7 @@ export default function BookingFlow() {
             <span className="text-[10px] uppercase tracking-[0.4em] text-gold">
               Step {String(step).padStart(2, "0")} / 04
             </span>
-            {step > 1 && !sent && (
+            {step > 1 && (
               <button
                 type="button"
                 onClick={() => setStep((s) => s - 1)}
@@ -521,32 +514,8 @@ export default function BookingFlow() {
             {/* ═══ STEP 4 — CONFIRM ═══ */}
             {step === 4 && (
               <motion.div key="s4" {...variants} transition={{ duration: 0.35, ease: "easeOut" }}>
-                {sent ? (
-                  <div className="flex flex-col items-center py-16 text-center">
-                    <span
-                      aria-hidden
-                      className="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-2xl font-black text-background"
-                    >
-                      ✓
-                    </span>
-                    <h2 className="mt-8 font-display text-4xl font-black text-cream">
-                      Request sent.
-                    </h2>
-                    <p className="mt-4 text-cream/50">
-                      We&apos;ll confirm your slot within 15 minutes.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={reset}
-                      className={`mt-8 text-sm text-gold underline-offset-4 hover:underline ${FOCUS}`}
-                    >
-                      Book another session
-                    </button>
-                  </div>
-                ) : (
-                  <>
                     <h2 className="font-display text-[clamp(32px,4vw,56px)] font-black leading-[0.95] text-cream">
-                      Choose your time.
+                      Confirm &amp; schedule.
                     </h2>
 
                     {/* Summary */}
@@ -589,30 +558,79 @@ export default function BookingFlow() {
                       </dl>
                     </div>
 
-                    {/*
-                      Simplybook.me mount point.
-                      TODO Stage 2: the embed script mounts the calendar + Stripe
-                      checkout here. The selections above live in this component's
-                      state as headcount, format, setId, mode, rentalIndex,
-                      packageId, addReels and total — pass them to the widget as
-                      prefill params / intake fields when wiring it up.
-                    */}
-                    <div id="sb-widget" className="mt-8 min-h-150 w-full">
-                      {/* Temporary fallback so the page books real sessions today. */}
-                      <div className="flex h-full min-h-150 flex-col items-center justify-center gap-6 border border-cream/10 bg-surface/40 p-8 text-center">
-                        <p className="max-w-sm text-cream/50">
-                          Confirm your slot on WhatsApp — we reply within 15 minutes.
+                    {/* What SimplyBook cannot know: the format/set/add-on
+                        choices live in this component, not in the widget's
+                        intake form. Surfaced here so the customer copies them
+                        across and the booking does not arrive mismatched. */}
+                    <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
+                      <p className="text-xs uppercase tracking-[0.3em] text-cream/60">
+                        When the form asks, enter:
+                      </p>
+                      <dl className="mt-4 space-y-2">
+                        <div className="flex items-baseline gap-3">
+                          <dt className="text-sm text-cream/40">Format</dt>
+                          <dd className="font-display text-lg text-cream">
+                            {format ? FORMATS[format].name : "—"}
+                          </dd>
+                        </div>
+                        <div className="flex items-baseline gap-3">
+                          <dt className="text-sm text-cream/40">Set</dt>
+                          <dd className="font-display text-lg text-cream">{setName}</dd>
+                        </div>
+                        {chosenAddons.length > 0 && (
+                          <div className="flex items-baseline gap-3">
+                            <dt className="text-sm text-cream/40">Add-ons</dt>
+                            <dd className="font-display text-lg text-cream">
+                              {chosenAddons.map((a) => a.name).join(", ")}
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
+                      {chosenAddons.length > 0 && (
+                        <p className="mt-3 text-xs text-cream/40">
+                          Add-ons are selected inside the booking form.
                         </p>
-                        <MagneticButton
-                          onClick={sendToWhatsApp}
-                          className={`block w-full max-w-sm rounded-none bg-gold px-10 py-5 text-center font-display text-sm font-semibold uppercase tracking-[0.2em] text-background transition-colors hover:bg-cream sm:w-auto ${FOCUS}`}
-                        >
-                          Continue on WhatsApp →
-                        </MagneticButton>
-                      </div>
+                      )}
                     </div>
-                  </>
-                )}
+
+                    <div className="mt-10">
+                      <h3 className="font-display text-3xl font-black text-cream">
+                        Choose your time.
+                      </h3>
+                      <p className="mt-3 font-body text-cream/50">
+                        Availability is live. Your slot is confirmed the moment you pay.
+                      </p>
+                    </div>
+
+                    <div className="mt-6">
+                      {session && <SimplybookEmbed sbId={session.sbId} />}
+                    </div>
+
+                    {/* One quiet alternative rather than a competing CTA. */}
+                    <p className="mt-6 text-sm">
+                      <a
+                        href={whatsappHref()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group inline-flex items-center gap-1.5 text-gold ${FOCUS}`}
+                      >
+                        Prefer to book by message? Chat on WhatsApp
+                        <span
+                          aria-hidden
+                          className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                        >
+                          →
+                        </span>
+                      </a>
+                      <span aria-hidden className="mx-3 text-cream/20">·</span>
+                      <button
+                        type="button"
+                        onClick={reset}
+                        className={`text-cream/40 underline-offset-4 transition-colors hover:text-cream hover:underline ${FOCUS}`}
+                      >
+                        Start over
+                      </button>
+                    </p>
               </motion.div>
             )}
           </AnimatePresence>
