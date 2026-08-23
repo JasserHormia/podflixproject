@@ -16,7 +16,6 @@ import {
   type FormatId,
   type SessionCategory,
 } from "@/lib/booking";
-import { SOCIAL } from "@/lib/brand";
 
 const STEP_NAMES = ["People", "Set", "Session", "Confirm"] as const;
 const HEADCOUNTS = [1, 2, 3, 4] as const;
@@ -87,22 +86,6 @@ export default function BookingFlow() {
     setExpanded(null);
   };
 
-  const whatsappHref = () => {
-    const body = [
-      "New Booking Request — Podflix",
-      `People: ${headcount}`,
-      `Format: ${format ? FORMATS[format].name : "—"}`,
-      `Set: ${setName}`,
-      `Session: ${sessionLabel}`,
-      `Add-ons: ${
-        chosenAddons.length
-          ? chosenAddons.map((a) => `${a.name} +${formatPrice(a.price)}`).join(", ")
-          : "none"
-      }`,
-      `Total: ${formatPrice(total)}`,
-    ].join("\n");
-    return `${SOCIAL.whatsapp}?text=${encodeURIComponent(body)}`;
-  };
 
   // ── Step transition ──
   const variants = reduce
@@ -558,71 +541,26 @@ export default function BookingFlow() {
                       </dl>
                     </div>
 
-                    {/* What SimplyBook cannot know: the format/set/add-on
-                        choices live in this component, not in the widget's
-                        intake form. Surfaced here so the customer copies them
-                        across and the booking does not arrive mismatched. */}
-                    <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
-                      <p className="text-xs uppercase tracking-[0.3em] text-cream/60">
-                        When the form asks, enter:
-                      </p>
-                      <dl className="mt-4 space-y-2">
-                        <div className="flex items-baseline gap-3">
-                          <dt className="text-sm text-cream/40">Format</dt>
-                          <dd className="font-display text-lg text-cream">
-                            {format ? FORMATS[format].name : "—"}
-                          </dd>
-                        </div>
-                        <div className="flex items-baseline gap-3">
-                          <dt className="text-sm text-cream/40">Set</dt>
-                          <dd className="font-display text-lg text-cream">{setName}</dd>
-                        </div>
-                        {chosenAddons.length > 0 && (
-                          <div className="flex items-baseline gap-3">
-                            <dt className="text-sm text-cream/40">Add-ons</dt>
-                            <dd className="font-display text-lg text-cream">
-                              {chosenAddons.map((a) => a.name).join(", ")}
-                            </dd>
-                          </div>
-                        )}
-                      </dl>
-                      {chosenAddons.length > 0 && (
-                        <p className="mt-3 text-xs text-cream/40">
-                          Add-ons are selected inside the booking form.
-                        </p>
+                    <div className="mt-8">
+                      {session && (
+                        <SimplybookEmbed
+                          sbId={session.sbId}
+                          summary={{
+                            people: headcount,
+                            format: format ? FORMATS[format].name : "—",
+                            set: setName,
+                            session: sessionLabel,
+                            addons: chosenAddons.map((a) => ({
+                              name: a.name,
+                              price: a.price,
+                            })),
+                            total,
+                          }}
+                        />
                       )}
                     </div>
 
-                    <div className="mt-10">
-                      <h3 className="font-display text-3xl font-black text-cream">
-                        Choose your time.
-                      </h3>
-                      <p className="mt-3 font-body text-cream/50">
-                        Availability is live. Your slot is confirmed the moment you pay.
-                      </p>
-                    </div>
-
-                    <div className="mt-6">
-                      {session && <SimplybookEmbed sbId={session.sbId} />}
-                    </div>
-
-                    {/* One quiet alternative rather than a competing CTA. */}
                     <p className="mt-6 text-sm">
-                      <a
-                        href={whatsappHref()}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`group inline-flex items-center gap-1.5 text-gold ${FOCUS}`}
-                      >
-                        Prefer to book by message? Chat on WhatsApp
-                        <span
-                          aria-hidden
-                          className="inline-block transition-transform duration-300 group-hover:translate-x-1"
-                        >
-                          →
-                        </span>
-                      </a>
-                      <span aria-hidden className="mx-3 text-cream/20">·</span>
                       <button
                         type="button"
                         onClick={reset}

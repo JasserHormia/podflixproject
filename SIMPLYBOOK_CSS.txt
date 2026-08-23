@@ -1,0 +1,59 @@
+/* ==========================================================================
+   Podflix — SimplyBook.me custom CSS
+   --------------------------------------------------------------------------
+   Paste into: SimplyBook admin → Custom Features → Custom CSS
+   (Design settings → Custom CSS on some plans.)
+
+   Applies to the booking widget only. Nothing here is applied from the
+   website codebase — the widget is cross-origin, so our stylesheets cannot
+   reach inside it. This must live in the SimplyBook dashboard.
+
+   Palette: background #0A0807 · surface #111009 · gold #A98F74
+            cream #EBE0D6 · border #1E1A16
+   ========================================================================== */
+
+/* nuke all light surfaces, then rebuild dark */
+html, body, body * { background-color: transparent !important; }
+html, body { background-color: #0A0807 !important; color:#EBE0D6 !important; }
+
+/* kill SimplyBook's own nav + branding inside the embed */
+[role="banner"] { display:none !important; }
+[role="contentinfo"] a[href*="simplybook"] { opacity:.15 !important; }
+
+/* panels */
+[role="region"] > div, [role="complementary"],
+div[class*="panel"], div[class*="card"], div[class*="box"] {
+  background-color:#111009 !important;
+  border:1px solid #1E1A16 !important;
+  border-radius:0 !important;
+}
+
+/* headings + text */
+h1,h2,h3,h4,[role="heading"] { color:#EBE0D6 !important; font-weight:800 !important; }
+[role="main"], [role="region"] { color:#EBE0D6 !important; }
+
+/* time slot buttons — currently pale blue */
+a[href*="/time/"] {
+  background-color:#A98F74 !important;
+  color:#0A0807 !important;
+  border:none !important; border-radius:0 !important;
+  font-weight:700 !important; letter-spacing:.05em !important;
+}
+a[href*="/time/"]:hover { background-color:#EBE0D6 !important; }
+
+/* calendar */
+a[href*="/date/"] { color:#EBE0D6 !important; }
+[aria-label*="Unavailable"], [title*="Unavailable"] { color:#3A342E !important; }
+
+/* buttons + inputs */
+button, input[type="submit"], a[class*="btn"] {
+  background-color:#A98F74 !important; color:#0A0807 !important;
+  border:none !important; border-radius:0 !important;
+  text-transform:uppercase !important; letter-spacing:.15em !important;
+  font-weight:700 !important;
+}
+input, select, textarea {
+  background-color:#111009 !important; color:#EBE0D6 !important;
+  border:1px solid #1E1A16 !important; border-radius:0 !important;
+}
+input:focus, select:focus { border-color:#A98F74 !important; outline:none !important; }
