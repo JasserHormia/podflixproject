@@ -5,22 +5,22 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
 import {
-  ADDON_REELS,
-  DEFAULT_RENTAL_INDEX,
+  ADDONS,
   FORMATS,
-  PACKAGES,
-  RENTAL_RATES,
+  SESSIONS,
   SETS,
   UNDECIDED_SET,
   formatPrice,
   headcountToFormat,
+  sessionsIn,
   type FormatId,
+  type SessionCategory,
 } from "@/lib/booking";
 import { SOCIAL } from "@/lib/brand";
 
 const STEP_NAMES = ["People", "Set", "Session", "Confirm"] as const;
 const HEADCOUNTS = [1, 2, 3, 4] as const;
-type Mode = "rental" | "package";
+
 
 const FOCUS =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -35,10 +35,10 @@ export default function BookingFlow() {
   const [headcount, setHeadcount] = useState<number | null>(null);
   const [hoverCount, setHoverCount] = useState<number | null>(null);
   const [setId, setSetId] = useState<string | null>(null);
-  const [mode, setMode] = useState<Mode>("rental");
-  const [rentalIndex, setRentalIndex] = useState(DEFAULT_RENTAL_INDEX);
-  const [packageId, setPackageId] = useState<string | null>(null);
-  const [addReels, setAddReels] = useState(false);
+  const [category, setCategory] = useState<SessionCategory>("studio");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [addons, setAddons] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,21 +50,24 @@ export default function BookingFlow() {
   const format: FormatId | null =
     headcount === null ? null : headcountToFormat(headcount);
   const sets = format ? SETS[format] : [];
-  const rate = RENTAL_RATES[rentalIndex];
-  const pkg = PACKAGES.find((p) => p.id === packageId) ?? null;
-  const base = mode === "rental" ? rate.price : (pkg?.price ?? 0);
-  const total = base + (addReels ? ADDON_REELS.price : 0);
-  const sessionValid = mode === "rental" || pkg !== null;
+  const session = SESSIONS.find((s) => s.id === sessionId) ?? null;
+  const chosenAddons = ADDONS.filter((a) => addons.includes(a.id));
+  const total =
+    (session?.price ?? 0) + chosenAddons.reduce((sum, a) => sum + a.price, 0);
+  const sessionValid = session !== null;
 
   const chosenSet = sets.find((s) => s.id === setId) ?? null;
   const setName =
     setId === UNDECIDED_SET ? "Not sure yet — needs a recommendation" : chosenSet?.name ?? "—";
-  const sessionLabel =
-    mode === "rental"
-      ? `Studio rental · ${rate.hours}h`
-      : pkg
-        ? `${pkg.name} (${pkg.duration})`
-        : "—";
+  const sessionLabel = session ? `${session.name} · ${session.duration}` : "—";
+  const addonLabel = chosenAddons.length
+    ? chosenAddons.map((a) => `${a.name} (+${formatPrice(a.price)})`).join(" · ")
+    : "None";
+
+  const toggleAddon = (id: string) =>
+    setAddons((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
 
   // ── Actions ──
   const pickHeadcount = (n: number) => {
@@ -79,10 +82,10 @@ export default function BookingFlow() {
     setHeadcount(null);
     setHoverCount(null);
     setSetId(null);
-    setMode("rental");
-    setRentalIndex(DEFAULT_RENTAL_INDEX);
-    setPackageId(null);
-    setAddReels(false);
+    setCategory("studio");
+    setSessionId(null);
+    setAddons([]);
+    setExpanded(null);
     setSent(false);
   };
 
@@ -93,7 +96,11 @@ export default function BookingFlow() {
       `Format: ${format ? FORMATS[format].name : "—"}`,
       `Set: ${setName}`,
       `Session: ${sessionLabel}`,
-      `Add-on: ${addReels ? `3 Reels +${formatPrice(ADDON_REELS.price)}` : "none"}`,
+      `Add-ons: ${
+        chosenAddons.length
+          ? chosenAddons.map((a) => `${a.name} +${formatPrice(a.price)}`).join(", ")
+          : "none"
+      }`,
       `Total: ${formatPrice(total)}`,
     ].join("\n");
     return `${SOCIAL.whatsapp}?text=${encodeURIComponent(body)}`;
@@ -327,159 +334,170 @@ export default function BookingFlow() {
                   What kind of session?
                 </h2>
 
-                {/* Mode tabs */}
+                {/* Category tabs */}
                 <div className="mt-8 flex gap-8 border-b border-cream/10">
                   {(
                     [
-                      ["rental", "Studio Rental"],
-                      ["package", "Production Package"],
+                      ["studio", "Studio Only"],
+                      ["production", "Full Production"],
                     ] as const
                   ).map(([id, label]) => (
                     <button
                       key={id}
                       type="button"
-                      onClick={() => setMode(id)}
-                      aria-pressed={mode === id}
+                      onClick={() => setCategory(id)}
+                      aria-pressed={category === id}
                       className={`relative -mb-px flex min-h-11 items-end pb-3 pt-2 font-body text-sm transition-colors ${FOCUS} ${
-                        mode === id
-                          ? "text-gold"
-                          : "text-cream/40 hover:text-cream/70"
+                        category === id ? "text-gold" : "text-cream/40 hover:text-cream/70"
                       }`}
                     >
                       {label}
-                      {mode === id && (
+                      {category === id && (
                         <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-gold" />
                       )}
                     </button>
                   ))}
                 </div>
 
-                {/* ── Mode A: rental stepper ── */}
-                {mode === "rental" && (
-                  <div className="mt-10 border border-cream/10 bg-surface p-8 text-center">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-cream/40">
-                      Session duration
-                    </p>
-
-                    <div className="mt-6 flex items-center justify-center gap-8">
-                      <button
-                        type="button"
-                        onClick={() => setRentalIndex((i) => Math.max(0, i - 1))}
-                        disabled={rentalIndex === 0}
-                        aria-label="Shorter session"
-                        className={`flex h-12 w-12 items-center justify-center rounded-full border border-cream/20 text-xl text-cream transition-colors hover:border-gold disabled:opacity-30 disabled:hover:border-cream/20 ${FOCUS}`}
+                {/* Session rows. The includes list stays collapsed by default —
+                    Signature alone carries 15 bullets. */}
+                <div className="mt-10">
+                  {sessionsIn(category).map((s) => {
+                    const active = sessionId === s.id;
+                    const open = expanded === s.id;
+                    return (
+                      <div
+                        key={s.id}
+                        className={`border-b border-cream/10 transition-colors ${
+                          active ? "border-l-2 border-l-gold bg-surface pl-4" : ""
+                        }`}
                       >
-                        −
-                      </button>
-
-                      <span
-                        aria-live="polite"
-                        className="min-w-20 font-display text-5xl font-black text-cream"
-                      >
-                        {rate.hours}h
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setRentalIndex((i) => Math.min(RENTAL_RATES.length - 1, i + 1))
-                        }
-                        disabled={rentalIndex === RENTAL_RATES.length - 1}
-                        aria-label="Longer session"
-                        className={`flex h-12 w-12 items-center justify-center rounded-full border border-cream/20 text-xl text-cream transition-colors hover:border-gold disabled:opacity-30 disabled:hover:border-cream/20 ${FOCUS}`}
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    {/* Keyed so Framer remounts and fades on every change. No
-                        AnimatePresence: mode="wait" would hold the previous
-                        price on screen through its exit, leaving the number
-                        visibly a step behind the duration above it. */}
-                    <motion.p
-                      key={rate.hours}
-                      initial={reduce ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="mt-6 font-display text-4xl font-black text-gold"
-                    >
-                      {formatPrice(rate.price)}
-                    </motion.p>
-
-                    {"recommended" in rate && rate.recommended && (
-                      <span className="mt-3 inline-block bg-gold px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
-                        Most popular
-                      </span>
-                    )}
-
-                    <p className="mt-6 text-sm text-cream/40">
-                      Raw footage delivery · Studio operator included
-                    </p>
-                  </div>
-                )}
-
-                {/* ── Mode B: production packages ── */}
-                {mode === "package" && (
-                  <div className="mt-10">
-                    {PACKAGES.map((p) => {
-                      const active = packageId === p.id;
-                      return (
                         <button
-                          key={p.id}
                           type="button"
-                          onClick={() => setPackageId(p.id)}
+                          onClick={() => setSessionId(s.id)}
                           aria-pressed={active}
-                          className={`flex w-full items-start justify-between gap-4 border-b border-cream/10 py-6 text-left transition-colors ${FOCUS} ${
-                            active ? "border-l-2 border-l-gold bg-surface pl-4" : "pl-0"
-                          }`}
+                          className={`flex w-full items-start justify-between gap-4 py-6 text-left ${FOCUS}`}
                         >
                           <span className="min-w-0">
                             <span className="flex flex-wrap items-center gap-2">
                               <span className="font-display text-xl font-semibold text-cream">
-                                {p.name}
+                                {s.name}
                               </span>
-                              {p.recommended && (
+                              {s.recommended && (
                                 <span className="bg-gold px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
-                                  Best value
+                                  Most popular
                                 </span>
                               )}
                             </span>
-                            <span className="mt-1 block text-sm text-cream/40">
-                              {p.duration} · {p.includes.join(", ")}
+                            <span className="mt-1 block text-sm text-cream/40">{s.tagline}</span>
+                            <span className="mt-2 inline-block border border-cream/15 px-2 py-0.5 text-[10px] uppercase tracking-widest text-cream/50">
+                              {s.duration}
                             </span>
                           </span>
-                          <span className="shrink-0 font-display text-xl font-black text-gold">
-                            {formatPrice(p.price)}
+                          <span className="shrink-0 text-right">
+                            <span className="block font-display text-xl font-black text-gold">
+                              {formatPrice(s.price)}
+                            </span>
+                            {s.priceNote && (
+                              <span className="mt-1 block text-xs text-cream/30">
+                                {s.priceNote}
+                              </span>
+                            )}
                           </span>
                         </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setExpanded(open ? null : s.id)}
+                          aria-expanded={open}
+                          aria-controls={`includes-${s.id}`}
+                          className={`mb-4 inline-flex items-center gap-1 text-xs text-cream/40 transition-colors hover:text-gold ${FOCUS}`}
+                        >
+                          What&apos;s included
+                          <span
+                            aria-hidden
+                            className={`inline-block transition-transform duration-300 ${
+                              open ? "rotate-180" : ""
+                            }`}
+                          >
+                            ↓
+                          </span>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {open && (
+                            <motion.div
+                              id={`includes-${s.id}`}
+                              initial={reduce ? false : { height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                              transition={{ duration: 0.35, ease: "easeOut" }}
+                              className="overflow-hidden"
+                            >
+                              <p className="pb-3 text-sm text-cream/50">{s.description}</p>
+                              <ul className="grid gap-1 pb-4 sm:grid-cols-2">
+                                {s.includes.map((inc) => (
+                                  <li
+                                    key={inc}
+                                    className="flex gap-2 text-sm text-cream/60"
+                                  >
+                                    <span aria-hidden className="text-gold">
+                                      ✓
+                                    </span>
+                                    {inc}
+                                  </li>
+                                ))}
+                              </ul>
+                              {s.revisions && (
+                                <p className="pb-5 text-[10px] uppercase tracking-[0.25em] text-gold/70">
+                                  {s.revisions}
+                                </p>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ── Add-ons — stackable, any combination ── */}
+                <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-gold">Add-ons</p>
+
+                  <div className="mt-4 space-y-4">
+                    {ADDONS.map((a) => {
+                      const on = addons.includes(a.id);
+                      return (
+                        <label key={a.id} className="flex cursor-pointer items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={on}
+                            onChange={() => toggleAddon(a.id)}
+                            className="peer sr-only"
+                          />
+                          <span
+                            aria-hidden
+                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background ${
+                              on ? "border-gold bg-gold text-background" : "border-cream/30"
+                            }`}
+                          >
+                            {on ? "✓" : ""}
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block font-body text-sm text-cream">
+                              {a.name} — +{formatPrice(a.price)}
+                            </span>
+                            <span className="mt-0.5 block text-xs text-cream/40">
+                              {a.description}
+                            </span>
+                          </span>
+                        </label>
                       );
                     })}
                   </div>
-                )}
 
-                {/* ── Add-on ── */}
-                <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
-                  <label className="flex cursor-pointer items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={addReels}
-                      onChange={(e) => setAddReels(e.target.checked)}
-                      className="peer sr-only"
-                    />
-                    <span
-                      aria-hidden
-                      className={`flex h-5 w-5 shrink-0 items-center justify-center border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background ${
-                        addReels ? "border-gold bg-gold text-background" : "border-cream/30"
-                      }`}
-                    >
-                      {addReels ? "✓" : ""}
-                    </span>
-                    <span className="font-body text-sm text-cream">
-                      {ADDON_REELS.label} — +{formatPrice(ADDON_REELS.price)}
-                    </span>
-                  </label>
-
-                  <p className="mt-4 font-display text-3xl font-black text-gold">
+                  <p className="mt-5 font-display text-3xl font-black text-gold">
                     Total: {sessionValid ? formatPrice(total) : "—"}
                   </p>
                 </div>
@@ -494,7 +512,7 @@ export default function BookingFlow() {
                     Continue →
                   </button>
                   {!sessionValid && (
-                    <p className="mt-3 text-xs text-cream/40">Select a package to continue.</p>
+                    <p className="mt-3 text-xs text-cream/40">Select a session to continue.</p>
                   )}
                 </div>
               </motion.div>
@@ -552,12 +570,7 @@ export default function BookingFlow() {
                           ["Format", format ? FORMATS[format].name : "—"],
                           ["Set", setName],
                           ["Session", sessionLabel],
-                          [
-                            "Add-on",
-                            addReels
-                              ? `3 edited reels · +${formatPrice(ADDON_REELS.price)}`
-                              : "None",
-                          ],
+                          ["Add-ons", addonLabel],
                         ].map(([label, value]) => (
                           <div
                             key={label}

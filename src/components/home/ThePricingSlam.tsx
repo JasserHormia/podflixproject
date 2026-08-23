@@ -5,9 +5,9 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 
 const TIERS = [
-  { name: "Studio Rental", price: "650", descriptor: "AED per hour" },
-  { name: "Podcast Production", price: "1,500", descriptor: "AED · record + edit" },
-  { name: "Podcast + Reels", price: "1,700", descriptor: "AED · from" },
+  { name: "Studio Recording", price: "590", descriptor: "AED · 1 hour, raw footage" },
+  { name: "Essential Podcast", price: "1,090", descriptor: "AED · record + edit" },
+  { name: "Podflix Signature", price: "2,500", descriptor: "AED · premium production" },
 ];
 
 export default function ThePricingSlam() {
@@ -51,7 +51,7 @@ export default function ThePricingSlam() {
       </motion.div>
 
       <p className="mt-14 text-center text-sm text-text-muted">
-        Bundle packages from AED 1,700 — reels, editing, and more included.
+        Full production from AED 1,090 — editing, reels, and more included.
       </p>
     </section>
   );

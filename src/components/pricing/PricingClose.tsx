@@ -35,7 +35,7 @@ export default function PricingClose() {
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.8, ease: EASE_EXPO, delay: 0.4 }}
         >
-          Sessions from AED 650. Your audience is waiting.
+          Sessions from AED 590. Your audience is waiting.
         </motion.p>
 
         <motion.div

@@ -3,6 +3,7 @@ import PricingEntrance from "@/components/pricing/PricingEntrance";
 import PricingPhilosophy from "@/components/pricing/PricingPhilosophy";
 import PricingTiers from "@/components/pricing/PricingTiers";
 import AlwaysIncluded from "@/components/pricing/AlwaysIncluded";
+import PricingAddons from "@/components/pricing/PricingAddons";
 import PricingFaq from "@/components/pricing/PricingFaq";
 import PricingClose from "@/components/pricing/PricingClose";
 
@@ -19,6 +20,7 @@ export default function PricingPage() {
       <PricingPhilosophy />
       <PricingTiers />
       <AlwaysIncluded />
+      <PricingAddons />
       <PricingFaq />
       <PricingClose />
     </>

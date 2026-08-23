@@ -14,9 +14,8 @@ export const localBusinessSchema = {
   name: "Podflix",
   url: SITE_URL,
   telephone: "+971565343070",
-  // NOTE: supplied by the client brief. It does not match the rates in
-  // src/lib/booking.ts (rentals run AED 650–6,000, packages AED 1,500–4,900).
-  // Flagged for confirmation — structured data should mirror visible pricing.
+  // Matches src/lib/booking.ts exactly: the cheapest session is Studio
+  // Recording at AED 590, the dearest is Signature + 3 Reels at AED 3,800.
   priceRange: "AED 590 - AED 3,800",
   address: {
     "@type": "PostalAddress",

@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 const FAQS = [
   {
     q: "Can I add reel edits to any package?",
-    a: "Yes — add 3 edited reels to any booking for AED 900. Just let us know when booking via WhatsApp.",
+    a: "Yes — add a Full Podcast Edit for AED 590 or 3 Reels for AED 700 to any session. Both can be added together.",
   },
   {
     q: "Is the studio operator included?",

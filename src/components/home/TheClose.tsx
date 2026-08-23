@@ -128,7 +128,7 @@ export default function TheClose() {
           </MagneticButton>
 
           <p className="mt-6 text-xs uppercase tracking-widest text-background/50">
-            Free reschedule up to 24h · Sessions from AED 650
+            Free reschedule up to 24h · Sessions from AED 590
           </p>
         </motion.div>
       </div>

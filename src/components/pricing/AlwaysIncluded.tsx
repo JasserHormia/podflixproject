@@ -9,7 +9,7 @@ const TICKER =
 const STATS = [
   { value: "12", label: "Themed studio sets" },
   { value: "4K", label: "Cinema quality output" },
-  { value: "AED 650", label: "Starting price per hour" },
+  { value: "AED 590", label: "Starting price per session" },
 ];
 
 export default function AlwaysIncluded() {

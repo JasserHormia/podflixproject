@@ -67,96 +67,236 @@ export const SETS: Record<FormatId, StudioSet[]> = {
 /** Chosen when the guest wants a recommendation instead of picking. */
 export const UNDECIDED_SET = "undecided";
 
+
 /* ── Pricing ─────────────────────────────────────────────────────────── */
 
-/**
- * Studio rental rates. Deliberately NOT continuous — the stepper walks these
- * array indices, so the sequence is 1 → 2 → 3 → 4 → 5 → 8 → 12 hours.
- */
-export const RENTAL_RATES = [
-  { hours: 1, price: 650 },
-  { hours: 2, price: 1250, recommended: true },
-  { hours: 3, price: 1800 },
-  { hours: 4, price: 2300 },
-  { hours: 5, price: 2750 },
-  { hours: 8, price: 4200 },
-  { hours: 12, price: 6000 },
-] as const;
+export type SessionCategory = "studio" | "production";
 
-/** Default stepper position — the recommended 2-hour rate. */
-export const DEFAULT_RENTAL_INDEX = RENTAL_RATES.findIndex(
-  (r) => "recommended" in r && r.recommended
-);
-
-export type Package = {
+export type Session = {
   id: string;
   name: string;
-  duration: string;
+  tagline: string;
   price: number;
+  duration: string;
+  category: SessionCategory;
+  description: string;
   includes: string[];
+  /** Null where the session ships no edit, so no revision policy applies. */
+  revisions: string | null;
+  /** Secondary line under the price, e.g. an effective hourly rate. */
+  priceNote?: string;
   recommended?: boolean;
 };
 
-export const PACKAGES: Package[] = [
+/**
+ * Final client pricing. Sessions are fixed-price products — there is no hourly
+ * ladder any more, so nothing should derive a price by multiplying hours.
+ */
+export const SESSIONS: Session[] = [
   {
-    id: "prod",
-    name: "Podcast Production",
-    duration: "1 hour",
-    price: 1500,
+    id: "studio-recording",
+    name: "Studio Recording",
+    tagline: "Just record. We take care of the rest.",
+    price: 590,
+    duration: "1 Hour",
+    category: "studio",
+    description:
+      "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
     includes: [
-      "Full podcast edit",
-      "Multi-camera editing",
-      "Audio enhancement",
-      "Color grading",
-      "4K export",
+      "1 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Professional studio lighting",
+      "Fully equipped podcast setup",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Raw video & audio footage available for 14 days",
     ],
+    revisions: null,
   },
   {
-    id: "reels-3",
-    name: "Podcast + 3 Reels",
-    duration: "1 hour",
-    price: 1700,
+    id: "essential-podcast",
+    name: "Essential Podcast",
+    tagline: "Record. Edit. Publish.",
+    price: 1090,
+    duration: "1 Hour",
+    category: "production",
+    description:
+      "A complete podcast recording and editing experience for a professional, polished final episode.",
     includes: [
-      "3 edited reels",
-      "Animated captions",
-      "Motion graphics",
-      "3-cam production",
-      "Cinematic color grading",
+      "1 hour studio recording",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio recording",
+      "Professional lighting",
+      "Dedicated videographer",
+      "Multi-camera synchronization",
+      "Full podcast episode edit",
+      "Clean cuts & professional pacing",
+      "Audio cleanup & mixing",
+      "Color correction",
+      "Basic titles & branding",
+      "YouTube-ready final episode",
     ],
+    revisions: "1 revision included",
   },
   {
-    id: "reels-5",
-    name: "Podcast + 5 Reels",
-    duration: "1 hour",
-    price: 2300,
+    id: "essential-3-reels",
+    name: "Essential + 3 Reels",
+    tagline: "One recording. One full episode. Three pieces of content.",
+    price: 1750,
+    duration: "1 Hour",
+    category: "production",
+    description:
+      "Everything you need to turn one podcast recording into long-form and short-form content.",
     includes: [
-      "5 edited reels",
-      "Animated captions",
-      "Motion graphics",
-      "3-cam production",
-      "Cinematic color grading",
+      "Everything in Essential Podcast",
+      "3 edited Reels",
+      "Multi-camera synchronization",
+      "Audio cleanup & mixing",
+      "Color correction",
+      "Basic titles & branding",
+      "YouTube-ready final episode",
     ],
+    revisions: "1 revision included",
+  },
+  {
+    id: "signature",
+    name: "Podflix Signature",
+    tagline: "Our premium production experience.",
+    price: 2500,
+    duration: "1 Hour",
+    category: "production",
+    description:
+      "A highly creative, visually refined podcast production designed for creators, brands and personalities who want their episode to stand out.",
+    includes: [
+      "1 hour premium studio recording",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional lighting",
+      "Dedicated videographer",
+      "Advanced multi-camera editing",
+      "Advanced color grading",
+      "Creative transitions",
+      "Dynamic pacing",
+      "Professional sound design",
+      "B-roll integration where appropriate",
+      "Advanced titles & graphics",
+      "Custom visual treatment",
+      "Premium audio mastering",
+      "YouTube-ready final episode",
+    ],
+    revisions: "2 revisions included",
+  },
+  {
+    id: "signature-3-reels",
+    name: "Podflix Signature + 3 Reels",
+    tagline: "The complete Podflix experience.",
+    price: 3800,
+    duration: "1 Hour",
+    category: "production",
     recommended: true,
+    description:
+      "Our highest-level production package: a signature podcast episode transformed into premium long-form and short-form content.",
+    includes: [
+      "Everything in Podflix Signature",
+      "3 Signature Reels",
+      "Advanced short-form editing",
+      "Cinematic visual treatment",
+      "Dynamic transitions",
+      "Advanced color grading",
+      "Sound design",
+      "Captions",
+      "Motion graphics where appropriate",
+      "9:16 social-media optimization",
+      "Instagram / TikTok / YouTube Shorts ready",
+    ],
+    revisions: "2 revisions included",
   },
   {
-    id: "reels-10",
-    name: "Podcast + 10 Reels",
-    duration: "2 hours",
-    price: 4900,
+    id: "studio-5hr",
+    name: "5-Hour Studio Package",
+    tagline: "Batch your content. Save time.",
+    price: 2500,
+    duration: "5 Hours",
+    category: "studio",
+    priceNote: "AED 500/hour",
+    description:
+      "For creators, brands and podcasts that want to record multiple episodes or content pieces in one booking.",
     includes: [
-      "10 edited reels",
-      "Animated captions",
-      "Motion graphics",
-      "3-cam production",
-      "Cinematic color grading",
+      "5 hours of studio recording",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Professional lighting",
+      "Dedicated videographer",
+      "Fully equipped podcast setup",
+      "Choice of available setup",
+      "Raw video & audio footage available for 14 days",
     ],
+    revisions: "Editing not included",
   },
 ];
 
-export const ADDON_REELS = { label: "Add 3 edited reels", price: 900 } as const;
+export type Addon = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  includes: string[];
+  revisions: string;
+};
+
+/** Stackable extras — any combination may be added to a session. */
+export const ADDONS: Addon[] = [
+  {
+    id: "full-edit",
+    name: "Full Podcast Edit",
+    price: 590,
+    description:
+      "For clients who already have their footage and only need professional post-production.",
+    includes: [
+      "Full multi-camera edit",
+      "Audio cleanup & mixing",
+      "Color correction",
+      "Basic titles & branding",
+      "Professional pacing",
+      "YouTube-ready delivery",
+    ],
+    revisions: "1 revision included",
+  },
+  {
+    id: "3-reels",
+    name: "3 Reels",
+    price: 700,
+    description: "Turn your existing podcast footage into short-form content.",
+    includes: [
+      "3 professionally edited Reels",
+      "Dynamic cuts",
+      "Captions",
+      "Hook-focused editing",
+      "9:16 formatting",
+      "Social-media ready delivery",
+    ],
+    revisions: "1 revision included",
+  },
+];
+
+/** Sessions in a given category, in display order. */
+export const sessionsIn = (category: SessionCategory) =>
+  SESSIONS.filter((s) => s.category === category);
+
+/** Lowest session price — the "from" figure quoted across the site. */
+export const FROM_PRICE = Math.min(...SESSIONS.map((s) => s.price));
+
+/** Lowest full-production price, quoted separately from studio-only. */
+export const FROM_PRODUCTION_PRICE = Math.min(
+  ...sessionsIn("production").map((s) => s.price)
+);
 
 /** Currency prefix — kept here so no component hardcodes it. */
 export const CURRENCY = "AED";
 
-/** Formats a number the way every price on the flow is displayed. */
+/** Formats a number the way every price on the site is displayed. */
 export const formatPrice = (n: number) => `${CURRENCY} ${n.toLocaleString("en-US")}`;
