@@ -96,7 +96,7 @@ export default function TheClose() {
         />
 
         <motion.p
-          className="mt-6 font-body text-lg text-background/60"
+          className="mt-6 font-body text-lg text-background/80"
           initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
@@ -127,14 +127,23 @@ export default function TheClose() {
             </span>
           </MagneticButton>
 
-          <p className="mt-6 text-xs uppercase tracking-widest text-background/50">
+          <p className="mt-6 text-xs uppercase tracking-widest text-background/80">
             Free reschedule up to 24h · Sessions from AED 590
           </p>
         </motion.div>
       </div>
 
+      {/* Gentle vignette over the bottom band. The multiply-blended ghost photo
+          drags this area down to ~#635341, where neither ink nor cream clears
+          AA on its own; deepening it slightly lets cream pass with margin.
+          Consistent with the global vignette in Grain.tsx. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-48 bg-linear-to-t from-background/40 to-transparent"
+      />
+
       {/* ── Section meta — stacked above the mobile chrome, split on md+ ── */}
-      <div className="absolute inset-x-0 bottom-40 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-background/50 md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
+      <div className="absolute inset-x-0 bottom-40 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-cream md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
         <p>© 2026 Podflix · MCFLIX Agency</p>
         {/* The WhatsApp pill occupies ~182px from the right edge on md+, so the
             reserve has to exceed that plus the container's own px-10. */}

@@ -21,6 +21,7 @@ const TONES: Record<
     watermark: string;
     badge: string;
     accent: string;
+    revisions: string;
     scrim: string;
   }
 > = {
@@ -28,39 +29,44 @@ const TONES: Record<
     section: "bg-surface",
     eyebrow: "text-gold/60",
     heading: "text-cream",
-    body: "text-cream/50",
+    body: "text-cream/60",
     price: "text-gold",
     rule: "border-cream/10",
     item: "text-cream/60",
     watermark: "text-cream/5",
     badge: "bg-gold text-background",
     accent: "text-gold",
+    revisions: "text-gold",
     scrim: "rgba(17,16,9,0.8)",
   },
   gold: {
     section: "bg-gold",
-    eyebrow: "text-background/50",
+    eyebrow: "text-background/80",
     heading: "text-background",
-    body: "text-background/70",
+    body: "text-background/80",
     price: "text-background",
     rule: "border-background/20",
     item: "text-background/80",
     watermark: "text-background/10",
     badge: "bg-background text-cream",
     accent: "text-background",
+    revisions: "text-background/80",
     scrim: "rgba(169,143,116,0.7)",
   },
   teal: {
     section: "bg-teal",
     eyebrow: "text-gold/60",
     heading: "text-cream",
-    body: "text-cream/50",
+    body: "text-cream/60",
     price: "text-gold",
     rule: "border-cream/10",
     item: "text-cream/60",
     watermark: "text-cream/5",
     badge: "bg-gold text-background",
     accent: "text-gold",
+    // Gold tops out at 4.27:1 on teal even at full opacity, so this one
+    // line drops to cream rather than sit under AA.
+    revisions: "text-cream/70",
     scrim: "rgba(35,51,59,0.8)",
   },
 };
@@ -184,7 +190,7 @@ export default function CategoryPanel({
 
                 {s.revisions && (
                   <p
-                    className={`mt-3 text-[10px] uppercase tracking-[0.25em] ${t.eyebrow}`}
+                    className={`mt-3 text-[10px] uppercase tracking-[0.25em] ${t.revisions}`}
                   >
                     {s.revisions}
                   </p>
