@@ -20,7 +20,7 @@ const THEME_SETTINGS = {
   hide_past_days: "0",
   timeline_show_end_time: "0",
   timeline_modern_display: "as_slots",
-  light_font_color: "#a98f74",
+  light_font_color: "#ebe0d6",
   sb_secondary_base: "#111009",
   sb_base_color: "#a98f74",
   display_item_mode: "block",
