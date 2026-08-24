@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import SimplybookWidget from "@/components/booking/SimplybookWidget";
 import { SB_BASE, whatsappBookingHref, type BookingSummary } from "@/lib/booking";
 import { SOCIAL } from "@/lib/brand";
 
@@ -15,9 +14,6 @@ const FOCUS =
  * Inline SimplyBook.me booking widget, deep-linked to one service so the
  * customer lands on its calendar rather than SimplyBook's service list.
  *
- * `allow="payment"` is required — without it the Payment Request API is
- * blocked inside the iframe and Stripe checkout can fail to open.
- *
  * SimplyBook holds its session in third-party cookies, which some browsers
  * block inside an iframe. The "Open in a new tab" link below the frame is the
  * escape hatch for anyone whose widget cannot complete checkout here.
@@ -29,10 +25,6 @@ export default function SimplybookEmbed({
   sbId: number;
   summary: BookingSummary;
 }) {
-  const reduce = useReducedMotion();
-  const [loaded, setLoaded] = useState(false);
-
-  const iframeSrc = `${SB_BASE}/v2/?theme=hugo&widget-type=iframe#book/service/${sbId}/count/1/`;
   // No widget-type param — that one is for embedding.
   const newTabUrl = `${SB_BASE}/v2/#book/service/${sbId}/count/1/`;
 
@@ -89,63 +81,7 @@ export default function SimplybookEmbed({
           </span>
         </div>
 
-        <div className="relative">
-          <iframe
-            // SimplyBook routes on the hash, and browsers do not reload an
-            // iframe on a fragment-only change — so remount per service.
-            key={sbId}
-            src={iframeSrc}
-            title="Book your session"
-            className="min-h-245 w-full border-0 md:min-h-205"
-            loading="eager"
-            allow="payment"
-            onLoad={() => setLoaded(true)}
-          />
-
-          {/* Covers the widget's white flash while it boots. */}
-          <AnimatePresence>
-            {!loaded && (
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center bg-surface"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              >
-                <motion.svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 48 48"
-                  fill="none"
-                  aria-hidden
-                  animate={reduce ? undefined : { rotate: 360 }}
-                  transition={{ duration: 1.4, ease: "linear", repeat: Infinity }}
-                >
-                  <circle
-                    cx="24"
-                    cy="24"
-                    r="20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="text-gold/15"
-                  />
-                  <motion.circle
-                    cx="24"
-                    cy="24"
-                    r="20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    className="text-gold"
-                    strokeDasharray="126"
-                    animate={reduce ? undefined : { strokeDashoffset: [126, 32, 126] }}
-                    transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
-                  />
-                </motion.svg>
-                <span className="sr-only">Loading availability…</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <SimplybookWidget sbId={sbId} />
       </div>
 
       <p className="mt-4 text-xs tracking-widest text-cream/25">
