@@ -6,7 +6,7 @@
  * See node_modules/next/dist/docs/01-app/02-guides/json-ld.md.
  */
 
-export const SITE_URL = "https://podflix.ae";
+export const SITE_URL = "https://podflixpodcast.ae";
 
 export const localBusinessSchema = {
   "@context": "https://schema.org",
@@ -15,8 +15,17 @@ export const localBusinessSchema = {
   url: SITE_URL,
   telephone: "+971565343070",
   // Matches src/lib/booking.ts exactly: the cheapest session is Studio
-  // Recording at AED 590, the dearest is Signature + 3 Reels at AED 3,800.
-  priceRange: "AED 590 - AED 3,800",
+  // Recording at AED 590, the dearest is Signature + 3 Reels at AED 3800.
+  priceRange: "AED 590 - AED 3800",
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: [
+      "Monday", "Tuesday", "Wednesday", "Thursday",
+      "Friday", "Saturday", "Sunday",
+    ],
+    opens: "09:00",
+    closes: "22:00",
+  },
   address: {
     "@type": "PostalAddress",
     streetAddress: "Tamani Arts Building, 9th Floor, Studio 902",

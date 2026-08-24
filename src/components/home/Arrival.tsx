@@ -135,16 +135,21 @@ export default function Arrival() {
           {SERVICES_LINE} — Dubai
         </motion.p>
 
-        <motion.h2
+        {/* The page's single h1. The visible words animate in per-word; the
+            leading sr-only span carries the primary keyword so the heading
+            text crawlers read is "Podflix — Podcast Studio Dubai. Every Story
+            Starts Here." while the design is unchanged. */}
+        <motion.h1
           variants={headlineContainer}
           className="font-display text-[clamp(5rem,12vw,10rem)] font-black leading-[0.9] tracking-[-0.03em] text-cream"
         >
+          <span className="sr-only">Podflix — Podcast Studio Dubai. </span>
           {HEADLINE.map((word) => (
             <motion.span key={word} variants={wordVariants} className="block">
               {word}
             </motion.span>
           ))}
-        </motion.h2>
+        </motion.h1>
       </motion.div>
 
       {/* ── Corner CTA (bottom-right) ── */}

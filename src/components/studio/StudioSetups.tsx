@@ -32,13 +32,13 @@ const SETUPS: Setup[] = [
     blurb:
       "One voice. Full focus. 7 themed sets to match your brand — from minimal to bold.",
     shots: [
-      { src: IMAGES.solo_1, alt: "Solo set in the navy panelled room" },
-      { src: IMAGES.solo_2, alt: "Solo desk set lit by warm slatted light" },
-      { src: IMAGES.solo_3, alt: "Solo armchair set with boom microphone and floor lamp" },
-      { src: IMAGES.solo_4, alt: "Solo desk set with patterned backlight and salt lamp" },
-      { src: IMAGES.solo_4b, alt: "Solo armchair set beneath a gold orb lamp" },
-      { src: IMAGES.solo_5, alt: "Solo desk set with a vertical light strip" },
-      { src: IMAGES.solo_5b, alt: "Solo table set against the slatted wall and bookshelf" },
+      { src: IMAGES.solo_1, alt: "Solo podcast recording set in the navy panelled room — Podflix Studio, Business Bay Dubai" },
+      { src: IMAGES.solo_2, alt: "Minimal solo podcast desk set under warm slatted light — Podflix Studio Dubai" },
+      { src: IMAGES.solo_3, alt: "Solo lounge podcast set with boom microphone and floor lamp — Podflix Studio, Business Bay Dubai" },
+      { src: IMAGES.solo_4, alt: "Moody solo podcast set with patterned backlight and salt lamp — Podflix Studio Dubai" },
+      { src: IMAGES.solo_4b, alt: "Bright editorial solo podcast set beneath a gold orb lamp — Podflix Studio Dubai" },
+      { src: IMAGES.solo_5, alt: "Focused solo podcast desk set with a vertical light strip — Podflix Studio, Business Bay Dubai" },
+      { src: IMAGES.solo_5b, alt: "Clean solo podcast table set against the slatted wall and bookshelf — Podflix Studio Dubai" },
     ],
     reverse: false,
   },
@@ -48,9 +48,9 @@ const SETUPS: Setup[] = [
     blurb:
       "Two chairs. Real conversation. 3 themed sets built for interviews and co-hosted shows.",
     shots: [
-      { src: IMAGES.duo_1, alt: "Duo set with two armchairs and boom microphones" },
-      { src: IMAGES.duo_2, alt: "Duo set in the navy panelled room" },
-      { src: IMAGES.duo_3, alt: "Duo set at the studio table" },
+      { src: IMAGES.duo_1, alt: "Duo interview podcast set with two warm lounge armchairs and boom microphones — Podflix Studio Dubai" },
+      { src: IMAGES.duo_2, alt: "Formal duo interview podcast set in the navy panelled room — Podflix Studio, Business Bay Dubai" },
+      { src: IMAGES.duo_3, alt: "Modern duo podcast set at the studio table — Podflix Studio Dubai" },
     ],
     reverse: true,
   },
@@ -63,8 +63,8 @@ const SETUPS: Setup[] = [
     // byte-identical to quattro-02, so listing it would duplicate a thumbnail
     // and contradict the badge.
     shots: [
-      { src: IMAGES.quattro_1, alt: "Quattro set around the studio table" },
-      { src: IMAGES.quattro_2, alt: "Quattro set with four armchairs arranged for a panel" },
+      { src: IMAGES.quattro_1, alt: "Four-person panel podcast set around the studio table — Podflix Studio, Business Bay Dubai" },
+      { src: IMAGES.quattro_2, alt: "Four-person panel podcast set with four lounge armchairs — Podflix Studio Dubai" },
     ],
     reverse: false,
   },
@@ -112,7 +112,7 @@ function SetupBlock({ setup }: { setup: Setup }) {
             <Image
               key={shot.src}
               src={shot.src}
-              alt={i === active ? shot.alt : ""}
+              alt={shot.alt}
               aria-hidden={i !== active}
               fill
               sizes={MAIN_SIZES}
@@ -183,7 +183,7 @@ function SetupBlock({ setup }: { setup: Setup }) {
             >
               <Image
                 src={shot.src}
-                alt=""
+                alt={shot.alt}
                 fill
                 sizes="128px"
                 quality={75}

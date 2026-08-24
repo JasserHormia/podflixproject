@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/schema";
 import AboutManifesto from "@/components/about/AboutManifesto";
 import AboutStory from "@/components/about/AboutStory";
 import AboutNumbers from "@/components/about/AboutNumbers";
@@ -9,6 +10,7 @@ import AboutClose from "@/components/about/AboutClose";
 
 // The root "%s | Podflix" template renders this as "About | Podflix".
 export const metadata: Metadata = {
+  alternates: { canonical: `${SITE_URL}/about` },
   title: "About",
   description:
     "Podflix is Dubai's premier podcast studio — built for creators who believe every story is worth telling well. Studio, production, and editing under one roof.",

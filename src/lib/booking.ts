@@ -30,6 +30,8 @@ export type StudioSet = {
   name: string;
   image: string;
   moods: string[];
+  /** Descriptive alt — these are content photos, not decoration. */
+  alt: string;
 };
 
 /**
@@ -45,22 +47,22 @@ export type StudioSet = {
  */
 export const SETS: Record<FormatId, StudioSet[]> = {
   solo: [
-    { id: "solo-01", name: "Set 01", image: IMAGES.solo_1, moods: ["Navy", "Formal"] },
-    { id: "solo-02", name: "Set 02", image: IMAGES.solo_2, moods: ["Minimal", "Warm"] },
-    { id: "solo-03", name: "Set 03", image: IMAGES.solo_3, moods: ["Lounge", "Soft"] },
-    { id: "solo-04", name: "Set 04", image: IMAGES.solo_4, moods: ["Moody", "Intimate"] },
-    { id: "solo-05", name: "Set 05", image: IMAGES.solo_4b, moods: ["Bright", "Editorial"] },
-    { id: "solo-06", name: "Set 06", image: IMAGES.solo_5, moods: ["Desk", "Focused"] },
-    { id: "solo-07", name: "Set 07", image: IMAGES.solo_5b, moods: ["Studio", "Clean"] },
+    { id: "solo-01", name: "Set 01", image: IMAGES.solo_1, moods: ["Navy", "Formal"], alt: "Solo podcast recording set in the navy panelled room — Podflix Studio, Business Bay Dubai" },
+    { id: "solo-02", name: "Set 02", image: IMAGES.solo_2, moods: ["Minimal", "Warm"], alt: "Minimal solo podcast desk set under warm slatted light — Podflix Studio Dubai" },
+    { id: "solo-03", name: "Set 03", image: IMAGES.solo_3, moods: ["Lounge", "Soft"], alt: "Solo lounge podcast set with boom microphone and floor lamp — Podflix Studio, Business Bay Dubai" },
+    { id: "solo-04", name: "Set 04", image: IMAGES.solo_4, moods: ["Moody", "Intimate"], alt: "Moody solo podcast set with patterned backlight and salt lamp — Podflix Studio Dubai" },
+    { id: "solo-05", name: "Set 05", image: IMAGES.solo_4b, moods: ["Bright", "Editorial"], alt: "Bright editorial solo podcast set beneath a gold orb lamp — Podflix Studio Dubai" },
+    { id: "solo-06", name: "Set 06", image: IMAGES.solo_5, moods: ["Desk", "Focused"], alt: "Focused solo podcast desk set with a vertical light strip — Podflix Studio, Business Bay Dubai" },
+    { id: "solo-07", name: "Set 07", image: IMAGES.solo_5b, moods: ["Studio", "Clean"], alt: "Clean solo podcast table set against the slatted wall and bookshelf — Podflix Studio Dubai" },
   ],
   duo: [
-    { id: "duo-01", name: "Set 01", image: IMAGES.duo_1, moods: ["Lounge", "Warm"] },
-    { id: "duo-02", name: "Set 02", image: IMAGES.duo_2, moods: ["Navy", "Formal"] },
-    { id: "duo-03", name: "Set 03", image: IMAGES.duo_3, moods: ["Table", "Modern"] },
+    { id: "duo-01", name: "Set 01", image: IMAGES.duo_1, moods: ["Lounge", "Warm"], alt: "Duo interview podcast set with two warm lounge armchairs — Podflix Studio Dubai" },
+    { id: "duo-02", name: "Set 02", image: IMAGES.duo_2, moods: ["Navy", "Formal"], alt: "Formal duo interview podcast set in the navy panelled room — Podflix Studio, Business Bay Dubai" },
+    { id: "duo-03", name: "Set 03", image: IMAGES.duo_3, moods: ["Table", "Modern"], alt: "Modern duo podcast set at the studio table — Podflix Studio Dubai" },
   ],
   quattro: [
-    { id: "quattro-01", name: "Set 01", image: IMAGES.quattro_1, moods: ["Table", "Panel"] },
-    { id: "quattro-02", name: "Set 02", image: IMAGES.quattro_2, moods: ["Lounge", "Warm"] },
+    { id: "quattro-01", name: "Set 01", image: IMAGES.quattro_1, moods: ["Table", "Panel"], alt: "Four-person panel podcast set around the studio table — Podflix Studio, Business Bay Dubai" },
+    { id: "quattro-02", name: "Set 02", image: IMAGES.quattro_2, moods: ["Lounge", "Warm"], alt: "Four-person panel podcast set with four lounge armchairs — Podflix Studio Dubai" },
   ],
 };
 

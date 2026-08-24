@@ -26,7 +26,7 @@ const bodyFont = Alexandria({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://podflix.ae"),
+  metadataBase: new URL("https://podflixpodcast.ae"),
   title: {
     default: "Podflix | Podcast Studio Dubai",
     template: "%s | Podflix",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_AE",
-    url: "https://podflix.ae",
+    url: "https://podflixpodcast.ae",
     siteName: "Podflix",
     title: "Podflix | Podcast Studio Dubai",
     description: "Dubai's premier podcast recording studio.",

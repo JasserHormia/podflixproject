@@ -230,7 +230,7 @@ export default function BookingFlow() {
                       >
                         <Image
                           src={s.image}
-                          alt=""
+                          alt={s.alt}
                           fill
                           sizes="(min-width: 768px) 30vw, 45vw"
                           quality={75}

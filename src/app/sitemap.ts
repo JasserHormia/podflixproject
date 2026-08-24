@@ -1,12 +1,21 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/schema";
+
+const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
+  { path: "", changeFrequency: "weekly", priority: 1 },
+  { path: "/studio", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/pricing", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/booking", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/faq", changeFrequency: "monthly", priority: 0.6 },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: "https://podflix.ae", lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: "https://podflix.ae/studio", lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: "https://podflix.ae/pricing", lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
-    { url: "https://podflix.ae/booking", lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
-    { url: "https://podflix.ae/about", lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
-    { url: "https://podflix.ae/faq", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-  ];
+  const lastModified = new Date();
+  return ROUTES.map(({ path, changeFrequency, priority }) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency,
+    priority,
+  }));
 }
