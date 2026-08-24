@@ -1,7 +1,7 @@
 "use client";
 
 import SimplybookWidget from "@/components/booking/SimplybookWidget";
-import { SB_BASE, whatsappBookingHref, type BookingSummary } from "@/lib/booking";
+import { whatsappBookingHref, type BookingSummary } from "@/lib/booking";
 import { SOCIAL } from "@/lib/brand";
 
 /** Chrome dots — purely decorative, so the frame reads as our own surface. */
@@ -13,10 +13,6 @@ const FOCUS =
 /**
  * Inline SimplyBook.me booking widget, deep-linked to one service so the
  * customer lands on its calendar rather than SimplyBook's service list.
- *
- * SimplyBook holds its session in third-party cookies, which some browsers
- * block inside an iframe. The "Open in a new tab" link below the frame is the
- * escape hatch for anyone whose widget cannot complete checkout here.
  */
 export default function SimplybookEmbed({
   sbId,
@@ -25,9 +21,6 @@ export default function SimplybookEmbed({
   sbId: number;
   summary: BookingSummary;
 }) {
-  // No widget-type param — that one is for embedding.
-  const newTabUrl = `${SB_BASE}/v2/#book/service/${sbId}/count/1/`;
-
   return (
     <div>
       <h3 className="font-display text-3xl font-black text-cream">
@@ -86,24 +79,6 @@ export default function SimplybookEmbed({
 
       <p className="mt-4 text-xs tracking-widest text-cream/25">
         🔒 Payments secured by Stripe
-      </p>
-
-      {/* Escape hatch for browsers that block SimplyBook's cookies in-frame. */}
-      <p className="mt-3">
-        <a
-          href={newTabUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`group inline-flex items-center gap-1 text-xs text-cream/25 transition-colors hover:text-cream/60 ${FOCUS}`}
-        >
-          Having trouble? Open booking in a new tab
-          <span
-            aria-hidden
-            className="inline-block transition-transform duration-300 group-hover:translate-x-1"
-          >
-            →
-          </span>
-        </a>
       </p>
 
       <p className="mt-6 text-sm">
