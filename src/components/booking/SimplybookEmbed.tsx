@@ -34,7 +34,7 @@ export default function SimplybookEmbed({
         Pick your date and pay.
       </h3>
       <p className="mt-3 font-body text-cream/50">
-        Live availability. Your slot is confirmed the moment you pay.
+        Live availability. Your session is confirmed the moment you pay.
       </p>
 
       {/* Above the widget deliberately: none of these cross into SimplyBook's
@@ -94,9 +94,9 @@ export default function SimplybookEmbed({
           href={newTabUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`group inline-flex items-center gap-1 text-xs text-cream/30 transition-colors hover:text-cream/60 ${FOCUS}`}
+          className={`group inline-flex items-center gap-1 text-xs text-cream/25 transition-colors hover:text-cream/60 ${FOCUS}`}
         >
-          Trouble loading? Open in a new tab
+          Having trouble? Open booking in a new tab
           <span
             aria-hidden
             className="inline-block transition-transform duration-300 group-hover:translate-x-1"

@@ -119,7 +119,9 @@ export default function SimplybookWidget({ sbId }: { sbId: number }) {
 
   return (
     <div className="relative">
-      <div id={containerId} className="min-h-245 w-full md:min-h-205" />
+      {/* 1100 mobile / 900 desktop: the payment step runs taller than the
+          calendar and gets clipped at the calendar's height. */}
+      <div id={containerId} className="min-h-275 w-full md:min-h-225" />
 
       <AnimatePresence>
         {!ready && (
