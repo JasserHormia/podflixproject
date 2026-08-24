@@ -160,7 +160,7 @@ function ProcessStep({ step }: { step: Step }) {
         {/* Layered step number, behind everything. */}
         <motion.span
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 flex select-none items-center font-display text-[120px] font-black leading-none text-cream/[0.04] md:text-[220px]"
+          className="pointer-events-none absolute inset-y-0 left-0 -z-10 flex max-w-full select-none items-center overflow-hidden font-display text-[80px] font-black leading-none text-cream/[0.03] md:text-[220px] md:text-cream/[0.04]"
           initial={reduce ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}

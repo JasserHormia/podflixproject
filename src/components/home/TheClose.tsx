@@ -54,7 +54,7 @@ export default function TheClose() {
     <section
       ref={sectionRef}
       // `isolate` keeps the blend modes below from reaching earlier sections.
-      className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-52 pt-24 md:pb-28"
+      className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-32 pt-24 md:pb-24"
       style={{ background: GOLD_WASH }}
     >
       {/* Ghost photo — barely there, just enough to break the flat field */}
@@ -143,7 +143,7 @@ export default function TheClose() {
       />
 
       {/* ── Section meta — stacked above the mobile chrome, split on md+ ── */}
-      <div className="absolute inset-x-0 bottom-40 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-cream md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
+      <div className="absolute inset-x-0 bottom-24 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-cream md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
         <p>© 2026 Podflix · MCFLIX Agency</p>
         {/* The WhatsApp pill occupies ~182px from the right edge on md+, so the
             reserve has to exceed that plus the container's own px-10. */}

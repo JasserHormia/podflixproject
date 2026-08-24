@@ -9,7 +9,7 @@ export default function TheBroadcast() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden bg-background">
+    <section className="relative flex min-h-[40vh] flex-col items-center justify-center overflow-hidden bg-background py-20 md:min-h-[70vh] md:py-0">
       {/* Static punchline — above the ticker */}
       <motion.h2
         initial={{ opacity: 0, y: 20 }}

@@ -35,7 +35,7 @@ export default function TheNumber() {
   return (
     <section
       ref={ref}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background"
+      className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-background py-24 md:min-h-screen md:py-0"
     >
       {/* The counting number IS the texture — massive, faint, parallaxed */}
       <motion.span

@@ -114,7 +114,7 @@ export default function CategoryPanel({
       >
         <span
           aria-hidden
-          className={`pointer-events-none absolute top-8 select-none font-display text-[160px] font-black leading-none ${
+          className={`pointer-events-none absolute top-8 -z-10 max-w-full select-none overflow-hidden font-display text-[80px] font-black leading-none md:text-[160px] ${
             t.watermark
           } ${imageLeft ? "right-8" : "left-8"}`}
         >

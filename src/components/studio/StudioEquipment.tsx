@@ -32,7 +32,7 @@ export default function StudioEquipment() {
   };
 
   return (
-    <section className="relative bg-teal">
+    <section className="relative overflow-x-clip bg-teal">
       {/* Top full-width gold line */}
       <motion.span
         aria-hidden
@@ -49,7 +49,7 @@ export default function StudioEquipment() {
           <div className="relative overflow-hidden">
             <span
               aria-hidden
-              className="pointer-events-none absolute left-0 top-0 font-display text-[200px] font-black leading-none text-cream/[0.03]"
+              className="pointer-events-none absolute left-0 top-0 -z-10 max-w-full overflow-hidden font-display text-[80px] font-black leading-none text-cream/[0.03] md:text-[200px]"
             >
               GEAR
             </span>

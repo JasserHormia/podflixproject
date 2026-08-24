@@ -33,6 +33,14 @@
   text-transform: uppercase;
 }
 
+/* Defence in depth: nothing may produce a sideways scrollbar. `clip` rather
+   than `hidden` so position:sticky still works (the booking progress bar). */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
 html {
   background-color: var(--color-background);
   color: var(--color-text-primary);

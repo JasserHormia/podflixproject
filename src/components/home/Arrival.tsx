@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import { SERVICES_LINE } from "@/lib/brand";
+import { LOGO_SRC, SERVICES_LINE } from "@/lib/brand";
 import HeroVideo from "./HeroVideo";
 
 const WORDMARK = "PODFLIX".split("");
@@ -84,7 +85,19 @@ export default function Arrival() {
                   : "text-[clamp(3rem,17vw,12rem)]"
               }`}
             >
-              {reduce
+              {/* Once docked this is the site's masthead, so it becomes the
+                  real logo — the per-letter animation only exists for the
+                  intro, and the wordmark should never persist as text. */}
+              {dockedNow ? (
+                <Image
+                  src={LOGO_SRC}
+                  alt="Podflix"
+                  width={100}
+                  height={28}
+                  priority
+                  className="h-7 w-auto md:h-8"
+                />
+              ) : reduce
                 ? "PODFLIX"
                 : WORDMARK.map((letter, i) => (
                     <motion.span
@@ -136,7 +149,7 @@ export default function Arrival() {
 
       {/* ── Corner CTA (bottom-right) ── */}
       <motion.div
-        className="absolute bottom-28 right-6 z-10 sm:right-10 md:bottom-8 lg:right-16"
+        className="absolute bottom-44 right-6 z-10 sm:right-10 md:bottom-8 lg:right-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: dockedNow ? 1 : 0 }}
         transition={{ duration: 0.8, ease: EASE_EXPO, delay: dockedNow ? 0.5 : 0 }}
