@@ -66,6 +66,16 @@ export default function BookingFlow() {
     ? chosenAddons.map((a) => `${a.name} (+${formatPrice(a.price)})`).join(" · ")
     : "None";
 
+  const rows = sessionsIn(category);
+
+  /** Switching tab clears the previous tab's pick — the tiers are not
+   *  interchangeable, so a carried-over selection would be wrong. */
+  const selectCategory = (next: SessionCategory) => {
+    setCategory(next);
+    setSessionId(null);
+    setExpanded(null);
+  };
+
   const toggleAddon = (id: string) =>
     setAddons((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -326,7 +336,7 @@ export default function BookingFlow() {
                     <button
                       key={id}
                       type="button"
-                      onClick={() => setCategory(id)}
+                      onClick={() => selectCategory(id)}
                       aria-pressed={category === id}
                       className={`relative -mb-px flex min-h-11 items-end pb-3 pt-2 font-body text-sm transition-colors ${FOCUS} ${
                         category === id ? "text-gold" : "text-cream/40 hover:text-cream/70"
@@ -340,107 +350,213 @@ export default function BookingFlow() {
                   ))}
                 </div>
 
-                {/* Session rows. The includes list stays collapsed by default —
-                    Signature alone carries 15 bullets. */}
-                <div className="mt-10">
-                  {sessionsIn(category).map((s) => {
-                    const active = sessionId === s.id;
-                    const open = expanded === s.id;
-                    return (
-                      <div
-                        key={s.id}
-                        className={`border-b border-cream/10 transition-colors ${
-                          active ? "border-l-2 border-l-gold bg-surface pl-4" : ""
-                        }`}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setSessionId(s.id)}
-                          aria-pressed={active}
-                          className={`flex w-full items-start justify-between gap-4 py-6 text-left ${FOCUS}`}
-                        >
-                          <span className="min-w-0">
-                            <span className="flex flex-wrap items-center gap-2">
-                              <span className="font-display text-xl font-semibold text-cream">
-                                {s.name}
-                              </span>
-                              {s.recommended && (
-                                <span className="bg-gold px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
-                                  Most popular
-                                </span>
-                              )}
-                            </span>
-                            <span className="mt-1 block text-sm text-cream/40">{s.tagline}</span>
-                            <span className="mt-2 inline-block border border-cream/15 px-2 py-0.5 text-[10px] uppercase tracking-widest text-cream/50">
-                              {durationLabel(s.hours)}
-                            </span>
-                          </span>
-                          <span className="shrink-0 text-right">
-                            <span className="block font-display text-xl font-black text-gold">
-                              {formatPrice(s.price)}
-                            </span>
-                            {s.hours > 1 && (
-                              <span className="mt-1 block text-xs text-cream/30">
-                                {formatPrice(hourlyRate(s))}/hour
-                              </span>
-                            )}
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setExpanded(open ? null : s.id)}
-                          aria-expanded={open}
-                          aria-controls={`includes-${s.id}`}
-                          className={`mb-4 inline-flex items-center gap-1 text-xs text-cream/40 transition-colors hover:text-gold ${FOCUS}`}
-                        >
-                          What&apos;s included
-                          <span
-                            aria-hidden
-                            className={`inline-block transition-transform duration-300 ${
-                              open ? "rotate-180" : ""
-                            }`}
-                          >
-                            ↓
-                          </span>
-                        </button>
-
-                        <AnimatePresence initial={false}>
-                          {open && (
-                            <motion.div
-                              id={`includes-${s.id}`}
-                              initial={reduce ? false : { height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={reduce ? undefined : { height: 0, opacity: 0 }}
-                              transition={{ duration: 0.35, ease: "easeOut" }}
-                              className="overflow-hidden"
+                {/* Tabs 1 & 2 are one product at different lengths, so they get a
+                    duration selector. Tab 3 is four different products, so it
+                    gets cards. Same data, deliberately different UI. */}
+                {/* No `initial={false}` here: it sets presence context for the
+                    whole subtree, which suppressed the keyed price remount
+                    below and left the figure swapping silently. */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={category}
+                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? undefined : { opacity: 0, y: 8 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  >
+                    {category === "package" ? (
+                      /* ── Package cards ── */
+                      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {rows.map((s) => {
+                          const active = sessionId === s.id;
+                          const open = expanded === s.id;
+                          return (
+                            <div
+                              key={s.id}
+                              className={`flex flex-col border bg-surface p-6 transition-all duration-300 md:p-8 ${
+                                active
+                                  ? "border-gold shadow-[0_0_24px_rgba(169,143,116,0.18)]"
+                                  : "border-cream/10 hover:border-gold/50"
+                              }`}
                             >
-                              <p className="pb-3 text-sm text-cream/50">{s.description}</p>
-                              <ul className="grid gap-1 pb-4 sm:grid-cols-2">
-                                {s.includes.map((inc) => (
-                                  <li
-                                    key={inc}
-                                    className="flex gap-2 text-sm text-cream/60"
-                                  >
-                                    <span aria-hidden className="text-gold">
-                                      ✓
+                              {/* The card body selects; the expander is a sibling
+                                  below it, never a button inside a button. */}
+                              <button
+                                type="button"
+                                onClick={() => setSessionId(s.id)}
+                                aria-pressed={active}
+                                className={`flex-1 text-left ${FOCUS}`}
+                              >
+                                <span className="flex items-start justify-between gap-3">
+                                  <span className="border border-cream/20 px-2 py-1 text-[10px] uppercase tracking-widest text-cream/50">
+                                    {durationLabel(s.hours)}
+                                  </span>
+                                  {s.recommended && (
+                                    <span className="bg-gold px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
+                                      Most popular
                                     </span>
-                                    {inc}
-                                  </li>
-                                ))}
-                              </ul>
-                              {s.revisions && (
-                                <p className="pb-5 text-[10px] uppercase tracking-[0.25em] text-gold/70">
-                                  {s.revisions}
-                                </p>
-                              )}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                                  )}
+                                </span>
+
+                                <span className="mt-4 block font-display text-2xl font-black leading-tight text-cream">
+                                  {s.name}
+                                </span>
+                                <span className="mt-1 block text-sm text-gold">
+                                  {s.tagline}
+                                </span>
+                                <span className="mt-4 block font-display text-4xl font-black text-gold">
+                                  {formatPrice(s.price)}
+                                </span>
+                                <span className="mt-3 block text-sm text-cream/50">
+                                  {s.description}
+                                </span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setExpanded(open ? null : s.id)}
+                                aria-expanded={open}
+                                aria-controls={`inc-${s.id}`}
+                                className={`mt-4 inline-flex items-center gap-1 self-start text-xs text-cream/40 transition-colors hover:text-gold ${FOCUS}`}
+                              >
+                                What&apos;s included
+                                <span
+                                  aria-hidden
+                                  className={`inline-block transition-transform duration-300 ${
+                                    open ? "rotate-180" : ""
+                                  }`}
+                                >
+                                  ↓
+                                </span>
+                              </button>
+
+                              <AnimatePresence initial={false}>
+                                {open && (
+                                  <motion.div
+                                    id={`inc-${s.id}`}
+                                    initial={reduce ? false : { height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className="overflow-hidden"
+                                  >
+                                    <ul className="pt-3">
+                                      {s.includes.map((inc) => (
+                                        <li
+                                          key={inc}
+                                          className="flex gap-2 py-1 text-sm text-cream/60"
+                                        >
+                                          <span aria-hidden className="text-gold">
+                                            ✓
+                                          </span>
+                                          {inc}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    {s.revisions && (
+                                      <p className="pt-2 text-[10px] uppercase tracking-[0.25em] text-gold/70">
+                                        {s.revisions}
+                                      </p>
+                                    )}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
+                    ) : (
+                      /* ── Duration selector ── */
+                      <div className="mt-8 border border-cream/10 bg-surface p-8 md:p-12">
+                        <p className="font-body text-lg text-cream/50">
+                          {rows[0]?.tagline}
+                        </p>
+
+                        <p className="mb-5 mt-10 text-[10px] uppercase tracking-[0.3em] text-cream/40">
+                          How long do you need?
+                        </p>
+
+                        <div className="flex flex-wrap gap-3">
+                          {rows.map((s) => {
+                            const active = sessionId === s.id;
+                            return (
+                              <div key={s.id} className="relative pt-5">
+                                {s.recommended && (
+                                  <span
+                                    aria-hidden
+                                    className="absolute inset-x-0 top-0 text-center text-[9px] font-semibold uppercase tracking-[0.2em] text-gold"
+                                  >
+                                    Popular
+                                  </span>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => setSessionId(s.id)}
+                                  aria-pressed={active}
+                                  aria-label={`${durationLabel(s.hours)} — ${formatPrice(s.price)}`}
+                                  className={`h-15 w-15 rounded-none border font-display text-xl font-black transition-colors duration-300 ${FOCUS} ${
+                                    active
+                                      ? "border-gold bg-gold text-background"
+                                      : "border-cream/20 text-cream hover:border-gold/60"
+                                  }`}
+                                >
+                                  {s.hours}H
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Price — keyed on the value so Framer remounts and it
+                            visibly changes on every pill press. */}
+                        <div className="mt-10 text-center">
+                          {session && session.category === category ? (
+                            <>
+                              <motion.p
+                                key={session.price}
+                                initial={reduce ? false : { opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="font-display text-5xl font-black text-gold md:text-6xl"
+                              >
+                                {formatPrice(session.price)}
+                              </motion.p>
+                              <p className="mt-2 text-sm text-cream/40">
+                                {formatPrice(hourlyRate(session))} per hour
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-cream/40">
+                              Pick a duration to see the price.
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Always visible — never behind an expander. */}
+                        {session && session.category === category && (
+                          <>
+                            <p className="mb-4 mt-10 text-[10px] uppercase tracking-[0.3em] text-cream/30">
+                              What&apos;s included
+                            </p>
+                            <ul className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+                              {session.includes.map((inc) => (
+                                <li
+                                  key={inc}
+                                  className="flex gap-2 py-1.5 text-sm text-cream/60"
+                                >
+                                  <span aria-hidden className="text-gold">
+                                    ✓
+                                  </span>
+                                  {inc}
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
 
                 {/* ── Add-ons — stackable, any combination ── */}
                 <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
