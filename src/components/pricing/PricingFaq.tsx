@@ -29,7 +29,7 @@ const FAQS = [
     a: "Reschedule free of charge up to 24 hours before your session. Within 24 hours, an AED 200 fee applies as booking credit. Cancellations are handled case by case.",
   },
   {
-    q: "Can I book for more than 12 hours?",
+    q: "Can I book for more than 5 hours?",
     a: "Absolutely — contact us via WhatsApp for custom full-day or multi-day rates.",
   },
   {

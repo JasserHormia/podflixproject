@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import { formatPrice, type Session } from "@/lib/booking";
+import { durationLabel, formatPrice, hourlyRate, type Session } from "@/lib/booking";
 
 /** The three panels differ only by palette; everything else is shared. */
 type Tone = "surface" | "gold" | "teal";
@@ -156,7 +156,7 @@ export default function CategoryPanel({
                     <span
                       className={`mt-2 inline-block border px-2 py-0.5 text-[10px] uppercase tracking-widest ${t.rule} ${t.body}`}
                     >
-                      {s.duration}
+                      {durationLabel(s.hours)}
                     </span>
                   </div>
 
@@ -166,9 +166,9 @@ export default function CategoryPanel({
                     >
                       {formatPrice(s.price)}
                     </span>
-                    {s.priceNote && (
+                    {s.hours > 1 && (
                       <span className={`mt-1 block text-xs ${t.body}`}>
-                        {s.priceNote}
+                        {formatPrice(hourlyRate(s))}/hour
                       </span>
                     )}
                   </div>

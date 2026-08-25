@@ -72,14 +72,16 @@ export const UNDECIDED_SET = "undecided";
 
 /* ── Pricing ─────────────────────────────────────────────────────────── */
 
-export type SessionCategory = "studio" | "production";
+export type SessionCategory = "studio" | "editing" | "package";
 
 export type Session = {
   id: string;
   name: string;
   tagline: string;
+  /** Booked duration in hours. The display pill and the per-hour rate both
+   *  derive from this, so a price and its rate can never disagree. */
+  hours: number;
   price: number;
-  duration: string;
   category: SessionCategory;
   /** SimplyBook.me service id — deep-links the embed straight to its calendar. */
   sbId: number;
@@ -87,22 +89,24 @@ export type Session = {
   includes: string[];
   /** Null where the session ships no edit, so no revision policy applies. */
   revisions: string | null;
-  /** Secondary line under the price, e.g. an effective hourly rate. */
-  priceNote?: string;
   recommended?: boolean;
 };
 
 /**
- * Final client pricing. Sessions are fixed-price products — there is no hourly
- * ladder any more, so nothing should derive a price by multiplying hours.
+ * Final client pricing. Studio time runs at a flat AED 590/hour and studio
+ * with editing at AED 1,190/hour; packages are fixed-price products.
+ *
+ * NOTE: SimplyBook service 15 (12H / AED 420) is deliberately absent — the
+ * client's figures for it are inconsistent and it is pending confirmation.
  */
 export const SESSIONS: Session[] = [
   {
-    id: "studio-recording",
-    name: "Studio Recording",
-    tagline: "Just record. We take care of the rest.",
+    id: "studio-1h",
+    name: "1 Hour Studio",
+    tagline:
+      "Video + audio recording. Just record — we handle the rest.",
+    hours: 1,
     price: 590,
-    duration: "1 Hour",
     category: "studio",
     sbId: 2,
     description:
@@ -112,8 +116,7 @@ export const SESSIONS: Session[] = [
       "3 × Sony FX3 cameras",
       "Up to 4 × Shure microphones",
       "Professional audio mixer",
-      "Professional studio lighting",
-      "Fully equipped podcast setup",
+      "Amaran studio lighting",
       "Dedicated videographer on set",
       "Technical assistance throughout",
       "Raw video & audio footage available for 14 days",
@@ -121,102 +124,243 @@ export const SESSIONS: Session[] = [
     revisions: null,
   },
   {
-    id: "essential-podcast",
-    name: "Essential Podcast",
-    tagline: "Record. Edit. Publish.",
-    price: 1090,
-    duration: "1 Hour",
-    category: "production",
+    id: "studio-2h",
+    name: "2 Hour Studio",
+    tagline:
+      "Video + audio recording. Just record — we handle the rest.",
+    hours: 2,
+    price: 1180,
+    category: "studio",
+    sbId: 8,
+    recommended: true,
+    description:
+      "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
+    includes: [
+      "2 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Raw video & audio footage available for 14 days",
+    ],
+    revisions: null,
+  },
+  {
+    id: "studio-3h",
+    name: "3 Hour Studio",
+    tagline:
+      "Video + audio recording. Just record — we handle the rest.",
+    hours: 3,
+    price: 1770,
+    category: "studio",
+    sbId: 9,
+    description:
+      "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
+    includes: [
+      "3 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Raw video & audio footage available for 14 days",
+    ],
+    revisions: null,
+  },
+  {
+    id: "studio-4h",
+    name: "4 Hour Studio",
+    tagline:
+      "Video + audio recording. Just record — we handle the rest.",
+    hours: 4,
+    price: 2360,
+    category: "studio",
+    sbId: 10,
+    description:
+      "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
+    includes: [
+      "4 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Raw video & audio footage available for 14 days",
+    ],
+    revisions: null,
+  },
+  {
+    id: "studio-5h",
+    name: "5 Hour Studio",
+    tagline:
+      "Video + audio recording. Just record — we handle the rest.",
+    hours: 5,
+    price: 2950,
+    category: "studio",
+    sbId: 11,
+    description:
+      "A fully equipped premium podcast studio for creators, entrepreneurs, brands and businesses who want professional-quality footage and audio.",
+    includes: [
+      "5 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Raw video & audio footage available for 14 days",
+    ],
+    revisions: null,
+  },
+  {
+    id: "edit-1h",
+    name: "1 Hour + Editing",
+    tagline:
+      "Record, edit, publish. Ready-to-upload episode.",
+    hours: 1,
+    price: 1190,
+    category: "editing",
     sbId: 3,
     description:
       "A complete podcast recording and editing experience for a professional, polished final episode.",
     includes: [
-      "1 hour studio recording",
+      "1 hour studio access",
       "3 × Sony FX3 cameras",
       "Up to 4 × Shure microphones",
-      "Professional audio recording",
-      "Professional lighting",
-      "Dedicated videographer",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
       "Multi-camera synchronization",
       "Full podcast episode edit",
       "Clean cuts & professional pacing",
       "Audio cleanup & mixing",
       "Color correction",
       "Basic titles & branding",
-      "YouTube-ready final episode",
+      "4K export · YouTube-ready final episode",
     ],
     revisions: "1 revision included",
   },
   {
-    id: "essential-3-reels",
-    name: "Essential + 3 Reels",
-    tagline: "One recording. One full episode. Three pieces of content.",
-    price: 1750,
-    duration: "1 Hour",
-    category: "production",
+    id: "edit-2h",
+    name: "2 Hour + Editing",
+    tagline:
+      "Record, edit, publish. Ready-to-upload episode.",
+    hours: 2,
+    price: 2380,
+    category: "editing",
     sbId: 4,
+    recommended: true,
     description:
-      "Everything you need to turn one podcast recording into long-form and short-form content.",
+      "A complete podcast recording and editing experience for a professional, polished final episode.",
     includes: [
-      "Everything in Essential Podcast",
-      "3 edited Reels",
+      "2 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
       "Multi-camera synchronization",
+      "Full podcast episode edit",
+      "Clean cuts & professional pacing",
       "Audio cleanup & mixing",
       "Color correction",
       "Basic titles & branding",
-      "YouTube-ready final episode",
+      "4K export · YouTube-ready final episode",
+    ],
+    revisions: "1 revision included",
+  },
+  {
+    id: "edit-3h",
+    name: "3 Hour + Editing",
+    tagline:
+      "Record, edit, publish. Ready-to-upload episode.",
+    hours: 3,
+    price: 3570,
+    category: "editing",
+    sbId: 5,
+    description:
+      "A complete podcast recording and editing experience for a professional, polished final episode.",
+    includes: [
+      "3 hour studio access",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Professional audio mixer",
+      "Amaran studio lighting",
+      "Dedicated videographer on set",
+      "Technical assistance throughout",
+      "Multi-camera synchronization",
+      "Full podcast episode edit",
+      "Clean cuts & professional pacing",
+      "Audio cleanup & mixing",
+      "Color correction",
+      "Basic titles & branding",
+      "4K export · YouTube-ready final episode",
     ],
     revisions: "1 revision included",
   },
   {
     id: "signature",
-    name: "Podflix Signature",
-    tagline: "Our premium production experience.",
-    price: 2500,
-    duration: "1 Hour",
-    category: "production",
-    sbId: 5,
+    name: "Signature Episode + Dynamic Edit",
+    tagline:
+      "Our premium production experience.",
+    hours: 2,
+    price: 3499,
+    category: "package",
+    sbId: 6,
     description:
       "A highly creative, visually refined podcast production designed for creators, brands and personalities who want their episode to stand out.",
     includes: [
-      "1 hour premium studio recording",
+      "2 hour premium studio recording",
       "3 × Sony FX3 cameras",
       "Up to 4 × Shure microphones",
-      "Professional lighting",
+      "Amaran studio lighting",
       "Dedicated videographer",
       "Advanced multi-camera editing",
       "Advanced color grading",
       "Creative transitions",
       "Dynamic pacing",
       "Professional sound design",
-      "B-roll integration where appropriate",
       "Advanced titles & graphics",
-      "Custom visual treatment",
       "Premium audio mastering",
-      "YouTube-ready final episode",
+      "4K export · YouTube-ready final episode",
     ],
     revisions: "2 revisions included",
   },
   {
-    id: "signature-3-reels",
-    name: "Podflix Signature + 3 Reels",
-    tagline: "The complete Podflix experience.",
-    price: 3800,
-    duration: "1 Hour",
-    category: "production",
-    sbId: 6,
-    recommended: true,
+    id: "signature-reels",
+    name: "Signature Episode + Dynamic Edit + 3 Reels",
+    tagline:
+      "The complete Podflix experience.",
+    hours: 2,
+    price: 4499,
+    category: "package",
+    sbId: 7,
     description:
-      "Our highest-level production package: a signature podcast episode transformed into premium long-form and short-form content.",
+      "Our highest-level production: a signature episode transformed into premium long-form and short-form content.",
     includes: [
-      "Everything in Podflix Signature",
-      "3 Signature Reels",
-      "Advanced short-form editing",
-      "Cinematic visual treatment",
-      "Dynamic transitions",
+      "2 hour premium studio recording",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Amaran studio lighting",
+      "Dedicated videographer",
+      "Advanced multi-camera editing",
       "Advanced color grading",
-      "Sound design",
-      "Captions",
+      "Creative transitions",
+      "Dynamic pacing",
+      "Professional sound design",
+      "Advanced titles & graphics",
+      "Premium audio mastering",
+      "4K export · YouTube-ready final episode",
+      "3 Signature Reels",
+      "Dynamic short-form editing",
+      "Animated captions",
+      "Hook-focused editing",
       "Motion graphics where appropriate",
       "9:16 social-media optimization",
       "Instagram / TikTok / YouTube Shorts ready",
@@ -224,28 +368,58 @@ export const SESSIONS: Session[] = [
     revisions: "2 revisions included",
   },
   {
-    id: "studio-5hr",
-    name: "5-Hour Studio Package",
-    tagline: "Batch your content. Save time.",
-    price: 2500,
-    duration: "5 Hours",
-    category: "studio",
-    sbId: 7,
-    priceNote: "AED 500/hour",
+    id: "reels-5",
+    name: "5 Reels Package",
+    tagline:
+      "One recording. Five pieces of short-form content.",
+    hours: 1,
+    price: 2499,
+    category: "package",
+    sbId: 14,
     description:
-      "For creators, brands and podcasts that want to record multiple episodes or content pieces in one booking.",
+      "Turn a single studio session into a run of scroll-stopping short-form content.",
     includes: [
-      "5 hours of studio recording",
+      "1 hour studio recording",
       "3 × Sony FX3 cameras",
       "Up to 4 × Shure microphones",
-      "Professional audio mixer",
-      "Professional lighting",
+      "Amaran studio lighting",
       "Dedicated videographer",
-      "Fully equipped podcast setup",
-      "Choice of available setup",
-      "Raw video & audio footage available for 14 days",
+      "5 professionally edited Reels",
+      "Dynamic short-form editing",
+      "Animated captions",
+      "Hook-focused editing",
+      "Motion graphics where appropriate",
+      "9:16 social-media optimization",
+      "Instagram / TikTok / YouTube Shorts ready",
     ],
-    revisions: "Editing not included",
+    revisions: "1 revision included",
+  },
+  {
+    id: "reels-10",
+    name: "10 Reels Package",
+    tagline:
+      "A full month of short-form in one session.",
+    hours: 2,
+    price: 4999,
+    category: "package",
+    sbId: 13,
+    description:
+      "A two-hour session cut into ten short-form pieces, ready to schedule across your channels.",
+    includes: [
+      "2 hour studio recording",
+      "3 × Sony FX3 cameras",
+      "Up to 4 × Shure microphones",
+      "Amaran studio lighting",
+      "Dedicated videographer",
+      "10 professionally edited Reels",
+      "Dynamic short-form editing",
+      "Animated captions",
+      "Hook-focused editing",
+      "Motion graphics where appropriate",
+      "9:16 social-media optimization",
+      "Instagram / TikTok / YouTube Shorts ready",
+    ],
+    revisions: "1 revision included",
   },
 ];
 
@@ -297,16 +471,20 @@ export const ADDONS: Addon[] = [
 export const sessionsIn = (category: SessionCategory) =>
   SESSIONS.filter((s) => s.category === category);
 
-/** Lowest session price — the "from" figure quoted across the site. */
-export const FROM_PRICE = Math.min(...SESSIONS.map((s) => s.price));
+/** Display label for a session's booked duration. */
+export const durationLabel = (hours: number) =>
+  `${hours} Hour${hours === 1 ? "" : "s"}`;
 
-/** Lowest full-production price, quoted separately from studio-only. */
-export const FROM_PRODUCTION_PRICE = Math.min(
-  ...sessionsIn("production").map((s) => s.price)
+/** Effective hourly rate, shown only on multi-hour sessions. */
+export const hourlyRate = (s: Session) => Math.round(s.price / s.hours);
+
+/** Lowest studio-only price — the "from" figure quoted across the site. */
+export const FROM_PRICE = Math.min(...sessionsIn("studio").map((s) => s.price));
+
+/** Lowest studio-with-editing price. */
+export const FROM_EDITING_PRICE = Math.min(
+  ...sessionsIn("editing").map((s) => s.price)
 );
-
-/** SimplyBook.me tenant. The booking embed deep-links into this host. */
-export const SB_BASE = "https://podflixpodcast.simplybook.me";
 
 /** Currency prefix — kept here so no component hardcodes it. */
 export const CURRENCY = "AED";

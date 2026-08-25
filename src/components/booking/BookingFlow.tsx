@@ -7,6 +7,8 @@ import SimplybookEmbed from "@/components/booking/SimplybookEmbed";
 import {
   ADDONS,
   FORMATS,
+  durationLabel,
+  hourlyRate,
   SESSIONS,
   SETS,
   UNDECIDED_SET,
@@ -57,7 +59,9 @@ export default function BookingFlow() {
   const chosenSet = sets.find((s) => s.id === setId) ?? null;
   const setName =
     setId === UNDECIDED_SET ? "Not sure yet — needs a recommendation" : chosenSet?.name ?? "—";
-  const sessionLabel = session ? `${session.name} · ${session.duration}` : "—";
+  const sessionLabel = session
+    ? `${session.name} · ${durationLabel(session.hours)}`
+    : "—";
   const addonLabel = chosenAddons.length
     ? chosenAddons.map((a) => `${a.name} (+${formatPrice(a.price)})`).join(" · ")
     : "None";
@@ -311,11 +315,12 @@ export default function BookingFlow() {
                 </h2>
 
                 {/* Category tabs */}
-                <div className="mt-8 flex gap-8 border-b border-cream/10">
+                <div className="mt-8 flex flex-wrap gap-x-8 gap-y-1 border-b border-cream/10">
                   {(
                     [
                       ["studio", "Studio Only"],
-                      ["production", "Full Production"],
+                      ["editing", "Studio + Editing"],
+                      ["package", "Packages"],
                     ] as const
                   ).map(([id, label]) => (
                     <button
@@ -367,16 +372,16 @@ export default function BookingFlow() {
                             </span>
                             <span className="mt-1 block text-sm text-cream/40">{s.tagline}</span>
                             <span className="mt-2 inline-block border border-cream/15 px-2 py-0.5 text-[10px] uppercase tracking-widest text-cream/50">
-                              {s.duration}
+                              {durationLabel(s.hours)}
                             </span>
                           </span>
                           <span className="shrink-0 text-right">
                             <span className="block font-display text-xl font-black text-gold">
                               {formatPrice(s.price)}
                             </span>
-                            {s.priceNote && (
+                            {s.hours > 1 && (
                               <span className="mt-1 block text-xs text-cream/30">
-                                {s.priceNote}
+                                {formatPrice(hourlyRate(s))}/hour
                               </span>
                             )}
                           </span>
@@ -473,9 +478,11 @@ export default function BookingFlow() {
                     })}
                   </div>
 
-                  <p className="mt-5 font-display text-3xl font-black text-gold">
-                    Total: {sessionValid ? formatPrice(total) : "—"}
-                  </p>
+                  {sessionValid && (
+                    <p className="mt-5 font-display text-3xl font-black text-gold">
+                      Total: {formatPrice(total)}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-10">

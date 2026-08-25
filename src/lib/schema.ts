@@ -14,9 +14,9 @@ export const localBusinessSchema = {
   name: "Podflix",
   url: SITE_URL,
   telephone: "+971565343070",
-  // Matches src/lib/booking.ts exactly: the cheapest session is Studio
-  // Recording at AED 590, the dearest is Signature + 3 Reels at AED 3800.
-  priceRange: "AED 590 - AED 3800",
+  // Matches src/lib/booking.ts exactly: the cheapest session is 1 Hour Studio
+  // at AED 590, the dearest is the 10 Reels Package at AED 4999.
+  priceRange: "AED 590 - AED 4999",
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: [
