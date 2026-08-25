@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import SimplybookEmbed from "@/components/booking/SimplybookEmbed";
@@ -26,11 +26,30 @@ const HEADCOUNTS = [1, 2, 3, 4] as const;
 const FOCUS =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
+/**
+ * True only for devices that genuinely hover. Touch screens report
+ * `(hover: none)`, and gating on this is what stops the includes panel from
+ * being unreachable on a phone — hover-only reveal would hide the contents
+ * of every tier from mobile buyers.
+ */
+function useHoverCapable() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(hover: hover) and (pointer: fine)").matches,
+    () => false
+  );
+}
+
 const seatLabel = (n: number) =>
   n === 1 ? "1 person" : n === 2 ? "2 people" : "3–4 people";
 
 export default function BookingFlow() {
   const reduce = useReducedMotion();
+  const hoverCapable = useHoverCapable();
 
   const [step, setStep] = useState(1);
   const [headcount, setHeadcount] = useState<number | null>(null);
@@ -39,7 +58,7 @@ export default function BookingFlow() {
   const [category, setCategory] = useState<SessionCategory>("studio");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [addons, setAddons] = useState<string[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
@@ -73,7 +92,7 @@ export default function BookingFlow() {
   const selectCategory = (next: SessionCategory) => {
     setCategory(next);
     setSessionId(null);
-    setExpanded(null);
+    setHovered(null);
   };
 
   const toggleAddon = (id: string) =>
@@ -97,7 +116,6 @@ export default function BookingFlow() {
     setCategory("studio");
     setSessionId(null);
     setAddons([]);
-    setExpanded(null);
   };
 
 
@@ -350,12 +368,10 @@ export default function BookingFlow() {
                   ))}
                 </div>
 
-                {/* Tabs 1 & 2 are one product at different lengths, so they get a
-                    duration selector. Tab 3 is four different products, so it
-                    gets cards. Same data, deliberately different UI. */}
-                {/* No `initial={false}` here: it sets presence context for the
-                    whole subtree, which suppressed the keyed price remount
-                    below and left the figure swapping silently. */}
+                {/* One unified list for all three tabs. The includes panel
+                    reveals on hover where hovering exists, and on selection
+                    where it does not — a hover-only reveal would leave touch
+                    users unable to see what a tier contains. */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={category}
@@ -363,198 +379,130 @@ export default function BookingFlow() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={reduce ? undefined : { opacity: 0, y: 8 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="mt-6"
                   >
-                    {category === "package" ? (
-                      /* ── Package cards ── */
-                      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        {rows.map((s) => {
-                          const active = sessionId === s.id;
-                          const open = expanded === s.id;
-                          return (
-                            <div
-                              key={s.id}
-                              className={`flex flex-col border bg-surface p-6 transition-all duration-300 md:p-8 ${
-                                active
-                                  ? "border-gold shadow-[0_0_24px_rgba(169,143,116,0.18)]"
-                                  : "border-cream/10 hover:border-gold/50"
-                              }`}
-                            >
-                              {/* The card body selects; the expander is a sibling
-                                  below it, never a button inside a button. */}
-                              <button
-                                type="button"
-                                onClick={() => setSessionId(s.id)}
-                                aria-pressed={active}
-                                className={`flex-1 text-left ${FOCUS}`}
+                    {rows.map((s) => {
+                      const active = sessionId === s.id;
+                      const open = active || (hoverCapable && hovered === s.id);
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSessionId(s.id)}
+                          onMouseEnter={hoverCapable ? () => setHovered(s.id) : undefined}
+                          onMouseLeave={hoverCapable ? () => setHovered(null) : undefined}
+                          onFocus={hoverCapable ? () => setHovered(s.id) : undefined}
+                          onBlur={hoverCapable ? () => setHovered(null) : undefined}
+                          aria-pressed={active}
+                          aria-expanded={open}
+                          className={`group relative w-full cursor-pointer overflow-hidden border-b border-cream/10 px-2 py-7 text-left transition-colors duration-300 ${FOCUS} ${
+                            active
+                              ? "border-l-2 border-l-gold bg-surface pl-4"
+                              : "hover:bg-surface/50 focus-visible:bg-surface/50"
+                          }`}
+                        >
+                          <span className="flex items-start justify-between gap-4">
+                            {/* LEFT */}
+                            <span className="min-w-0">
+                              <span
+                                className={`block font-display text-xl font-semibold transition-colors duration-300 md:text-2xl ${
+                                  active ? "text-gold" : "text-cream group-hover:text-gold"
+                                }`}
                               >
-                                <span className="flex items-start justify-between gap-3">
-                                  <span className="border border-cream/20 px-2 py-1 text-[10px] uppercase tracking-widest text-cream/50">
-                                    {durationLabel(s.hours)}
+                                {s.name}
+                              </span>
+                              {s.category === "package" && (
+                                <span className="mt-0.5 block text-sm text-gold">
+                                  {s.tagline}
+                                </span>
+                              )}
+                              {s.category !== "package" && (
+                                <span className="mt-1 block text-sm text-cream/40">
+                                  {s.tagline}
+                                </span>
+                              )}
+                              <span className="mt-3 inline-block border border-cream/20 px-2 py-1 text-[10px] uppercase tracking-widest text-cream/50">
+                                {durationLabel(s.hours)}
+                              </span>
+                            </span>
+
+                            {/* RIGHT */}
+                            <span className="shrink-0 text-right">
+                              {s.recommended && (
+                                <span className="mb-1 block bg-gold px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
+                                  Popular
+                                </span>
+                              )}
+                              <span className="block font-display text-2xl font-black text-gold">
+                                {formatPrice(s.price)}
+                              </span>
+                              {s.hours > 1 && (
+                                <span className="mt-1 block text-xs text-cream/30">
+                                  {formatPrice(hourlyRate(s))}/hour
+                                </span>
+                              )}
+                            </span>
+                          </span>
+
+                          {/* Touch devices get an explicit affordance, since
+                              there is no hover to discover the panel with. */}
+                          {!hoverCapable && (
+                            <span className="mt-3 inline-flex items-center gap-1 text-xs text-cream/40">
+                              What&apos;s included
+                              <span
+                                aria-hidden
+                                className={`inline-block transition-transform duration-300 ${
+                                  open ? "rotate-180" : ""
+                                }`}
+                              >
+                                ↓
+                              </span>
+                            </span>
+                          )}
+
+                          <AnimatePresence initial={false}>
+                            {open && (
+                              <motion.span
+                                className="block overflow-hidden"
+                                initial={reduce ? false : { height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                                transition={{
+                                  duration: reduce ? 0 : 0.3,
+                                  ease: [0.04, 0.62, 0.23, 0.98],
+                                }}
+                              >
+                                <span className="block pb-2 pt-5">
+                                  {s.category === "package" && (
+                                    <span className="mb-3 block text-sm text-cream/50">
+                                      {s.description}
+                                    </span>
+                                  )}
+                                  <span className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
+                                    {s.includes.map((inc) => (
+                                      <span
+                                        key={inc}
+                                        className="flex gap-2 text-sm text-cream/60"
+                                      >
+                                        <span aria-hidden className="text-gold">
+                                          ✓
+                                        </span>
+                                        {inc}
+                                      </span>
+                                    ))}
                                   </span>
-                                  {s.recommended && (
-                                    <span className="bg-gold px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-background">
-                                      Most popular
+                                  {s.revisions && (
+                                    <span className="mt-3 block text-[10px] uppercase tracking-[0.25em] text-gold/70">
+                                      {s.revisions}
                                     </span>
                                   )}
                                 </span>
-
-                                <span className="mt-4 block font-display text-2xl font-black leading-tight text-cream">
-                                  {s.name}
-                                </span>
-                                <span className="mt-1 block text-sm text-gold">
-                                  {s.tagline}
-                                </span>
-                                <span className="mt-4 block font-display text-4xl font-black text-gold">
-                                  {formatPrice(s.price)}
-                                </span>
-                                <span className="mt-3 block text-sm text-cream/50">
-                                  {s.description}
-                                </span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => setExpanded(open ? null : s.id)}
-                                aria-expanded={open}
-                                aria-controls={`inc-${s.id}`}
-                                className={`mt-4 inline-flex items-center gap-1 self-start text-xs text-cream/40 transition-colors hover:text-gold ${FOCUS}`}
-                              >
-                                What&apos;s included
-                                <span
-                                  aria-hidden
-                                  className={`inline-block transition-transform duration-300 ${
-                                    open ? "rotate-180" : ""
-                                  }`}
-                                >
-                                  ↓
-                                </span>
-                              </button>
-
-                              <AnimatePresence initial={false}>
-                                {open && (
-                                  <motion.div
-                                    id={`inc-${s.id}`}
-                                    initial={reduce ? false : { height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={reduce ? undefined : { height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: "easeOut" }}
-                                    className="overflow-hidden"
-                                  >
-                                    <ul className="pt-3">
-                                      {s.includes.map((inc) => (
-                                        <li
-                                          key={inc}
-                                          className="flex gap-2 py-1 text-sm text-cream/60"
-                                        >
-                                          <span aria-hidden className="text-gold">
-                                            ✓
-                                          </span>
-                                          {inc}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                    {s.revisions && (
-                                      <p className="pt-2 text-[10px] uppercase tracking-[0.25em] text-gold/70">
-                                        {s.revisions}
-                                      </p>
-                                    )}
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      /* ── Duration selector ── */
-                      <div className="mt-8 border border-cream/10 bg-surface p-8 md:p-12">
-                        <p className="font-body text-lg text-cream/50">
-                          {rows[0]?.tagline}
-                        </p>
-
-                        <p className="mb-5 mt-10 text-[10px] uppercase tracking-[0.3em] text-cream/40">
-                          How long do you need?
-                        </p>
-
-                        <div className="flex flex-wrap gap-3">
-                          {rows.map((s) => {
-                            const active = sessionId === s.id;
-                            return (
-                              <div key={s.id} className="relative pt-5">
-                                {s.recommended && (
-                                  <span
-                                    aria-hidden
-                                    className="absolute inset-x-0 top-0 text-center text-[9px] font-semibold uppercase tracking-[0.2em] text-gold"
-                                  >
-                                    Popular
-                                  </span>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => setSessionId(s.id)}
-                                  aria-pressed={active}
-                                  aria-label={`${durationLabel(s.hours)} — ${formatPrice(s.price)}`}
-                                  className={`h-15 w-15 rounded-none border font-display text-xl font-black transition-colors duration-300 ${FOCUS} ${
-                                    active
-                                      ? "border-gold bg-gold text-background"
-                                      : "border-cream/20 text-cream hover:border-gold/60"
-                                  }`}
-                                >
-                                  {s.hours}H
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-
-                        {/* Price — keyed on the value so Framer remounts and it
-                            visibly changes on every pill press. */}
-                        <div className="mt-10 text-center">
-                          {session && session.category === category ? (
-                            <>
-                              <motion.p
-                                key={session.price}
-                                initial={reduce ? false : { opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, ease: "easeOut" }}
-                                className="font-display text-5xl font-black text-gold md:text-6xl"
-                              >
-                                {formatPrice(session.price)}
-                              </motion.p>
-                              <p className="mt-2 text-sm text-cream/40">
-                                {formatPrice(hourlyRate(session))} per hour
-                              </p>
-                            </>
-                          ) : (
-                            <p className="text-sm text-cream/40">
-                              Pick a duration to see the price.
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Always visible — never behind an expander. */}
-                        {session && session.category === category && (
-                          <>
-                            <p className="mb-4 mt-10 text-[10px] uppercase tracking-[0.3em] text-cream/30">
-                              What&apos;s included
-                            </p>
-                            <ul className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
-                              {session.includes.map((inc) => (
-                                <li
-                                  key={inc}
-                                  className="flex gap-2 py-1.5 text-sm text-cream/60"
-                                >
-                                  <span aria-hidden className="text-gold">
-                                    ✓
-                                  </span>
-                                  {inc}
-                                </li>
-                              ))}
-                            </ul>
-                          </>
-                        )}
-                      </div>
-                    )}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </button>
+                      );
+                    })}
                   </motion.div>
                 </AnimatePresence>
 
