@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import EnterpriseBlock from "@/components/booking/EnterpriseBlock";
 import SimplybookEmbed from "@/components/booking/SimplybookEmbed";
 import {
   ADDONS,
@@ -562,6 +563,11 @@ export default function BookingFlow() {
                     <p className="mt-3 text-xs text-cream/40">Select a session to continue.</p>
                   )}
                 </div>
+
+                {/* Sits after Continue, not between the total and the CTA —
+                    it is a sales enquiry, not a step in the purchase. Renders
+                    on all three tabs, outside the tab AnimatePresence. */}
+                <EnterpriseBlock className="mt-10" />
               </motion.div>
             )}
 

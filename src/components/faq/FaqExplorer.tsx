@@ -25,6 +25,10 @@ const CATEGORIES: Category[] = [
         a: "[PLACEHOLDER — One hour is the minimum. Most sessions run longer once the ideas start flowing.]",
       },
       {
+        q: "Can I book the studio for a full day?",
+        a: "Yes. Full-day and multi-day bookings start at AED 420 per hour for 8 hours or more. Message us on WhatsApp with your requirements and we'll put together a custom quote.",
+      },
+      {
         q: "Do you offer recurring booking packages?",
         a: "[PLACEHOLDER — Absolutely. The Creator Pack bundles hours at a better rate for regulars.]",
       },

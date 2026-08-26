@@ -96,8 +96,8 @@ export type Session = {
  * Final client pricing. Studio time runs at a flat AED 590/hour and studio
  * with editing at AED 1,190/hour; packages are fixed-price products.
  *
- * NOTE: SimplyBook service 15 (12H / AED 420) is deliberately absent — the
- * client's figures for it are inconsistent and it is pending confirmation.
+ * Bookings of 8 hours or more are handled by the sales team rather than
+ * self-checkout, so no session here exposes them — see EnterpriseBlock.
  */
 export const SESSIONS: Session[] = [
   {

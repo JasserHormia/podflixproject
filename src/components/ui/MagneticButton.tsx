@@ -15,12 +15,17 @@ export default function MagneticButton({
   onClick,
   className = "",
   max = 15,
+  target,
+  rel,
 }: {
   children: ReactNode;
   href?: string;
   onClick?: () => void;
   className?: string;
   max?: number;
+  /** Passed through to the underlying link — external hrefs need these. */
+  target?: string;
+  rel?: string;
 }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -47,7 +52,7 @@ export default function MagneticButton({
   };
 
   const content = href ? (
-    <Link href={href} onClick={onClick} className={className}>
+    <Link href={href} onClick={onClick} className={className} target={target} rel={rel}>
       {children}
     </Link>
   ) : (
