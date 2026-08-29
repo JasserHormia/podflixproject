@@ -91,3 +91,161 @@ export function calApiKey() {
   if (!key) throw new Error("CAL_API_KEY is not set");
   return key;
 }
+
+/* ── Cal API operations ───────────────────────────────────────────────
+   Versions are pinned per endpoint and differ; see the report. Shared here
+   so every route speaks to Cal the same way.                            */
+
+export const CAL_VERSION = {
+  /** GET /v2/slots */
+  slots: "2024-09-04",
+  /** POST /v2/bookings */
+  createBooking: "2026-02-25",
+  /** POST /v2/bookings/{uid}/confirm */
+  confirmBooking: "2026-02-25",
+  /** POST /v2/bookings/{uid}/cancel, GET /v2/bookings/{uid} */
+  bookingOps: "2024-08-13",
+} as const;
+
+type CalResult<T> = { ok: true; data: T } | { ok: false; status: number; detail: unknown };
+
+async function calFetch<T>(
+  path: string,
+  version: string,
+  init?: RequestInit
+): Promise<CalResult<T>> {
+  try {
+    const res = await fetch(`${CAL_API_BASE}${path}`, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${calApiKey()}`,
+        "cal-api-version": version,
+        "Content-Type": "application/json",
+        ...(init?.headers ?? {}),
+      },
+      cache: "no-store",
+    });
+    const body = (await res.json().catch(() => null)) as
+      | { status?: string; data?: T; error?: unknown }
+      | null;
+    if (!res.ok || !body?.data) {
+      return { ok: false, status: res.status, detail: body?.error ?? body };
+    }
+    return { ok: true, data: body.data };
+  } catch (err) {
+    return { ok: false, status: 0, detail: err };
+  }
+}
+
+export type CalBooking = {
+  uid: string;
+  status: string;
+  start: string;
+  end: string;
+  title?: string;
+};
+
+/** Creates the booking that holds the slot. */
+export function createCalBooking(input: {
+  eventTypeId: number;
+  start: string;
+  name: string;
+  email: string;
+  metadata: Record<string, string>;
+}) {
+  return calFetch<CalBooking>("/bookings", CAL_VERSION.createBooking, {
+    method: "POST",
+    body: JSON.stringify({
+      start: input.start,
+      eventTypeId: input.eventTypeId,
+      attendee: {
+        name: input.name,
+        email: input.email,
+        timeZone: TIMEZONE,
+        language: "en",
+      },
+      metadata: input.metadata,
+    }),
+  });
+}
+
+/** Promotes a pending booking to accepted. Requires the event type to have
+ *  "requires confirmation" enabled — otherwise bookings arrive accepted and
+ *  this is a no-op. */
+export function confirmCalBooking(uid: string) {
+  return calFetch<CalBooking>(
+    `/bookings/${encodeURIComponent(uid)}/confirm`,
+    CAL_VERSION.confirmBooking,
+    { method: "POST" }
+  );
+}
+
+/** Releases the slot. Safe to call on an already-cancelled booking. */
+export function cancelCalBooking(uid: string, reason: string) {
+  return calFetch<CalBooking>(
+    `/bookings/${encodeURIComponent(uid)}/cancel`,
+    CAL_VERSION.bookingOps,
+    { method: "POST", body: JSON.stringify({ cancellationReason: reason }) }
+  );
+}
+
+export function getCalBooking(uid: string) {
+  return calFetch<CalBooking>(
+    `/bookings/${encodeURIComponent(uid)}`,
+    CAL_VERSION.bookingOps
+  );
+}
+
+/**
+ * Is this exact start still offered for the event type?
+ *
+ * Availability is fetched when the customer opens the picker, but they then
+ * spend a while choosing and typing card details. Re-checking immediately
+ * before the booking is written narrows the double-booking window from the
+ * length of a checkout down to the round trip of this call.
+ *
+ * Returns `null` when availability could not be determined — the caller should
+ * proceed rather than block a legitimate booking on a transient error, since
+ * Cal itself still rejects a genuine collision at creation time.
+ */
+export async function isSlotAvailable(
+  eventTypeId: number,
+  startIso: string
+): Promise<boolean | null> {
+  const target = Date.parse(startIso);
+  if (Number.isNaN(target)) return false;
+
+  // A narrow window either side is enough to see the slot without pulling a
+  // whole day, and sidesteps timezone date-boundary edge cases entirely.
+  const from = new Date(target - 60 * 60 * 1000).toISOString();
+  const to = new Date(target + 60 * 60 * 1000).toISOString();
+  const query = new URLSearchParams({
+    eventTypeId: String(eventTypeId),
+    start: from,
+    end: to,
+    timeZone: TIMEZONE,
+  });
+
+  const res = await calFetch<Record<string, { start: string }[]>>(
+    `/slots?${query}`,
+    CAL_VERSION.slots
+  );
+  if (!res.ok) {
+    console.warn("[cal] availability check failed", eventTypeId, res.status, res.detail);
+    return null;
+  }
+
+  // Compare instants, not strings: the same moment can be expressed with a
+  // different offset or as Z, and both are legitimate input.
+  return Object.values(res.data)
+    .flat()
+    .some((slot) => Date.parse(slot.start) === target);
+}
+
+/** Cal session for a session id used by the booking flow's steps 1-3. */
+export const calSessionForBookingId = (bookingSessionId: string) => {
+  const match = (Object.keys(CAL_TO_BOOKING) as CalSessionId[]).find(
+    (calId) => CAL_TO_BOOKING[calId] === bookingSessionId
+  );
+  return match ? (CAL_SESSIONS.find((s) => s.id === match) ?? null) : null;
+};
