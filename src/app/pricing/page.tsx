@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/pricing` },
   title: "Pricing & Packages",
   description:
-    "Invest in your voice. Three ways into Dubai's premier podcast studio — Single Session, Creator Pack, and Pro Bundle. Every session includes full equipment access.",
+    "Transparent podcast studio pricing in Dubai. Studio from AED 590/hour, editing from AED 1,190/hour, plus Signature and Reels packages. No hidden fees.",
 };
 
 export default function PricingPage() {

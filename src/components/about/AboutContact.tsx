@@ -91,7 +91,7 @@ export default function AboutContact() {
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
+              className="inline-block py-1.5 text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
             >
               {s.label}
             </a>
@@ -116,7 +116,7 @@ export default function AboutContact() {
           href="https://maps.google.com/?q=Tamani+Arts+Building+Business+Bay+Dubai"
           target="_blank"
           rel="noopener"
-          className="group relative mt-4 inline-block font-display text-sm text-gold"
+          className="group relative mt-4 inline-block py-1 font-display text-sm text-gold"
         >
           Get Directions →
           <span

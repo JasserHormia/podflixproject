@@ -16,7 +16,7 @@ import {
 } from "@/lib/brand";
 
 const SERVICES = [
-  "Studio Rental",
+  "Studio Booking",
   "Video Production",
   "Post-Production",
   "Content Strategy",

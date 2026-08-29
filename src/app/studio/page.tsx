@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/studio` },
   title: "The Studio",
   description:
-    "Dubai's premier podcast production studio. Solo, Duo and Quattro setups, three cinema-grade cameras, Shure mics, and end-to-end production — every session includes full equipment access.",
+    "Dubai podcast studio with Solo, Duo and Quattro setups, three cinema-grade cameras and Shure mics. Every session includes full equipment access and a videographer.",
 };
 
 export default function StudioPage() {

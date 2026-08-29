@@ -20,7 +20,7 @@ export default function PricingPhilosophy() {
         viewport={{ once: true, amount: 0.6 }}
         transition={{ duration: 0.8, ease: EASE_EXPO, delay: 0.8 }}
       >
-        Studio rental. Full production. Content packages. Pick your path.
+        Studio only. Studio with editing. Full packages. Pick your path.
       </motion.p>
     </section>
   );

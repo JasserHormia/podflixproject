@@ -65,7 +65,10 @@ export default function FaqClose() {
         <div className="mt-16 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-cream/20">
           {PAGE_LINKS.map((link, i) => (
             <span key={link.href} className="flex items-center gap-4">
-              <Link href={link.href} className="transition-colors hover:text-gold">
+              <Link
+                href={link.href}
+                className="inline-block py-1.5 transition-colors hover:text-gold"
+              >
                 {link.label}
               </Link>
               {i < PAGE_LINKS.length - 1 && <span aria-hidden>·</span>}

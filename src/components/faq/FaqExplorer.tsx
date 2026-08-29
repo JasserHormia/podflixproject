@@ -30,7 +30,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "Do you offer recurring booking packages?",
-        a: "[PLACEHOLDER — Absolutely. The Creator Pack bundles hours at a better rate for regulars.]",
+        a: "[PLACEHOLDER — Yes, recurring bookings are available. Message us on WhatsApp to arrange a schedule.]",
       },
     ],
   },
@@ -66,7 +66,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "Can you edit my podcast after recording?",
-        a: "[PLACEHOLDER — We do. Post-production and editing are available as an add-on or in the Pro Bundle.]",
+        a: "[PLACEHOLDER — Yes. Editing is included in the Studio + Editing tiers, or can be added to any session.]",
       },
       {
         q: "Can I live stream directly from the studio?",
