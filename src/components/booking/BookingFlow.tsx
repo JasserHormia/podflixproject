@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import EnterpriseBlock from "@/components/booking/EnterpriseBlock";
-import SimplybookEmbed from "@/components/booking/SimplybookEmbed";
+import BookingCheckout from "@/components/booking/checkout/BookingCheckout";
 import {
   ADDONS,
   FORMATS,
@@ -60,6 +60,9 @@ export default function BookingFlow() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [addons, setAddons] = useState<string[]>([]);
   const [hovered, setHovered] = useState<string | null>(null);
+  /** Set once payment has succeeded — the choices behind it are no longer
+   *  editable, so the escape hatches on step 4 change meaning. */
+  const [confirmed, setConfirmed] = useState(false);
 
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
@@ -117,6 +120,7 @@ export default function BookingFlow() {
     setCategory("studio");
     setSessionId(null);
     setAddons([]);
+    setConfirmed(false);
   };
 
 
@@ -148,7 +152,7 @@ export default function BookingFlow() {
             <span className="text-[10px] uppercase tracking-[0.4em] text-gold">
               Step {String(step).padStart(2, "0")} / 04
             </span>
-            {step > 1 && (
+            {step > 1 && !confirmed && (
               <button
                 type="button"
                 onClick={() => setStep((s) => s - 1)}
@@ -575,7 +579,7 @@ export default function BookingFlow() {
             {step === 4 && (
               <motion.div key="s4" {...variants} transition={{ duration: 0.35, ease: "easeOut" }}>
                     <h2 className="font-display text-[clamp(32px,4vw,56px)] font-black leading-[0.95] text-cream">
-                      Confirm &amp; schedule.
+                      {confirmed ? "All set." : "Confirm & schedule."}
                     </h2>
 
                     {/* Summary */}
@@ -584,13 +588,16 @@ export default function BookingFlow() {
                         <h3 className="text-[10px] uppercase tracking-[0.3em] text-gold">
                           Your session
                         </h3>
-                        <button
-                          type="button"
-                          onClick={() => setStep(1)}
-                          className={`text-xs text-cream/40 underline-offset-4 hover:text-cream hover:underline ${FOCUS}`}
-                        >
-                          Edit
-                        </button>
+                        {/* Nothing here is editable once it has been paid for. */}
+                        {!confirmed && (
+                          <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className={`-m-3 p-3 text-xs text-cream/40 underline-offset-4 hover:text-cream hover:underline ${FOCUS}`}
+                          >
+                            Edit
+                          </button>
+                        )}
                       </div>
 
                       <dl className="mt-6 space-y-3 text-sm">
@@ -618,32 +625,31 @@ export default function BookingFlow() {
                       </dl>
                     </div>
 
+                    {/* Date, details and payment — all inline, no redirect and
+                        no embed. Steps 1–3 above are the input; this is where
+                        the booking is actually made. */}
                     <div className="mt-8">
                       {session && (
-                        <SimplybookEmbed
-                          sbId={session.sbId}
-                          summary={{
-                            people: headcount,
-                            format: format ? FORMATS[format].name : "—",
-                            set: setName,
-                            session: sessionLabel,
-                            addons: chosenAddons.map((a) => ({
-                              name: a.name,
-                              price: a.price,
-                            })),
-                            total,
-                          }}
+                        <BookingCheckout
+                          bookingSessionId={session.id}
+                          sessionLabel={sessionLabel}
+                          format={format ? FORMATS[format].name : "—"}
+                          setName={setName}
+                          addonIds={addons}
+                          total={total}
+                          hours={session.hours}
+                          onConfirmed={() => setConfirmed(true)}
                         />
                       )}
                     </div>
 
-                    <p className="mt-6 text-sm">
+                    <p className="mt-8 text-sm">
                       <button
                         type="button"
                         onClick={reset}
-                        className={`text-cream/40 underline-offset-4 transition-colors hover:text-cream hover:underline ${FOCUS}`}
+                        className={`-m-3 p-3 text-cream/40 underline-offset-4 transition-colors hover:text-cream hover:underline ${FOCUS}`}
                       >
-                        Start over
+                        {confirmed ? "Book another session" : "Start over"}
                       </button>
                     </p>
               </motion.div>
