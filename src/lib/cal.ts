@@ -215,10 +215,21 @@ export async function isSlotAvailable(
   const target = Date.parse(startIso);
   if (Number.isNaN(target)) return false;
 
-  // A narrow window either side is enough to see the slot without pulling a
-  // whole day, and sidesteps timezone date-boundary edge cases entirely.
-  const from = new Date(target - 60 * 60 * 1000).toISOString();
-  const to = new Date(target + 60 * 60 * 1000).toISOString();
+  // Two things about Cal's /slots endpoint drive this window, and getting
+  // either wrong reads as "slot taken":
+  //
+  //   1. It only returns a slot if the FULL session duration fits inside the
+  //      requested range. A fixed one-hour window therefore returned nothing
+  //      for every session longer than an hour.
+  //   2. It generates the slot grid FROM the requested start. Asking from
+  //      target-1h shifts the grid by an hour, so an 11:00 slot comes back as
+  //      10:00 and 12:00 and the exact match fails.
+  //
+  // So: start exactly on the target, and extend the end past the session's
+  // length. The extra hour is slack, and only ever widens what is returned.
+  const hours = sessionByCalId(eventTypeId)?.hours ?? 1;
+  const from = new Date(target).toISOString();
+  const to = new Date(target + (hours + 1) * 60 * 60 * 1000).toISOString();
   const query = new URLSearchParams({
     eventTypeId: String(eventTypeId),
     start: from,
