@@ -106,7 +106,10 @@ export const SESSIONS: Session[] = [
     tagline:
       "Video + audio recording. Just record — we handle the rest.",
     hours: 1,
-    price: 590,
+    // ⚠️ TEMPORARY — live payment test. REVERT BEFORE LAUNCH: price: 590
+    // This is the number every page renders; lib/cal.ts holds the number the
+    // server charges. Both are overridden, and both must go back together.
+    price: 10,
     category: "studio",
     sbId: 2,
     description:
