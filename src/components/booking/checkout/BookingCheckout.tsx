@@ -141,12 +141,18 @@ export default function BookingCheckout({
   const [touched, setTouched] = useState<Partial<Record<keyof Details, boolean>>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [slotTaken, setSlotTaken] = useState(false);
+  /** The server's own 409 message. A 409 is not always a taken slot — it also
+   *  covers "already paid for" — so the reason is shown verbatim rather than
+   *  assumed. */
+  const [conflict, setConflict] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [bookingUid, setBookingUid] = useState<string | null>(null);
 
   const [reload, setReload] = useState(0);
   const pickerRef = useRef<HTMLElement>(null);
+  /** True while Stripe is confirming. 3DS navigates away mid-payment, and that
+   *  must not be mistaken for abandonment. */
+  const [paying, setPaying] = useState(false);
 
   /** Re-fetch, showing the loading state again. Bumping the token is what the
    *  effect below listens to, so refreshing is an event, not a render. */
@@ -196,7 +202,7 @@ export default function BookingCheckout({
     if (!calSession || !time) return;
     setBusy(true);
     setError(null);
-    setSlotTaken(false);
+    setConflict(null);
     try {
       const res = await fetch("/api/booking/create", {
         method: "POST",
@@ -217,10 +223,14 @@ export default function BookingCheckout({
       };
 
       if (res.status === 409) {
-        // Taken while they were filling the form. Send them back to a freshly
-        // loaded picker rather than into a dead end — and take them there,
-        // since the button they pressed is a screen below the calendar.
-        setSlotTaken(true);
+        // Send them back to a freshly loaded picker rather than into a dead
+        // end — and take them there, since the button they pressed is a screen
+        // below the calendar. The message comes from the server: a 409 can mean
+        // the slot was taken, or that this booking is already paid for, and
+        // telling someone to pick another time would be wrong in the latter.
+        setConflict(
+          body.error ?? "That time is no longer available. Please pick another slot."
+        );
         setTime(null);
         refreshSlots();
         pickerRef.current?.scrollIntoView({
@@ -244,6 +254,55 @@ export default function BookingCheckout({
       setBusy(false);
     }
   };
+
+  /**
+   * Release the hold if they leave the page mid-checkout.
+   *
+   * Without this, a closed tab keeps a real slot blocked until the
+   * reconciliation cron sweeps it up — 30 to 45 minutes during which nobody
+   * else can book that time.
+   *
+   * Three deliberate constraints:
+   *
+   * - `sendBeacon`, not `fetch`: the request has to outlive the document, and
+   *   a normal fetch is cancelled the instant the page goes away.
+   * - `pagehide` only when `persisted === false`. A persisted pagehide means
+   *   the page went into the back/forward cache and may well return; on mobile
+   *   that fires when the browser is merely backgrounded, which is exactly what
+   *   someone does to fetch their card or read an OTP.
+   * - Never while `paying`. `confirmPayment` hands off to the bank for 3DS,
+   *   which unloads this page and comes back via return_url. Releasing there
+   *   would cancel a booking the customer is in the middle of paying for, and
+   *   they would still be charged.
+   *
+   * `visibilitychange` is not used, for the same reason as the persisted case:
+   * switching tabs during payment is ordinary behaviour, not abandonment. The
+   * cron remains the safety net for crashes and force-quits, where no event
+   * fires at all.
+   */
+  useEffect(() => {
+    if (phase !== "pay" || !bookingUid || paying) return;
+
+    const release = () => {
+      navigator.sendBeacon?.(
+        "/api/booking/cancel",
+        new Blob(
+          [JSON.stringify({ bookingUid, reason: "Checkout abandoned" })],
+          { type: "application/json" }
+        )
+      );
+    };
+    const onPageHide = (e: PageTransitionEvent) => {
+      if (!e.persisted) release();
+    };
+
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("beforeunload", release);
+    return () => {
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("beforeunload", release);
+    };
+  }, [phase, bookingUid, paying]);
 
   /** Releases the hold before going back, so an abandoned time frees up now
    *  rather than waiting for the reconciliation cron. */
@@ -349,13 +408,15 @@ export default function BookingCheckout({
           <section ref={pickerRef} className={`scroll-mt-40 ${CARD}`}>
             <p className={EYEBROW}>Pick a date</p>
 
-            {slotTaken && (
+            {conflict && (
               <p
                 role="alert"
                 className="mt-4 border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-cream"
               >
-                That time was taken while you were filling in your details.
-                We&apos;ve refreshed the times below — please choose another.
+                {conflict}{" "}
+                <span className="text-cream/60">
+                  We&apos;ve refreshed the times below.
+                </span>
               </p>
             )}
 
@@ -583,6 +644,7 @@ export default function BookingCheckout({
                 >
                   <PaymentStep
                     total={formatPrice(total)}
+                    onPayingChange={setPaying}
                     onPaid={() => {
                       setPhase("done");
                       onConfirmed?.();

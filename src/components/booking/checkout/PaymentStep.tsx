@@ -21,9 +21,13 @@ const FOCUS =
 export default function PaymentStep({
   total,
   onPaid,
+  onPayingChange,
 }: {
   total: string;
   onPaid: () => void;
+  /** Signals that a confirmation is in flight. The parent uses this to avoid
+   *  mistaking a 3DS hand-off for an abandoned checkout. */
+  onPayingChange?: (paying: boolean) => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -31,10 +35,15 @@ export default function PaymentStep({
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
+  const settle = (value: boolean) => {
+    setBusy(value);
+    onPayingChange?.(value);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements) return;
-    setBusy(true);
+    settle(true);
     setError(null);
 
     const { error: err, paymentIntent } = await stripe.confirmPayment({
@@ -47,7 +56,7 @@ export default function PaymentStep({
       // Card declines and validation problems land here. The Elements state is
       // untouched, so the customer can correct and retry without re-entering.
       setError(err.message ?? "That payment could not be completed.");
-      setBusy(false);
+      settle(false);
       return;
     }
     if (paymentIntent?.status === "succeeded") {
@@ -55,7 +64,7 @@ export default function PaymentStep({
       return;
     }
     setError("Payment did not complete. Please try again.");
-    setBusy(false);
+    settle(false);
   };
 
   return (

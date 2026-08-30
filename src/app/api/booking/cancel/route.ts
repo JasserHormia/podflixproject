@@ -1,4 +1,5 @@
 import { cancelCalBooking, getCalBooking } from "@/lib/cal";
+import { findIntentForBooking } from "@/lib/stripe";
 
 /**
  * POST /api/booking/cancel — releases a held slot.
@@ -33,6 +34,19 @@ export async function POST(request: Request) {
   const existing = await getCalBooking(uid);
   if (existing.ok && existing.data.status === "cancelled") {
     return Response.json({ ok: true, status: "cancelled", alreadyCancelled: true });
+  }
+
+  // Never cancel something that has been paid for. This route is unauthenticated
+  // and is now called by an unload beacon, so it can fire at the exact moment a
+  // payment is settling — a 3DS hand-off that succeeds after the beacon leaves.
+  // Releasing there would take the customer's money and give away their slot.
+  const intent = await findIntentForBooking(uid);
+  if (intent?.status === "succeeded") {
+    console.warn("[booking/cancel] refusing to cancel a paid booking", uid, intent.id);
+    return Response.json(
+      { error: "This booking has been paid for and cannot be released here." },
+      { status: 409 }
+    );
   }
 
   const res = await cancelCalBooking(uid, reason);
