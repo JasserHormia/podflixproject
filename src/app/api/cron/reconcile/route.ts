@@ -13,8 +13,14 @@ import { stripeClient } from "@/lib/stripe";
  * Protected by CRON_SECRET; Vercel Cron sends it as a bearer token.
  */
 
-const PENDING_GRACE_MS = 15 * 60 * 1000; // ignore bookings younger than this
-const NO_INTENT_CUTOFF_MS = 30 * 60 * 1000; // no payment at all by now → release
+// The grace period gates every booking before the cutoff below is ever
+// consulted, so it must stay BELOW the cutoff — at 15 minutes it made a
+// 10-minute cutoff unreachable. Five minutes still leaves the webhook a clear
+// run at a genuinely paid booking before the sweep looks at it.
+const PENDING_GRACE_MS = 5 * 60 * 1000; // ignore bookings younger than this
+// Nobody who has reached the payment step, with a slot held, spends ten
+// minutes deciding whether to type a card number.
+const NO_INTENT_CUTOFF_MS = 10 * 60 * 1000; // no payment at all by now → release
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Cal's documented `status=unconfirmed` filter did not return this account's
