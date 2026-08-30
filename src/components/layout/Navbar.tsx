@@ -51,9 +51,28 @@ export default function Navbar() {
   // Homepage supplies its own docked wordmark (Arrival) in the logo slot.
   const isHome = pathname === "/";
 
+  /**
+   * Close the menu whenever the route changes.
+   *
+   * The link handlers already call setOpen(false), but this component lives in
+   * the root layout and never unmounts, so any navigation that bypasses those
+   * handlers — browser back/forward being the obvious one — used to leave
+   * `open` true. The scroll lock below is keyed on `open`, so it stayed
+   * engaged on the new page and scrolling was dead until the menu was opened
+   * and closed again.
+   *
+   * Adjusting state during render rather than in an effect: React re-renders
+   * immediately without committing the stale UI, and it keeps the lock and the
+   * menu from ever disagreeing for a frame.
+   */
+  const [renderedPath, setRenderedPath] = useState(pathname);
+  if (renderedPath !== pathname) {
+    setRenderedPath(pathname);
+    if (open) setOpen(false);
+  }
+
   // Body scroll lock — engaged while the menu is open, restored on close /
-  // unmount. Navigating closes the menu (link onClick), which flips `open`
-  // and runs this cleanup, so scroll is restored on route change too.
+  // unmount, and now also on any route change via the reset above.
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;

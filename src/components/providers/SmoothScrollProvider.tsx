@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 /**
@@ -12,6 +13,9 @@ export default function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -24,6 +28,7 @@ export default function SmoothScrollProvider({
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
+    lenisRef.current = lenis;
 
     let rafId: number;
     function raf(time: number) {
@@ -35,8 +40,26 @@ export default function SmoothScrollProvider({
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
+
+  /**
+   * Start every route at the top.
+   *
+   * The App Router navigates on the client and does reset window scroll, but
+   * Lenis keeps its own `animatedScroll` position and writes it back on the
+   * next frame — so the page springs straight back down to wherever the
+   * previous route was. Resetting Lenis itself is what actually sticks.
+   *
+   * `window.scrollTo` first covers the cases where there is no Lenis instance
+   * to reset: reduced-motion users, and the first paint before the effect
+   * above has run.
+   */
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    lenisRef.current?.scrollTo(0, { immediate: true });
+  }, [pathname]);
 
   return <>{children}</>;
 }
