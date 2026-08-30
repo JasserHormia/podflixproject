@@ -21,11 +21,7 @@ export const TIMEZONE = "Asia/Dubai";
 export const CAL_API_BASE = "https://api.cal.com/v2";
 
 export const CAL_SESSIONS = [
-  // ⚠️ TEMPORARY — live payment test. REVERT BEFORE LAUNCH:
-  //    price: 590, calId: 6839068  ("1 Hour Recording")
-  // Paired with the same override on studio-1h in lib/booking.ts — the two
-  // must move together or the customer is shown one price and charged another.
-  { id: "rec-1h", name: "1 Hour Recording", category: "studio", hours: 1, price: 10, calId: 6870815 },
+  { id: "rec-1h", name: "1 Hour Recording", category: "studio", hours: 1, price: 590, calId: 6839068 },
   { id: "rec-2h", name: "2 Hour Recording", category: "studio", hours: 2, price: 1180, calId: 6839134, recommended: true },
   { id: "rec-3h", name: "3 Hour Recording", category: "studio", hours: 3, price: 1770, calId: 6841766 },
   { id: "rec-4h", name: "4 Hour Recording", category: "studio", hours: 4, price: 2360, calId: 6841782 },
