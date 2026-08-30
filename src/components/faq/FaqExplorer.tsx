@@ -134,6 +134,14 @@ const CATEGORIES: Category[] = [
         q: "How do I book a session at Podflix?",
         a: "Booking is simple - choose your session on our website, pick your set and time, and pay securely online. You can also reach us on WhatsApp if you'd prefer help choosing the right package.",
       },
+      // CLAUDE-ADDED — client to review/approve.
+      // Not part of the client's supplied list; written to match the tone of
+      // the surrounding answers. Delete this entry, or replace the wording,
+      // if the client would rather phrase it themselves.
+      {
+        q: "What payment methods do you accept?",
+        a: "We accept all major credit and debit cards, along with Apple Pay and Google Pay for a fast, secure checkout. Payment is completed online at the time of booking.",
+      },
     ],
   },
 ];
