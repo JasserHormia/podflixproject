@@ -22,11 +22,13 @@ const FAQS = [
   },
   {
     q: "How do I book and pay?",
-    a: "Book online, select your package, and we'll send a secure payment link via WhatsApp. Powered by Network International.",
+    a: "Booking is simple - choose your session on our website, pick your set and time, and pay securely online. You can also reach us on WhatsApp if you'd prefer help choosing the right package.",
   },
   {
     q: "Can I reschedule or cancel my session?",
-    a: "Reschedule free of charge up to 24 hours before your session. Within 24 hours, an AED 200 fee applies as booking credit. Cancellations are handled case by case.",
+    // Kept word-for-word identical to the same question on /faq — two pages
+    // stating the same policy differently is how policies drift.
+    a: "You can reschedule your session free of charge up to 24 hours before your booking. Rescheduling within 24 hours is subject to a AED 200 fee, which will be deducted from your existing booking credit. For cancellations, please contact our team as early as possible to discuss the applicable booking terms.",
   },
   {
     q: "Can I book for more than 5 hours?",
