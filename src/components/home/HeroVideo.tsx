@@ -53,11 +53,20 @@ export default function HeroVideo({ visible }: { visible: boolean }) {
       <video
         className="h-full w-full object-cover"
         src={reel === "desktop" ? VIDEOS.hero_desktop : VIDEOS.hero_mobile}
+        // Grabbed from the reel's own first frame, so there is no visible jump
+        // when playback starts — and no black gap above the fold before it.
+        poster={
+          reel === "desktop" ? VIDEOS.hero_desktop_poster : VIDEOS.hero_mobile_poster
+        }
         // muted + playsInline are required for autoplay to be allowed.
         autoPlay
         muted
         loop
         playsInline
+        // Deliberately not "auto": the mobile reel is 3.2MB and the desktop one
+        // 8MB. Now that a 56KB poster covers the gap, eagerly pulling the whole
+        // file would compete with hydration on exactly the slow connections
+        // this is meant to help. Autoplay fetches it regardless once it can.
         preload="metadata"
       />
       {/* Dark gradient overlay for legibility */}

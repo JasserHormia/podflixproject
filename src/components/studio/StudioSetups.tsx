@@ -199,7 +199,10 @@ function SetupBlock({ setup }: { setup: Setup }) {
 
 export default function StudioSetups() {
   return (
-    <section className="relative bg-background">
+    // overflow-x-clip contains the thumbnail strip's -mx-8/-mx-12: the strip
+    // scrolls internally by design, but without a clip here its negative margin
+    // escapes and widens the whole document (500 -> 564 at a 500px viewport).
+    <section className="relative overflow-x-clip bg-background">
       {/* Section header */}
       <div className="px-8 py-24 md:px-16 md:py-32">
         <TextWipe

@@ -89,7 +89,7 @@ export default function TheShowroom() {
       {/* Single corner link */}
       <Link
         href="/studio"
-        className="group absolute bottom-5 right-6 z-10 inline-flex items-center gap-2 py-1.5 font-body text-sm text-gold sm:right-10"
+        className="group absolute bottom-5 right-6 z-10 inline-flex min-h-11 items-center gap-2 py-1.5 font-body text-sm text-gold sm:right-10"
       >
         See everything
         <span

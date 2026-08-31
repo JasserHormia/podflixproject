@@ -39,10 +39,10 @@ export default function BookingFallback() {
           <p className="mt-4 text-sm text-cream/30">
             Or email us at{" "}
             <a
-              href="mailto:hello@podflix.ae"
-              className="text-cream/50 transition-colors hover:text-gold"
+              href="mailto:bookings@podflixpodcast.ae"
+              className="inline-flex min-h-11 items-center text-cream/50 transition-colors hover:text-gold"
             >
-              hello@podflix.ae
+              bookings@podflixpodcast.ae
             </a>
           </p>
         </div>

@@ -79,7 +79,7 @@ export default function TheClose() {
       <motion.span
         aria-hidden
         style={parallax ? { y: watermarkY } : undefined}
-        className="pointer-events-none absolute inset-x-0 bottom-[-3vw] select-none text-center font-display text-[28vw] font-black leading-none text-background/[0.08] md:text-[20vw]"
+        className="pointer-events-none absolute inset-x-0 bottom-[-3vw] select-none text-center font-display text-[25vw] font-black leading-none text-background/[0.08] md:text-[20vw]"
       >
         PODFLIX
       </motion.span>
@@ -142,13 +142,18 @@ export default function TheClose() {
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-48 bg-linear-to-t from-background/40 to-transparent"
       />
 
-      {/* ── Section meta — stacked above the mobile chrome, split on md+ ── */}
-      <div className="absolute inset-x-0 bottom-24 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-cream md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
+      {/* ── Section meta — stacked above the mobile chrome, split on md+ ──
+           A <footer>, not a <div>: the shared Footer component deliberately
+           renders nothing on the homepage (this panel replaces it), which left
+           the page with no contentinfo landmark at all. This strip already
+           carries the copyright and location, so it is the footer in
+           everything but name. Purely semantic — nothing moves. */}
+      <footer className="absolute inset-x-0 bottom-24 z-10 flex flex-col items-center gap-2 px-6 text-center text-xs text-cream md:bottom-6 md:flex-row md:justify-between md:px-10 md:text-left">
         <p>© 2026 Podflix · MCFLIX Agency</p>
         {/* The WhatsApp pill occupies ~182px from the right edge on md+, so the
             reserve has to exceed that plus the container's own px-10. */}
         <p className="md:pr-48">Dubai · Business Bay</p>
-      </div>
+      </footer>
     </section>
   );
 }

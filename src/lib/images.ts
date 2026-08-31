@@ -45,4 +45,7 @@ export default IMAGES;
 export const VIDEOS = {
   hero_desktop: "/assets/videos/hero-desktop.mp4",
   hero_mobile: "/assets/videos/hero-mobile.mp4",
+  /** First-frame stills, so the hero is never a black gap while the reel loads. */
+  hero_desktop_poster: "/assets/videos/hero-desktop-poster.jpg",
+  hero_mobile_poster: "/assets/videos/hero-mobile-poster.jpg",
 } as const;

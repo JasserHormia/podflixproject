@@ -282,7 +282,7 @@ export default function FaqExplorer() {
                 key={pill.id}
                 type="button"
                 onClick={() => scrollTo(pill.id)}
-                className={`rounded-none border px-6 py-3 font-display text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
+                className={`inline-flex min-h-11 items-center rounded-none border px-6 py-3 font-display text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
                   active
                     ? "border-gold bg-gold text-background"
                     : "border-cream/20 text-cream/40 hover:border-gold hover:bg-gold hover:text-background"

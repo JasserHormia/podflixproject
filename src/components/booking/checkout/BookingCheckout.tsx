@@ -573,7 +573,9 @@ export default function BookingCheckout({
                 <button
                   type="button"
                   onClick={() => void startPayment()}
-                  className={`underline underline-offset-4 ${FOCUS}`}
+                  // -m-3/p-3 buys the 44px hit area without shifting the text
+                  // it sits inside, matching "Change time" further down.
+                  className={`-m-3 p-3 underline underline-offset-4 ${FOCUS}`}
                 >
                   Try again
                 </button>

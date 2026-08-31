@@ -25,7 +25,7 @@ const SERVICES = [
 const CONNECT = [
   { label: "WhatsApp →", href: SOCIAL.whatsapp, external: true },
   { label: "Instagram →", href: SOCIAL.instagram, external: true },
-  { label: "Email →", href: "mailto:hello@podflix.ae", external: false },
+  { label: "Email →", href: "mailto:bookings@podflixpodcast.ae", external: false },
 ];
 
 const COL_HEADING = "mb-6 text-[9px] uppercase tracking-[0.4em] text-cream/30";
@@ -56,7 +56,7 @@ export default function Footer() {
       {/* ── TOP SECTION ── */}
       <div className="grid grid-cols-1 gap-12 px-8 py-20 md:grid-cols-[60fr_40fr] md:px-16">
         <div>
-          <Link href="/" aria-label={`${BRAND_NAME} home`} className="inline-block">
+          <Link href="/" aria-label={`${BRAND_NAME} home`} className="inline-flex min-h-11 items-center">
             <Image
               src={LOGO_SRC}
               alt="Podflix"
@@ -96,7 +96,7 @@ export default function Footer() {
             <Link
               key={link.href}
               href={link.href}
-              className="block py-1 font-body text-sm text-cream/50 transition-colors hover:text-gold"
+              className="flex min-h-11 items-center font-body text-sm text-cream/50 transition-colors hover:text-gold"
             >
               {link.label}
             </Link>
@@ -123,7 +123,7 @@ export default function Footer() {
               {...(item.external
                 ? { target: "_blank", rel: "noopener noreferrer" }
                 : {})}
-              className="block py-1 font-body text-sm text-gold transition-colors hover:text-cream"
+              className="flex min-h-11 items-center font-body text-sm text-gold transition-colors hover:text-cream"
             >
               {item.label}
             </a>

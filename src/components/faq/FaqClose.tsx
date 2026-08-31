@@ -67,7 +67,7 @@ export default function FaqClose() {
             <span key={link.href} className="flex items-center gap-4">
               <Link
                 href={link.href}
-                className="inline-block py-1.5 transition-colors hover:text-gold"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-gold"
               >
                 {link.label}
               </Link>

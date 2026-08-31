@@ -40,7 +40,7 @@ export default function StudioClose() {
 
         <Link
           href="/booking"
-          className="group relative mt-10 inline-block font-display text-xl font-black text-background transition-colors hover:text-background/70"
+          className="group relative mt-10 inline-flex min-h-11 items-center font-display text-xl font-black text-background transition-colors hover:text-background/70"
         >
           Book a Session →
           <span

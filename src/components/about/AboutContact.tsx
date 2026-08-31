@@ -43,20 +43,25 @@ export default function AboutContact() {
               href="https://wa.me/971565343070"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-display text-base font-semibold text-gold transition-transform duration-300 hover:translate-x-1"
+              className="inline-flex min-h-11 items-center font-display text-base font-semibold text-gold transition-transform duration-300 hover:translate-x-1"
             >
               +971 56 534 3070
             </a>
           </div>
 
-          {/* Email */}
-          <div className="flex items-center justify-between border-b border-cream/10 py-6">
+          {/* Email — flex-wrap, and the only row that needs it. The address is
+              a single unbreakable 232px token, so below ~360px it cannot share
+              a line with the label: it used to run past the divider to the
+              screen edge. Wrapping is self-adjusting, so the one-line layout at
+              390px and up is untouched. gap-x-4 also matches Location/Hours,
+              which this row was alone in missing. */}
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-cream/10 py-6">
             <span className="text-xs uppercase tracking-[0.2em] text-gold/40">Email</span>
             <a
-              href="mailto:hello@podflix.ae"
-              className="group relative font-display text-base font-semibold text-gold"
+              href="mailto:bookings@podflixpodcast.ae"
+              className="group relative inline-flex min-h-11 items-center font-display text-base font-semibold text-gold"
             >
-              hello@podflix.ae
+              bookings@podflixpodcast.ae
               <span
                 aria-hidden
                 className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-gold transition-transform duration-300 group-hover:scale-x-100"
@@ -84,14 +89,21 @@ export default function AboutContact() {
         </div>
 
         {/* Socials */}
-        <div className="mt-12 flex gap-8">
+        {/* gap-2, not gap-8: each link is now a 44px box, so the old 32px
+            gap would read as ~55px between labels. gap-2 restores the
+            original optical rhythm and keeps the trio reading as one group. */}
+        <div className="mt-12 flex gap-2">
           {SOCIALS.map((s) => (
             <a
               key={s.label}
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block py-1.5 text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
+              // min-w-11 as well as min-h-11. These labels are two characters,
+              // so height alone left them 44px tall but only 17-25px wide — a
+              // sliver, not a target. justify-center keeps the label centred in
+              // the widened box rather than pinned to its left edge.
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
             >
               {s.label}
             </a>
@@ -116,7 +128,7 @@ export default function AboutContact() {
           href="https://maps.google.com/?q=Tamani+Arts+Building+Business+Bay+Dubai"
           target="_blank"
           rel="noopener"
-          className="group relative mt-4 inline-block py-1 font-display text-sm text-gold"
+          className="group relative mt-4 inline-flex min-h-11 items-center font-display text-sm text-gold"
         >
           Get Directions →
           <span

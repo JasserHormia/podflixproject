@@ -199,7 +199,7 @@ function ProcessStep({ step }: { step: Step }) {
           <motion.div variants={item} className="mt-8">
             <Link
               href={step.href}
-              className="group relative inline-flex items-center gap-2 py-1.5 font-body text-sm text-gold"
+              className="group relative inline-flex min-h-11 items-center gap-2 py-1.5 font-body text-sm text-gold"
             >
               <span className="relative">
                 {step.cta}

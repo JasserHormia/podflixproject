@@ -117,7 +117,7 @@ export default function Navbar() {
           {isHome ? (
             <span aria-hidden />
           ) : (
-            <Link href="/" aria-label="Podflix home" className="flex min-w-35 items-center">
+            <Link href="/" aria-label="Podflix home" className="flex min-h-11 min-w-35 items-center">
               <LogoImage />
             </Link>
           )}
@@ -131,7 +131,7 @@ export default function Navbar() {
               className="group flex items-center gap-2"
             >
               <RecDot reduce={reduce} />
-              <span className="font-display text-[10px] uppercase tracking-[0.3em] text-cream/60 transition-colors duration-300 group-hover:text-cream">
+              <span className="font-display text-[11px] uppercase tracking-[0.3em] text-cream/60 transition-colors duration-300 group-hover:text-cream md:text-[10px]">
                 REC
               </span>
             </button>
@@ -166,13 +166,19 @@ export default function Navbar() {
         >
           <span className="flex items-center gap-1.5">
             <RecDot reduce={reduce} />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-cream/60">REC</span>
+            <span className="text-[11px] uppercase tracking-[0.3em] text-cream/60 md:text-[10px]">REC</span>
           </span>
           <Image
             src={LOGO_SRC}
             alt="Podflix"
             width={100}
             height={28}
+            // The mobile pill is on screen from first paint on every page, so
+            // the brand mark must not wait for a lazy-load pass. Not `priority`
+            // (deprecated in Next 16), and not `preload` either — that injects a
+            // <link> into <head> on every route, including desktop, where this
+            // pill is md:hidden and the image never renders at all.
+            loading="eager"
             className="h-7 w-auto object-contain"
           />
           <span className="text-xs uppercase tracking-[0.2em] text-gold">MENU</span>

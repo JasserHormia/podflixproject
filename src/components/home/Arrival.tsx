@@ -74,7 +74,14 @@ export default function Arrival() {
           <Link
             href="/"
             aria-label="Podflix home"
-            className={dockedNow ? "pointer-events-auto" : "pointer-events-none"}
+            // min-h-11 gives the docked logo a 44px tap height inside the
+            // 64px masthead row; it does not affect the intro state, where the
+            // wordmark is far larger and non-interactive anyway.
+            className={
+              dockedNow
+                ? "pointer-events-auto inline-flex min-h-11 items-center"
+                : "pointer-events-none"
+            }
           >
             <motion.span
               layout
@@ -161,7 +168,7 @@ export default function Arrival() {
       >
         <Link
           href="/booking"
-          className="group relative inline-flex items-center gap-2 font-body text-base font-medium text-gold sm:text-lg"
+          className="group relative inline-flex min-h-11 items-center gap-2 font-body text-base font-medium text-gold sm:text-lg"
         >
           <span className="relative">
             Book a Session
@@ -184,7 +191,7 @@ export default function Arrival() {
         transition={{ duration: 0.8, ease: EASE_EXPO, delay: dockedNow ? 0.7 : 0 }}
       >
         <span
-          className="text-[10px] tracking-[0.4em] text-text-muted"
+          className="text-[11px] tracking-[0.4em] text-text-muted md:text-[10px]"
           style={{ writingMode: "vertical-rl" }}
         >
           SCROLL
