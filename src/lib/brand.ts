@@ -49,7 +49,7 @@ export type NavLink = (typeof NAV_LINKS)[number];
 /** External / social links — replace placeholders with real handles. */
 export const SOCIAL = {
   whatsapp: "https://wa.me/971565343070",
-  instagram: "https://instagram.com/PLACEHOLDER",
+  instagram: "https://www.instagram.com/podflix_studio/",
 } as const;
 
 /** Attribution shown in the footer. */

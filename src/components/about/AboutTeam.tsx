@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * PARKED — not rendered on /about.
+ *
+ * Every field here is still placeholder copy ("[PLACEHOLDER NAME]", the photo
+ * boxes, and the one-line bios), which was shipping to production verbatim.
+ * Unhooked from app/about/page.tsx rather than deleted, so it can go back the
+ * moment the client supplies real names, roles, bios and photos.
+ *
+ * To restore: fill in TEAM below, swap the [Team Photo] box for a next/image,
+ * then re-add the import and <AboutTeam /> to app/about/page.tsx.
+ */
+
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import TextWipe from "@/components/ui/TextWipe";

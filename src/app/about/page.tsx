@@ -4,7 +4,6 @@ import AboutManifesto from "@/components/about/AboutManifesto";
 import AboutStory from "@/components/about/AboutStory";
 import AboutNumbers from "@/components/about/AboutNumbers";
 import AboutSpace from "@/components/about/AboutSpace";
-import AboutTeam from "@/components/about/AboutTeam";
 import AboutContact from "@/components/about/AboutContact";
 import AboutClose from "@/components/about/AboutClose";
 
@@ -23,7 +22,6 @@ export default function AboutPage() {
       <AboutStory />
       <AboutNumbers />
       <AboutSpace />
-      <AboutTeam />
       <AboutContact />
       <AboutClose />
     </>
