@@ -8,18 +8,16 @@ import { SOCIAL } from "@/lib/brand";
 import TextWipe from "@/components/ui/TextWipe";
 
 /**
- * IG points at the real account via SOCIAL, the same constant the footer uses,
- * so there is one Instagram URL in the codebase rather than two that can drift.
+ * Instagram is the only social account that exists, so it is the only one
+ * listed. The TW and YT entries that used to sit here pointed at twitter.com
+ * and youtube.com — the platforms' own front pages, not profiles — which is
+ * worse than no link at all.
  *
- * TW and YT are still bare platform homepages — placeholders, not accounts.
- * Left as-is pending the real handles rather than guessed at; they should
- * either be pointed at real profiles or removed.
+ * A list of one is deliberate: adding a real handle later is a single line,
+ * and the label style matches the footer's "Instagram →" so the site has one
+ * social convention rather than two.
  */
-const SOCIALS = [
-  { label: "IG", href: SOCIAL.instagram },
-  { label: "TW", href: "https://twitter.com" },
-  { label: "YT", href: "https://youtube.com" },
-];
+const SOCIALS = [{ label: "Instagram →", href: SOCIAL.instagram }];
 
 export default function AboutContact() {
   const reduce = useReducedMotion();
@@ -97,10 +95,12 @@ export default function AboutContact() {
           </div>
         </div>
 
-        {/* Socials */}
-        {/* gap-2, not gap-8: each link is now a 44px box, so the old 32px
-            gap would read as ~55px between labels. gap-2 restores the
-            original optical rhythm and keeps the trio reading as one group. */}
+        {/* Socials — one link, so it is written out rather than abbreviated.
+            "IG" only read as a label beside "TW" and "YT"; alone it reads as a
+            fragment. min-w-11 and justify-center go with them: they existed to
+            square up two-character labels, and a spelled-out link is already
+            far wider than 44px and belongs on the same left edge as every
+            other row in this column. */}
         <div className="mt-12 flex gap-2">
           {SOCIALS.map((s) => (
             <a
@@ -108,11 +108,7 @@ export default function AboutContact() {
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              // min-w-11 as well as min-h-11. These labels are two characters,
-              // so height alone left them 44px tall but only 17-25px wide — a
-              // sliver, not a target. justify-center keeps the label centred in
-              // the widened box rather than pinned to its left edge.
-              className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
+              className="inline-flex min-h-11 items-center text-xs uppercase tracking-[0.2em] text-cream/30 transition-colors hover:text-gold"
             >
               {s.label}
             </a>

@@ -15,7 +15,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import { LOGO_SRC, NAV_LINKS, SERVICES_LINE } from "@/lib/brand";
+import { LOGO_SRC, NAV_LINKS, SERVICES_LINE, SOCIAL } from "@/lib/brand";
 
 /** Pulsing red REC dot. */
 function RecDot({ reduce }: { reduce: boolean | null }) {
@@ -270,22 +270,24 @@ export default function Navbar() {
               <span className="tracking-[0.2em] text-cream/20">
                 {SERVICES_LINE} — Dubai
               </span>
-              <div className="flex gap-4 text-cream/30">
+              {/* Instagram only, and written out. The TW link beside it went
+                  to twitter.com rather than any profile, and this IG one went
+                  to instagram.com — both platform front pages. Now reads
+                  SOCIAL.instagram, the single Instagram URL in the codebase.
+                  min-h-11 because this row sits inside the mobile menu, which
+                  the earlier tap-target pass never measured — the overlay is
+                  closed unless opened. */}
+              <div className="flex shrink-0 text-cream/30">
                 <a
-                  href="https://instagram.com"
+                  href={SOCIAL.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-gold"
+                  // whitespace-nowrap: this row is justify-between against the
+                  // services line, which squeezes the link at 390px and left
+                  // the arrow orphaned on its own line.
+                  className="inline-flex min-h-11 items-center whitespace-nowrap transition-colors hover:text-gold"
                 >
-                  IG
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-gold"
-                >
-                  TW
+                  Instagram →
                 </a>
               </div>
             </div>
