@@ -4,10 +4,19 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import IMAGES from "@/lib/images";
+import { SOCIAL } from "@/lib/brand";
 import TextWipe from "@/components/ui/TextWipe";
 
+/**
+ * IG points at the real account via SOCIAL, the same constant the footer uses,
+ * so there is one Instagram URL in the codebase rather than two that can drift.
+ *
+ * TW and YT are still bare platform homepages — placeholders, not accounts.
+ * Left as-is pending the real handles rather than guessed at; they should
+ * either be pointed at real profiles or removed.
+ */
 const SOCIALS = [
-  { label: "IG", href: "https://instagram.com" },
+  { label: "IG", href: SOCIAL.instagram },
   { label: "TW", href: "https://twitter.com" },
   { label: "YT", href: "https://youtube.com" },
 ];
