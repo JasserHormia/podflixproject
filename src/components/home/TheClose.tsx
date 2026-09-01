@@ -4,6 +4,7 @@ import { useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { FROM_PRICE, formatPrice } from "@/lib/booking";
 import IMAGES from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -128,7 +129,7 @@ export default function TheClose() {
           </MagneticButton>
 
           <p className="mt-6 text-xs uppercase tracking-widest text-background/80">
-            Free reschedule up to 24h · Sessions from AED 590
+            Free reschedule up to 24h · Sessions from {formatPrice(FROM_PRICE)}
           </p>
         </motion.div>
       </div>

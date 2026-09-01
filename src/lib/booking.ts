@@ -505,6 +505,18 @@ export const FROM_EDITING_PRICE = promoPrice(
   Math.min(...sessionsIn("editing").map((s) => s.price))
 );
 
+/**
+ * Advertised "from" rate for 8h+ bookings. Quoted by the sales team and never
+ * charged through the flow, so it is a published figure only — but it is still
+ * published, so it goes through promoPrice() at the call site like every other
+ * number on the site rather than sitting at a hardcoded discount.
+ */
+export const ENTERPRISE_HOURLY_RATE = 420;
+
+/** Cheapest and dearest published sessions — the schema.org priceRange bounds. */
+export const PRICE_FLOOR = promoPrice(Math.min(...SESSIONS.map((s) => s.price)));
+export const PRICE_CEILING = promoPrice(Math.max(...SESSIONS.map((s) => s.price)));
+
 /** Currency prefix — kept here so no component hardcodes it. */
 export const CURRENCY = "AED";
 

@@ -6,6 +6,8 @@
  * See node_modules/next/dist/docs/01-app/02-guides/json-ld.md.
  */
 
+import { PRICE_CEILING, PRICE_FLOOR, formatPrice } from "@/lib/booking";
+
 export const SITE_URL = "https://podflixpodcast.ae";
 
 export const localBusinessSchema = {
@@ -14,9 +16,10 @@ export const localBusinessSchema = {
   name: "Podflix",
   url: SITE_URL,
   telephone: "+971565343070",
-  // Matches src/lib/booking.ts exactly: the cheapest session is 1 Hour Studio
-  // at AED 590, the dearest is the 10 Reels Package at AED 4999.
-  priceRange: "AED 590 - AED 4999",
+  // Derived from SESSIONS rather than transcribed, so it cannot drift from the
+  // published prices — and follows the promotion, since search engines surface
+  // this range directly.
+  priceRange: `${formatPrice(PRICE_FLOOR)} - ${formatPrice(PRICE_CEILING)}`,
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: [

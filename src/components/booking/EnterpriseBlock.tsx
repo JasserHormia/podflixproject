@@ -1,5 +1,7 @@
 import MagneticButton from "@/components/ui/MagneticButton";
 import { SOCIAL } from "@/lib/brand";
+import { ENTERPRISE_HOURLY_RATE, formatPrice } from "@/lib/booking";
+import { promoPrice } from "@/lib/promo";
 
 const MESSAGE =
   "Hi! I'm interested in a full-day studio booking (8+ hours). Here's what I'm planning:";
@@ -25,8 +27,9 @@ export default function EnterpriseBlock({ className = "" }: { className?: string
           Booking 8 hours or more?
         </h3>
         <p className="mt-2 max-w-md font-body text-sm text-cream/50">
-          Full-day rates start at AED 420 per hour. Tell us what you&apos;re
-          shooting and we&apos;ll build the session around it.
+          Full-day rates start at {formatPrice(promoPrice(ENTERPRISE_HOURLY_RATE))}{" "}
+          per hour. Tell us what you&apos;re shooting and we&apos;ll build the
+          session around it.
         </p>
       </div>
 

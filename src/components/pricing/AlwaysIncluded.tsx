@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { FROM_PRICE, formatPrice } from "@/lib/booking";
 
 const TICKER =
   "3-Camera Setup · Professional Audio · Studio Operator · 12 Themed Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
@@ -9,7 +10,9 @@ const TICKER =
 const STATS = [
   { value: "12", label: "Themed studio sets" },
   { value: "4K", label: "Cinema quality output" },
-  { value: "AED 590", label: "Starting price per hour" },
+  // FROM_PRICE is promo-aware, so this stat cannot advertise a rate the
+  // cards on the same page have already discounted.
+  { value: formatPrice(FROM_PRICE), label: "Starting price per hour" },
 ];
 
 export default function AlwaysIncluded() {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/schema";
+import { FROM_EDITING_PRICE, FROM_PRICE, formatPrice } from "@/lib/booking";
 import PricingEntrance from "@/components/pricing/PricingEntrance";
 import PricingPhilosophy from "@/components/pricing/PricingPhilosophy";
 import EnterpriseBlock from "@/components/booking/EnterpriseBlock";
@@ -14,8 +15,13 @@ import { PROMO_ACTIVE } from "@/lib/promo";
 export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/pricing` },
   title: "Pricing & Packages",
-  description:
-    "Transparent podcast studio pricing in Dubai. Studio from AED 590/hour, editing from AED 1,190/hour, plus Signature and Reels packages. No hidden fees.",
+  // Derived, so the figure in search results tracks the promotion instead of
+  // advertising a price the page no longer shows.
+  description: `Transparent podcast studio pricing in Dubai. Studio from ${formatPrice(
+    FROM_PRICE
+  )}/hour, editing from ${formatPrice(
+    FROM_EDITING_PRICE
+  )}/hour, plus Signature and Reels packages. No hidden fees.`,
 };
 
 export default function PricingPage() {

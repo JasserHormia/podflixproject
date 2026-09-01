@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { FROM_PRICE, formatPrice } from "@/lib/booking";
 import IMAGES from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -35,7 +36,7 @@ export default function PricingClose() {
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.8, ease: EASE_EXPO, delay: 0.4 }}
         >
-          Sessions from AED 590. Your audience is waiting.
+          Sessions from {formatPrice(FROM_PRICE)}. Your audience is waiting.
         </motion.p>
 
         <motion.div

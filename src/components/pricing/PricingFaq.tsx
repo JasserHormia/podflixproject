@@ -2,11 +2,20 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { ADDONS, formatPrice } from "@/lib/booking";
+import { promoPrice } from "@/lib/promo";
+
+/** Read from ADDONS so the answer cannot contradict the cards further up the
+ *  same page — it previously said 590/700 while they showed 413/490. */
+const addon = (id: string) => {
+  const a = ADDONS.find((x) => x.id === id)!;
+  return `${a.name} for ${formatPrice(promoPrice(a.price))}`;
+};
 
 const FAQS = [
   {
     q: "Can I add reel edits to any package?",
-    a: "Yes — add a Full Podcast Edit for AED 590 or 3 Reels for AED 700 to any session. Both can be added together.",
+    a: `Yes — add a ${addon("full-edit")} or ${addon("3-reels")} to any session. Both can be added together.`,
   },
   {
     q: "Is the studio operator included?",
