@@ -36,8 +36,15 @@ export default function SmoothScrollProvider({
      * would kill scrolling outright if anything ever stopped it. That is a
      * failure surface bought for nothing. Not running it on touch removes the
      * whole class of risk with no visual loss.
+     *
+     * Both conditions, not just `hover: none`. A device can report no hover
+     * while still being pointer-driven (a TV remote, some kiosk browsers);
+     * requiring a coarse pointer as well means this only ever catches genuine
+     * touch input and never quietly disables smooth scrolling on a desktop.
      */
-    const isTouch = window.matchMedia("(hover: none)").matches;
+    const isTouch = window.matchMedia(
+      "(hover: none) and (pointer: coarse)"
+    ).matches;
 
     if (prefersReducedMotion || isTouch) return;
 

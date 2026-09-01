@@ -1,12 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import { LOGO_SRC, SERVICES_LINE } from "@/lib/brand";
 import HeroVideo from "./HeroVideo";
+
+/**
+ * The intro plays once per browsing session, not once per mount.
+ *
+ * Arrival remounts on every return to "/", and the wordmark it animates lives
+ * in a `fixed inset-0` layer — so a replay drew a full-screen wordmark over
+ * whatever the visitor was already looking at, wherever they had scrolled to.
+ * On a phone that is constant: iOS discards background tabs and reloads them,
+ * which restores the old scroll position and then replayed the intro on top
+ * of it.
+ *
+ * sessionStorage rather than a module flag alone, so the gate also survives a
+ * reload or a tab restore — a module flag is reset by both, which is exactly
+ * the case that looked worst. The module flag is still kept as the first
+ * check: it costs nothing and covers Safari private mode and any browser where
+ * storage access throws, where at least same-load navigations stay clean.
+ */
+const INTRO_SESSION_KEY = "podflix:intro-played";
+let introPlayedThisLoad = false;
+
+function introHasPlayed() {
+  if (introPlayedThisLoad) return true;
+  try {
+    return window.sessionStorage.getItem(INTRO_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markIntroPlayed() {
+  introPlayedThisLoad = true;
+  try {
+    window.sessionStorage.setItem(INTRO_SESSION_KEY, "1");
+  } catch {
+    /* Storage unavailable — the module flag still covers this page load. */
+  }
+}
+
+/**
+ * Reads the gate before the browser paints, so a returning visitor never sees
+ * a frame of the un-docked intro. useLayoutEffect does not run during SSR and
+ * warns if called there, hence the swap.
+ */
+const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const WORDMARK = "PODFLIX".split("");
 const HEADLINE = ["Every", "Story", "Starts", "Here."];
@@ -27,15 +71,31 @@ function DrawUnderline({ show }: { show: boolean }) {
 export default function Arrival() {
   const reduce = useReducedMotion();
   const [docked, setDocked] = useState(false);
-  // Reduced motion skips the whole intro and renders the docked/settled state.
-  const dockedNow = docked || !!reduce;
+  const [skipIntro, setSkipIntro] = useState(false);
+
+  // Starts false on both server and client so hydration matches, then flips
+  // before paint if this session has already seen the intro.
+  useIsoLayoutEffect(() => {
+    if (introHasPlayed()) setSkipIntro(true);
+  }, []);
+
+  // Reduced motion and a already-played intro both render the settled state.
+  const dockedNow = docked || !!reduce || skipIntro;
+  /** Settle instantly rather than animating there from the intro position. */
+  const instant = !!reduce || skipIntro;
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || skipIntro) return;
     // slam-in (~0.75s) + hold (0.4s) → dock
-    const t = setTimeout(() => setDocked(true), 1300);
+    const t = setTimeout(() => {
+      setDocked(true);
+      // Marked on completion, not on mount: leaving mid-intro means it was
+      // never really seen, and marking at mount would make React's StrictMode
+      // double-invoke swallow the intro in development.
+      markIntroPlayed();
+    }, 1300);
     return () => clearTimeout(t);
-  }, [reduce]);
+  }, [reduce, skipIntro]);
 
   const contentVariants: Variants = {
     hidden: {},
@@ -85,7 +145,7 @@ export default function Arrival() {
           >
             <motion.span
               layout
-              transition={{ layout: { duration: 0.9, ease: EASE_EXPO } }}
+              transition={{ layout: { duration: instant ? 0 : 0.9, ease: EASE_EXPO } }}
               className={`block font-display font-black leading-none tracking-tight text-cream ${
                 dockedNow
                   ? "text-xl tracking-wider"
