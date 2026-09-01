@@ -2,7 +2,8 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import { ADDONS, formatPrice } from "@/lib/booking";
+import { ADDONS } from "@/lib/booking";
+import PriceTag from "@/components/ui/PriceTag";
 
 /** Compact add-on cards — extras that stack onto any session. */
 export default function PricingAddons() {
@@ -48,8 +49,13 @@ export default function PricingAddons() {
                 <h3 className="font-display text-2xl font-semibold text-cream">
                   {a.name}
                 </h3>
-                <span className="shrink-0 font-display text-2xl font-black text-gold">
-                  {formatPrice(a.price)}
+                <span className="shrink-0">
+                  <PriceTag
+                    original={a.price}
+                    stacked
+                    className="font-display text-2xl font-black text-gold"
+                    strikeClassName="font-display text-sm font-semibold text-cream/30"
+                  />
                 </span>
               </div>
 

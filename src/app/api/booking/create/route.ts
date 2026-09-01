@@ -1,4 +1,5 @@
 import { ADDONS } from "@/lib/booking";
+import { promoPrice } from "@/lib/promo";
 import {
   CAL_SESSIONS,
   cancelCalBooking,
@@ -18,6 +19,12 @@ import { findIntentForBooking, isReusableIntent, stripeClient, toFils } from "@/
  *
  * The amount is computed here from CAL_SESSIONS and ADDONS. Nothing about
  * price, currency or event type id is taken from the request body.
+ *
+ * While the launch promotion runs, every component of the total goes through
+ * promoPrice() — the session and each addon individually, matching how they
+ * are displayed and rounded on screen. Discounting the summed total instead
+ * would round once rather than per line and could differ by a dirham from the
+ * figure the customer just agreed to.
  */
 
 type Body = {
@@ -75,7 +82,11 @@ export async function POST(request: Request) {
   const addons = ADDONS.filter((a) => requested.includes(a.id));
   if (addons.length !== requested.length) return bad(400, "Unknown addon id.");
 
-  const total = session.price + addons.reduce((sum, a) => sum + a.price, 0);
+  // promoPrice() per line, not on the sum — see the note at the top of the
+  // file. Reverts to the original figures the moment PROMO_ACTIVE is false.
+  const total =
+    promoPrice(session.price) +
+    addons.reduce((sum, a) => sum + promoPrice(a.price), 0);
 
   const format = str(body.metadata?.format, 60) ?? "";
   const setName = str(body.metadata?.setName, 120) ?? "";

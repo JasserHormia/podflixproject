@@ -3,12 +3,38 @@
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import {
+  FROM_EDITING_PRICE,
+  FROM_PRICE,
+  SESSIONS,
+  formatPrice,
+} from "@/lib/booking";
+import { PROMO_ACTIVE, promoPrice } from "@/lib/promo";
 
-const TIERS = [
-  { name: "Studio Only", price: "590", descriptor: "AED · per hour" },
-  { name: "Studio + Editing", price: "1,190", descriptor: "AED · per hour" },
-  { name: "Signature Episode", price: "3,499", descriptor: "AED · 2 hours, dynamic edit" },
-];
+/**
+ * Read from SESSIONS rather than typed out. These three numbers used to be
+ * hardcoded strings and would have gone stale the moment the promotion landed,
+ * advertising the old price beside the discounted one on the same screen.
+ *
+ * The descriptor carries the "AED", so the figures render bare — hence
+ * toLocaleString here instead of the shared PriceTag, which formats a full
+ * "AED 1,180".
+ */
+const TIERS = (
+  [
+    ["studio-1h", "Studio Only", "AED · per hour"],
+    ["edit-1h", "Studio + Editing", "AED · per hour"],
+    ["signature", "Signature Episode", "AED · 2 hours, dynamic edit"],
+  ] as const
+).map(([id, name, descriptor]) => {
+  const original = SESSIONS.find((s) => s.id === id)!.price;
+  return {
+    name,
+    descriptor,
+    original: original.toLocaleString("en-US"),
+    now: promoPrice(original).toLocaleString("en-US"),
+  };
+});
 
 export default function ThePricingSlam() {
   const reduce = useReducedMotion();
@@ -39,8 +65,18 @@ export default function ThePricingSlam() {
               <span className="text-sm uppercase tracking-[0.3em] text-cream/40">
                 {tier.name}
               </span>
-              <span className="text-center font-display text-[12vw] font-black leading-none text-cream transition-colors duration-300 group-hover:text-gold md:text-[8vw]">
-                {tier.price}
+              <span className="text-center">
+                {PROMO_ACTIVE && (
+                  <span
+                    aria-hidden
+                    className="block font-display text-2xl font-black leading-none text-cream/30 line-through decoration-1 md:text-3xl"
+                  >
+                    {tier.original}
+                  </span>
+                )}
+                <span className="block font-display text-[12vw] font-black leading-none text-cream transition-colors duration-300 group-hover:text-gold md:text-[8vw]">
+                  {tier.now}
+                </span>
               </span>
               <span className="font-body text-lg text-gold md:text-right">
                 {tier.descriptor}
@@ -50,8 +86,12 @@ export default function ThePricingSlam() {
         ))}
       </motion.div>
 
+      {/* Derived too — a hardcoded "from AED 590/hour" directly under a
+          discounted 413 would contradict the numbers above it. FROM_PRICE and
+          FROM_EDITING_PRICE are already promo-aware. */}
       <p className="mt-14 text-center text-sm text-text-muted">
-        Studio from AED 590/hour · With editing from AED 1,190/hour.
+        Studio from {formatPrice(FROM_PRICE)}/hour · With editing from{" "}
+        {formatPrice(FROM_EDITING_PRICE)}/hour.
       </p>
     </section>
   );

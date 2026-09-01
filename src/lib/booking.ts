@@ -9,6 +9,14 @@
  */
 
 import IMAGES from "@/lib/images";
+import { promoPrice } from "@/lib/promo";
+
+/**
+ * Re-exported so a consumer can reach the promotion from the same module it
+ * reads prices from. Both names resolve to the one definition in lib/promo.ts
+ * — there is still exactly one flag to flip.
+ */
+export { PROMO_ACTIVE, PROMO_PERCENT, PROMO_LABEL, promoPrice } from "@/lib/promo";
 
 /* ── Formats ─────────────────────────────────────────────────────────── */
 
@@ -476,15 +484,25 @@ export const sessionsIn = (category: SessionCategory) =>
 export const durationLabel = (hours: number) =>
   `${hours} Hour${hours === 1 ? "" : "s"}`;
 
-/** Effective hourly rate, shown only on multi-hour sessions. */
-export const hourlyRate = (s: Session) => Math.round(s.price / s.hours);
+/**
+ * Effective hourly rate — what the customer actually pays per hour, so this
+ * follows the promotion. Divides the discounted total rather than discounting
+ * the original rate: the two agree on every current session, but dividing the
+ * real total is the figure that can never disagree with the sum charged.
+ */
+export const hourlyRate = (s: Session) => Math.round(promoPrice(s.price) / s.hours);
+
+/** The pre-promotion hourly rate, for the struck-through label only. */
+export const originalHourlyRate = (s: Session) => Math.round(s.price / s.hours);
 
 /** Lowest studio-only price — the "from" figure quoted across the site. */
-export const FROM_PRICE = Math.min(...sessionsIn("studio").map((s) => s.price));
+export const FROM_PRICE = promoPrice(
+  Math.min(...sessionsIn("studio").map((s) => s.price))
+);
 
 /** Lowest studio-with-editing price. */
-export const FROM_EDITING_PRICE = Math.min(
-  ...sessionsIn("editing").map((s) => s.price)
+export const FROM_EDITING_PRICE = promoPrice(
+  Math.min(...sessionsIn("editing").map((s) => s.price))
 );
 
 /** Currency prefix — kept here so no component hardcodes it. */

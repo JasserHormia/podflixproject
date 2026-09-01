@@ -5,11 +5,15 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import EnterpriseBlock from "@/components/booking/EnterpriseBlock";
 import BookingCheckout from "@/components/booking/checkout/BookingCheckout";
+import PriceTag from "@/components/ui/PriceTag";
+import PromoBadge from "@/components/ui/PromoBadge";
+import { promoPrice } from "@/lib/promo";
 import {
   ADDONS,
   FORMATS,
   durationLabel,
   hourlyRate,
+  originalHourlyRate,
   SESSIONS,
   SETS,
   UNDECIDED_SET,
@@ -75,7 +79,14 @@ export default function BookingFlow() {
   const sets = format ? SETS[format] : [];
   const session = SESSIONS.find((s) => s.id === sessionId) ?? null;
   const chosenAddons = ADDONS.filter((a) => addons.includes(a.id));
+  // promoPrice() per line, mirroring api/booking/create exactly. Discounting
+  // the sum instead would round once and could land a dirham away from the
+  // amount the server charges.
   const total =
+    promoPrice(session?.price ?? 0) +
+    chosenAddons.reduce((sum, a) => sum + promoPrice(a.price), 0);
+  /** Pre-promotion total, for the struck-through comparison only. */
+  const originalTotal =
     (session?.price ?? 0) + chosenAddons.reduce((sum, a) => sum + a.price, 0);
   const sessionValid = session !== null;
 
@@ -86,7 +97,7 @@ export default function BookingFlow() {
     ? `${session.name} · ${durationLabel(session.hours)}`
     : "—";
   const addonLabel = chosenAddons.length
-    ? chosenAddons.map((a) => `${a.name} (+${formatPrice(a.price)})`).join(" · ")
+    ? chosenAddons.map((a) => `${a.name} (+${formatPrice(promoPrice(a.price))})`).join(" · ")
     : "None";
 
   const rows = sessionsIn(category);
@@ -347,6 +358,10 @@ export default function BookingFlow() {
                   What kind of session?
                 </h2>
 
+                {/* Renders nothing once PROMO_ACTIVE is false, so this cannot
+                    outlive the discount it advertises. */}
+                <PromoBadge className="mt-6" />
+
                 {/* Category tabs */}
                 <div className="mt-8 flex flex-wrap gap-x-8 gap-y-1 border-b border-cream/10">
                   {(
@@ -438,12 +453,20 @@ export default function BookingFlow() {
                                   Popular
                                 </span>
                               )}
-                              <span className="block font-display text-2xl font-black text-gold">
-                                {formatPrice(s.price)}
-                              </span>
+                              <PriceTag
+                                original={s.price}
+                                stacked
+                                className="font-display text-2xl font-black text-gold"
+                                strikeClassName="font-display text-sm font-semibold text-cream/30"
+                              />
                               {s.hours > 1 && (
                                 <span className="mt-1 block text-xs text-cream/30">
-                                  {formatPrice(hourlyRate(s))}/hour
+                                  <PriceTag
+                                    original={originalHourlyRate(s)}
+                                    current={hourlyRate(s)}
+                                    suffix="/hour"
+                                    strikeClassName="text-cream/30"
+                                  />
                                 </span>
                               )}
                             </span>
@@ -536,7 +559,12 @@ export default function BookingFlow() {
                           </span>
                           <span className="min-w-0">
                             <span className="block font-body text-sm text-cream">
-                              {a.name} — +{formatPrice(a.price)}
+                              {a.name} — +
+                              <PriceTag
+                                original={a.price}
+                                className="text-cream"
+                                strikeClassName="text-cream/30"
+                              />
                             </span>
                             <span className="mt-0.5 block text-xs text-cream/40">
                               {a.description}
@@ -549,7 +577,13 @@ export default function BookingFlow() {
 
                   {sessionValid && (
                     <p className="mt-5 font-display text-3xl font-black text-gold">
-                      Total: {formatPrice(total)}
+                      Total:{" "}
+                      <PriceTag
+                        original={originalTotal}
+                        current={total}
+                        className="text-gold"
+                        strikeClassName="text-xl text-cream/30"
+                      />
                     </p>
                   )}
                 </div>
@@ -619,7 +653,12 @@ export default function BookingFlow() {
                         <div className="flex items-baseline justify-between gap-6 pt-2">
                           <dt className="text-cream/40">Total</dt>
                           <dd className="font-display text-2xl font-black text-gold">
-                            {formatPrice(total)}
+                            <PriceTag
+                              original={originalTotal}
+                              current={total}
+                              className="text-gold"
+                              strikeClassName="text-base text-cream/30"
+                            />
                           </dd>
                         </div>
                       </dl>

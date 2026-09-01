@@ -14,6 +14,13 @@
  */
 
 import { SESSIONS } from "@/lib/booking";
+import { promoPrice } from "@/lib/promo";
+
+/**
+ * Re-exported so the server path can reach the promotion from the same module
+ * it reads CAL_SESSIONS from. Same single definition as lib/promo.ts.
+ */
+export { PROMO_ACTIVE, PROMO_PERCENT, PROMO_LABEL, promoPrice } from "@/lib/promo";
 
 export const TIMEZONE = "Asia/Dubai";
 
@@ -37,6 +44,16 @@ export const CAL_SESSIONS = [
 
 export type CalSession = (typeof CAL_SESSIONS)[number];
 export type CalSessionId = CalSession["id"];
+
+/**
+ * The price actually charged for a Cal session.
+ *
+ * CAL_SESSIONS keeps the original figure untouched; this is the only number
+ * that should ever reach Stripe. api/booking/create computes its total from
+ * this and from addonChargedPrice, so the sum charged cannot drift from the
+ * sum displayed while both go through promoPrice().
+ */
+export const calSessionPrice = (s: { price: number }) => promoPrice(s.price);
 
 /**
  * Cal id → the id used by the live SimplyBook flow. Taglines, descriptions,

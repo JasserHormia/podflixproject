@@ -3,7 +3,13 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import { durationLabel, formatPrice, hourlyRate, type Session } from "@/lib/booking";
+import {
+  durationLabel,
+  hourlyRate,
+  originalHourlyRate,
+  type Session,
+} from "@/lib/booking";
+import PriceTag from "@/components/ui/PriceTag";
 
 /** The three panels differ only by palette; everything else is shared. */
 type Tone = "surface" | "gold" | "teal";
@@ -16,6 +22,8 @@ const TONES: Record<
     heading: string;
     body: string;
     price: string;
+    /** Struck pre-promotion price — must survive this tone's background. */
+    strike: string;
     rule: string;
     item: string;
     watermark: string;
@@ -31,6 +39,7 @@ const TONES: Record<
     heading: "text-cream",
     body: "text-cream/60",
     price: "text-gold",
+    strike: "text-cream/30",
     rule: "border-cream/10",
     item: "text-cream/60",
     watermark: "text-cream/5",
@@ -45,6 +54,7 @@ const TONES: Record<
     heading: "text-background",
     body: "text-background/80",
     price: "text-background",
+    strike: "text-background/45",
     rule: "border-background/20",
     item: "text-background/80",
     watermark: "text-background/10",
@@ -59,6 +69,7 @@ const TONES: Record<
     heading: "text-cream",
     body: "text-cream/60",
     price: "text-gold",
+    strike: "text-cream/30",
     rule: "border-cream/10",
     item: "text-cream/60",
     watermark: "text-cream/5",
@@ -161,14 +172,20 @@ export default function CategoryPanel({
                   </div>
 
                   <div className="shrink-0 text-right">
-                    <span
-                      className={`block font-display text-2xl font-black ${t.price}`}
-                    >
-                      {formatPrice(s.price)}
-                    </span>
+                    <PriceTag
+                      original={s.price}
+                      stacked
+                      className={`font-display text-2xl font-black ${t.price}`}
+                      strikeClassName={`font-display text-sm font-semibold ${t.strike}`}
+                    />
                     {s.hours > 1 && (
                       <span className={`mt-1 block text-xs ${t.body}`}>
-                        {formatPrice(hourlyRate(s))}/hour
+                        <PriceTag
+                          original={originalHourlyRate(s)}
+                          current={hourlyRate(s)}
+                          suffix="/hour"
+                          strikeClassName={t.strike}
+                        />
                       </span>
                     )}
                   </div>
