@@ -3,8 +3,9 @@
  * selectable on /booking. No price may be invented at a call site; if a number
  * is not in this file, it does not go on screen.
  *
- * The front end owns headcount → format → set → session type. Calendar slots,
- * availability and payment belong to Simplybook.me (Stage 2).
+ * The front end owns headcount → format → set → session type. Calendar slots
+ * and availability come from Cal.com and payment from Stripe, both behind our
+ * own API routes — see lib/cal.ts and api/booking/create.
  */
 
 import IMAGES from "@/lib/images";
@@ -492,35 +493,3 @@ export const CURRENCY = "AED";
 /** Formats a number the way every price on the site is displayed. */
 export const formatPrice = (n: number) => `${CURRENCY} ${n.toLocaleString("en-US")}`;
 
-/* ── Booking summary ─────────────────────────────────────────────────── */
-
-/** Everything chosen in the flow, in display-ready form. */
-export type BookingSummary = {
-  people: number | null;
-  format: string;
-  set: string;
-  session: string;
-  addons: { name: string; price: number }[];
-  total: number;
-};
-
-/**
- * WhatsApp handoff link carrying the full selection. Kept here rather than in
- * the flow so the booking card can build it without prop-drilling.
- */
-export const whatsappBookingHref = (s: BookingSummary, whatsappUrl: string) => {
-  const body = [
-    "New Booking Request — Podflix",
-    `People: ${s.people ?? "—"}`,
-    `Format: ${s.format}`,
-    `Set: ${s.set}`,
-    `Session: ${s.session}`,
-    `Add-ons: ${
-      s.addons.length
-        ? s.addons.map((a) => `${a.name} +${formatPrice(a.price)}`).join(", ")
-        : "none"
-    }`,
-    `Total: ${formatPrice(s.total)}`,
-  ].join("\n");
-  return `${whatsappUrl}?text=${encodeURIComponent(body)}`;
-};
