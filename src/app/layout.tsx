@@ -78,9 +78,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${displayFont.variable} ${bodyFont.variable} h-full antialiased`}
+      // No h-full. `html { height: 100% }` alongside a body that had become a
+      // scroll container is the pairing iOS mishandles — and because
+      // `html.lenis { height: auto }` overrides it, that height only ever
+      // applied on touch, which is the one place it caused trouble.
+      className={`${displayFont.variable} ${bodyFont.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-text-primary">
+      <body className="bg-background text-text-primary">
         {/* LocalBusiness structured data — applies to every route. */}
         <script
           type="application/ld+json"
@@ -91,8 +95,15 @@ export default function RootLayout({
             <ScrollProgress />
             <Grain />
             <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            {/* The sticky-footer column, moved off <body> so body carries no
+                height or overflow of its own. 100dvh rather than 100vh so the
+                mobile address bar cannot make this taller than the visible
+                viewport. Navbar, Grain, ScrollProgress and WhatsAppButton are
+                all position:fixed, so they sit outside it. */}
+            <div className="flex min-h-[100dvh] flex-col">
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
             <WhatsAppButton />
           </SmoothScrollProvider>
         </MotionProvider>
