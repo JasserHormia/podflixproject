@@ -3,6 +3,7 @@
 import { useId } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 /**
  * Circular text ring using SVG <textPath>, rotating on a loop, with a static
@@ -23,13 +24,14 @@ export default function CircularText({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
   const pathId = useId();
 
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>
       <motion.div
         className="absolute inset-0"
-        animate={reduce ? undefined : { rotate: 360 }}
+        animate={reduce || isTouch ? undefined : { rotate: 360 }}
         transition={{ duration, ease: "linear", repeat: Infinity }}
       >
         <svg viewBox="0 0 100 100" className="h-full w-full">

@@ -13,6 +13,7 @@ import {
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import IMAGES from "@/lib/images";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 type Step = {
   n: string;
@@ -75,18 +76,50 @@ function useIsDesktop() {
 // The image column is 45% of the viewport on desktop, full width stacked.
 const IMAGE_SIZES = "(min-width: 768px) 45vw, 100vw";
 
+const BLEED_CLASS = "absolute inset-0 md:-top-12 md:-bottom-12";
+
+/**
+ * Image layer that drifts ±40px across the row's travel.
+ *
+ * One of these mounts per step, so this is where the scroll listeners multiply
+ * — hence its own component, never mounted on touch.
+ */
+function ParallaxImageLayer({
+  target,
+  children,
+}: {
+  target: React.RefObject<HTMLDivElement | null>;
+  children: React.ReactNode;
+}) {
+  const { scrollYProgress } = useScroll({ target, offset: ["start end", "end start"] });
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+  return (
+    <motion.div className={BLEED_CLASS} style={{ y: parallaxY }}>
+      {children}
+    </motion.div>
+  );
+}
+
+/** Picks the drifting layer or a plain one, so hooks stay out of the plain path. */
+function ParallaxWrapper({
+  parallax,
+  target,
+  children,
+}: {
+  parallax: boolean;
+  target: React.RefObject<HTMLDivElement | null>;
+  children: React.ReactNode;
+}) {
+  if (parallax) return <ParallaxImageLayer target={target}>{children}</ParallaxImageLayer>;
+  return <div className={BLEED_CLASS}>{children}</div>;
+}
+
 function ProcessStep({ step }: { step: Step }) {
   const reduce = useReducedMotion();
   const isDesktop = useIsDesktop();
+  const isTouch = useIsTouch();
   const rowRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: rowRef,
-    offset: ["start end", "end start"],
-  });
-  // Image drifts ±40px across the row's travel — slower than the page itself.
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
-  const parallax = isDesktop && !reduce;
+  const parallax = isDesktop && !reduce && !isTouch;
 
   // Content enters from whichever side of the row it occupies.
   const fromX = step.reverse ? 60 : -60;
@@ -120,10 +153,7 @@ function ProcessStep({ step }: { step: Step }) {
       >
         {/* Vertical bleed on md+ gives the parallax room to travel without
             exposing an edge; the row's overflow-hidden clips it. */}
-        <motion.div
-          className="absolute inset-0 md:-top-12 md:-bottom-12"
-          style={parallax ? { y: parallaxY } : undefined}
-        >
+        <ParallaxWrapper parallax={parallax} target={rowRef}>
           <motion.div
             className="relative h-full w-full"
             initial={reduce ? false : { scale: 1.08 }}
@@ -140,7 +170,7 @@ function ProcessStep({ step }: { step: Step }) {
               className="object-cover"
             />
           </motion.div>
-        </motion.div>
+        </ParallaxWrapper>
 
         {/* Melts into the content side — upward when stacked, sideways on md+. */}
         <div
@@ -222,14 +252,18 @@ function ProcessStep({ step }: { step: Step }) {
   );
 }
 
-export default function TheProcess() {
-  const reduce = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // Drives the connecting thread: 0 when the section's top reaches the viewport
-  // centre, 1 when its bottom does — so the line draws as you move through steps.
+/**
+ * The connecting thread that draws as you move through the steps.
+ *
+ * The line is `hidden md:block`, so on a phone this was a scroll listener and a
+ * running spring feeding an element that is never painted. Now it is simply
+ * not mounted there.
+ */
+function Thread({ target }: { target: React.RefObject<HTMLElement | null> }) {
+  // 0 when the section's top reaches the viewport centre, 1 when its bottom
+  // does — so the line draws as you move through steps.
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target,
     offset: ["start center", "end center"],
   });
   const threadScale = useSpring(scrollYProgress, {
@@ -237,6 +271,16 @@ export default function TheProcess() {
     damping: 30,
     restDelta: 0.001,
   });
+  return (
+    <motion.div className="h-full w-full origin-top bg-gold" style={{ scaleY: threadScale }} />
+  );
+}
+
+export default function TheProcess() {
+  const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
+  const sectionRef = useRef<HTMLElement>(null);
+  const drawThread = !reduce && !isTouch;
 
   return (
     <section ref={sectionRef} className="relative bg-background">
@@ -245,10 +289,11 @@ export default function TheProcess() {
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-10 z-20 hidden w-px bg-gold/20 md:block"
       >
-        <motion.div
-          className="h-full w-full origin-top bg-gold"
-          style={reduce ? { scaleY: 1 } : { scaleY: threadScale }}
-        />
+        {drawThread ? (
+          <Thread target={sectionRef} />
+        ) : (
+          <div className="h-full w-full origin-top bg-gold" />
+        )}
       </div>
 
       {STEPS.map((step) => (

@@ -16,14 +16,70 @@ import {
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import { LOGO_SRC, NAV_LINKS, SERVICES_LINE, SOCIAL } from "@/lib/brand";
+import { useIsTouch } from "@/lib/useIsTouch";
 
-/** Pulsing red REC dot. */
+const PILL_CLASS =
+  "flex items-center gap-4 rounded-full border border-gold/20 bg-surface/90 px-6 py-3 shadow-[0_0_20px_rgba(169,143,116,0.15)] backdrop-blur-md";
+
+/**
+ * The pill compresses slightly with scroll velocity.
+ *
+ * The four hooks that drive it — useScroll, useVelocity, useTransform,
+ * useSpring — attach a scroll listener and keep a spring resolving on every
+ * frame that scroll moves. They live in their own component so that touch
+ * never mounts them: hooks cannot be called conditionally, and calling them
+ * and simply not using the value still leaves the listener attached.
+ */
+function BreathingPill({
+  onOpen,
+  children,
+}: {
+  onOpen: () => void;
+  children: React.ReactNode;
+}) {
+  const { scrollY } = useScroll();
+  const velocity = useVelocity(scrollY);
+  const target = useTransform(velocity, [-1500, 0, 1500], [0.95, 1, 0.95]);
+  const scaleX = useSpring(target, { stiffness: 400, damping: 30 });
+  return (
+    <motion.button
+      type="button"
+      onClick={onOpen}
+      aria-label="Open menu"
+      style={{ scaleX }}
+      className={PILL_CLASS}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+/** Plain button on touch and under reduced motion; scroll-reactive otherwise. */
+function PillButton({
+  breathing,
+  onOpen,
+  children,
+}: {
+  breathing: boolean;
+  onOpen: () => void;
+  children: React.ReactNode;
+}) {
+  if (breathing) return <BreathingPill onOpen={onOpen}>{children}</BreathingPill>;
+  return (
+    <button type="button" onClick={onOpen} aria-label="Open menu" className={PILL_CLASS}>
+      {children}
+    </button>
+  );
+}
+
+/** Pulsing red REC dot. Static on touch — an infinite loop is not worth a frame budget. */
 function RecDot({ reduce }: { reduce: boolean | null }) {
+  const isTouch = useIsTouch();
   return (
     <motion.span
       aria-hidden
       className="block h-2 w-2 rounded-full bg-red-500"
-      animate={reduce ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
+      animate={reduce || isTouch ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
       transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
     />
   );
@@ -47,6 +103,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
   const pathname = usePathname();
   // Homepage supplies its own docked wordmark (Arrival) in the logo slot.
   const isHome = pathname === "/";
@@ -91,12 +148,6 @@ export default function Navbar() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
-
-  // Mobile pill "breathing": compresses with scroll velocity, springs back to 1.
-  const { scrollY } = useScroll();
-  const velocity = useVelocity(scrollY);
-  const pillScaleTarget = useTransform(velocity, [-1500, 0, 1500], [0.95, 1, 0.95]);
-  const pillScaleX = useSpring(pillScaleTarget, { stiffness: 400, damping: 30 });
 
   const listContainer: Variants = {
     hidden: {},
@@ -157,12 +208,9 @@ export default function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE_EXPO, delay: 1 }}
       >
-        <motion.button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-          style={reduce ? undefined : { scaleX: pillScaleX }}
-          className="flex items-center gap-4 rounded-full border border-gold/20 bg-surface/90 px-6 py-3 shadow-[0_0_20px_rgba(169,143,116,0.15)] backdrop-blur-md"
+        <PillButton
+          breathing={!reduce && !isTouch}
+          onOpen={() => setOpen(true)}
         >
           <span className="flex items-center gap-1.5">
             <RecDot reduce={reduce} />
@@ -182,7 +230,7 @@ export default function Navbar() {
             className="h-7 w-auto object-contain"
           />
           <span className="text-xs uppercase tracking-[0.2em] text-gold">MENU</span>
-        </motion.button>
+        </PillButton>
       </motion.div>
 
       {/* ── FULL-SCREEN MENU ── */}

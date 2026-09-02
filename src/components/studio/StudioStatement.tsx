@@ -10,6 +10,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const LINES = ["Built for", "creators", "who are", "serious."];
 const STATS = [
@@ -22,12 +23,10 @@ const STATS = [
 function StatementLine({
   progress,
   index,
-  reduce,
   children,
 }: {
   progress: MotionValue<number>;
   index: number;
-  reduce: boolean | null;
   children: string;
 }) {
   const start = 0.05 + index * 0.08;
@@ -35,19 +34,50 @@ function StatementLine({
   const x = useTransform(progress, [start, end], [-80, 0]);
   const opacity = useTransform(progress, [start, end], [0, 1]);
   return (
-    <motion.span style={reduce ? undefined : { x, opacity }} className="block">
+    <motion.span style={{ x, opacity }} className="block">
       {children}
     </motion.span>
   );
 }
 
-export default function StudioStatement() {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
+/**
+ * Scroll-scrubbed headline. Owns the only useScroll in this file, so touch and
+ * reduced motion render <StaticHeadline /> and attach no scroll listener.
+ */
+function ScrubbedHeadline({ target }: { target: React.RefObject<HTMLElement | null> }) {
   const { scrollYProgress } = useScroll({
-    target: ref,
+    target,
     offset: ["start end", "center center"],
   });
+  return (
+    <>
+      {LINES.map((line, i) => (
+        <StatementLine key={line} progress={scrollYProgress} index={i}>
+          {line}
+        </StatementLine>
+      ))}
+    </>
+  );
+}
+
+/** The settled headline — every line at its final position. */
+function StaticHeadline() {
+  return (
+    <>
+      {LINES.map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
+    </>
+  );
+}
+
+export default function StudioStatement() {
+  const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
+  const ref = useRef<HTMLElement>(null);
+  const scrub = !reduce && !isTouch;
 
   const statContainer: Variants = {
     hidden: {},
@@ -68,11 +98,7 @@ export default function StudioStatement() {
         className="font-display font-black leading-[0.85] tracking-[-0.02em] text-cream md:w-3/5"
         style={{ fontSize: "clamp(48px, 7vw, 100px)" }}
       >
-        {LINES.map((line, i) => (
-          <StatementLine key={line} progress={scrollYProgress} index={i} reduce={reduce}>
-            {line}
-          </StatementLine>
-        ))}
+        {scrub ? <ScrubbedHeadline target={ref} /> : <StaticHeadline />}
       </h2>
 
       {/* Right — stats */}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Alexandria } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
+import MotionProvider from "@/components/providers/MotionProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Grain from "@/components/ui/Grain";
@@ -85,14 +86,16 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(localBusinessSchema) }}
         />
-        <SmoothScrollProvider>
-          <ScrollProgress />
-          <Grain />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <WhatsAppButton />
-        </SmoothScrollProvider>
+        <MotionProvider>
+          <SmoothScrollProvider>
+            <ScrollProgress />
+            <Grain />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </SmoothScrollProvider>
+        </MotionProvider>
       </body>
     </html>
   );

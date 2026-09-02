@@ -93,6 +93,21 @@ h6 {
   background: var(--color-gold);
 }
 
+/*
+ * Touch devices drop the full-viewport decorative layers.
+ *
+ * The grain sits over the whole viewport with mix-blend-overlay, which forces
+ * the compositor to re-blend every pixel on every scrolled frame; the vignette
+ * is a second full-viewport fixed layer on top of it. On a phone that is the
+ * most expensive thing on the page and the least visible. Done in CSS rather
+ * than JS so the markup stays a server component and the layers never mount.
+ */
+@media (hover: none) and (pointer: coarse) {
+  .touch-hide {
+    display: none !important;
+  }
+}
+
 /* Lenis smooth scroll */
 html.lenis,
 html.lenis body {

@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const WORDS = [
   { text: "Every", className: "text-cream" },
@@ -14,6 +15,7 @@ const TICKER = "STUDIO · DUBAI · PRODUCTION · EDITING · PODFLIX · ";
 
 export default function AboutManifesto() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   const container: Variants = {
     hidden: {},
@@ -83,7 +85,7 @@ export default function AboutManifesto() {
       <div aria-hidden className="pointer-events-none absolute bottom-0 left-0 flex w-full overflow-hidden">
         <motion.div
           className="flex whitespace-nowrap font-display text-6xl font-black text-cream/5"
-          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+          animate={reduce || isTouch ? undefined : { x: ["0%", "-50%"] }}
           transition={{ duration: 30, ease: "linear", repeat: Infinity }}
         >
           <span>{TICKER.repeat(3)}</span>

@@ -7,6 +7,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import { LOGO_SRC, SERVICES_LINE } from "@/lib/brand";
 import HeroVideo from "./HeroVideo";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 /**
  * The intro plays once per browsing session, not once per mount.
@@ -70,6 +71,7 @@ function DrawUnderline({ show }: { show: boolean }) {
 
 export default function Arrival() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
   const [docked, setDocked] = useState(false);
   const [skipIntro, setSkipIntro] = useState(false);
 
@@ -260,7 +262,7 @@ export default function Arrival() {
           <motion.span
             aria-hidden
             className="absolute inset-x-0 top-0 h-1/2 bg-gold"
-            animate={reduce ? undefined : { y: ["-100%", "200%"] }}
+            animate={reduce || isTouch ? undefined : { y: ["-100%", "200%"] }}
             transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
           />
         </span>

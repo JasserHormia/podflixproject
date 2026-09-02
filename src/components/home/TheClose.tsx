@@ -4,6 +4,7 @@ import { useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 import { FROM_PRICE, formatPrice } from "@/lib/booking";
 import IMAGES from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
@@ -35,21 +36,33 @@ function useIsDesktop() {
   );
 }
 
-export default function TheClose() {
-  const reduce = useReducedMotion();
-  const isDesktop = useIsDesktop();
-  const sectionRef = useRef<HTMLElement>(null);
+const WATERMARK_CLASS =
+  "pointer-events-none absolute inset-x-0 bottom-[-3vw] select-none text-center font-display text-[25vw] font-black leading-none text-background/[0.08] md:text-[20vw]";
 
+/**
+ * Wordmark that drifts ~60px up as the section arrives. Owns the only
+ * useScroll here, so touch mounts the static span instead and no scroll
+ * listener is attached.
+ */
+function ParallaxWatermark({ target }: { target: React.RefObject<HTMLElement | null> }) {
   // This is the last section on the page, so it never scrolls back out of the
   // viewport — an "end start" range would leave half the drift unreachable.
   // "end end" completes exactly as the section finishes scrolling into view.
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end end"],
-  });
-  // Wordmark drifts ~60px upward as the section arrives.
+  const { scrollYProgress } = useScroll({ target, offset: ["start end", "end end"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], [60, 0]);
-  const parallax = isDesktop && !reduce;
+  return (
+    <motion.span aria-hidden style={{ y: watermarkY }} className={WATERMARK_CLASS}>
+      PODFLIX
+    </motion.span>
+  );
+}
+
+export default function TheClose() {
+  const reduce = useReducedMotion();
+  const isDesktop = useIsDesktop();
+  const isTouch = useIsTouch();
+  const sectionRef = useRef<HTMLElement>(null);
+  const parallax = isDesktop && !reduce && !isTouch;
 
   return (
     <section
@@ -77,13 +90,13 @@ export default function TheClose() {
       />
 
       {/* Oversized wordmark bleeding off the bottom edge */}
-      <motion.span
-        aria-hidden
-        style={parallax ? { y: watermarkY } : undefined}
-        className="pointer-events-none absolute inset-x-0 bottom-[-3vw] select-none text-center font-display text-[25vw] font-black leading-none text-background/[0.08] md:text-[20vw]"
-      >
-        PODFLIX
-      </motion.span>
+      {parallax ? (
+        <ParallaxWatermark target={sectionRef} />
+      ) : (
+        <span aria-hidden className={WATERMARK_CLASS}>
+          PODFLIX
+        </span>
+      )}
 
       {/* ── Centre stack ── */}
       <div className="relative z-10 w-full max-w-4xl text-center">

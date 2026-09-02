@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import IMAGES from "@/lib/images";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const HEADING = ["The", "Studio."];
 const OVERLAY =
@@ -11,6 +12,7 @@ const OVERLAY =
 
 export default function StudioEntrance() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   const container: Variants = {
     hidden: {},
@@ -97,7 +99,7 @@ export default function StudioEntrance() {
           <motion.span
             aria-hidden
             className="absolute inset-x-0 top-0 h-1/2 bg-gold"
-            animate={reduce ? undefined : { y: ["-100%", "200%"] }}
+            animate={reduce || isTouch ? undefined : { y: ["-100%", "200%"] }}
             transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
           />
         </span>

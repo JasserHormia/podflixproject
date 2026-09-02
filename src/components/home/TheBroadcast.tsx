@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const PHRASE =
   "EVERY STORY STARTS HERE · STUDIO · PRODUCTION · EDITING · DUBAI · PODFLIX · ";
 
 export default function TheBroadcast() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   return (
     <section className="relative flex min-h-[40vh] flex-col items-center justify-center overflow-hidden bg-background py-20 md:min-h-[70vh] md:py-0">
@@ -25,7 +27,7 @@ export default function TheBroadcast() {
       <div aria-hidden className="pointer-events-none flex w-full items-center overflow-hidden">
         <motion.div
           className="flex whitespace-nowrap font-display text-4xl font-black text-cream/10 md:text-6xl"
-          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+          animate={reduce || isTouch ? undefined : { x: ["0%", "-50%"] }}
           transition={{ duration: 20, ease: "linear", repeat: Infinity }}
         >
           <span>{PHRASE.repeat(4)}</span>

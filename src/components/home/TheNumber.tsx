@@ -9,16 +9,22 @@ import {
   useTransform,
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const STATS = ["3 Formats", "12 Themed Sets", "∞ Stories"];
 
-export default function TheNumber() {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const numberRef = useRef<HTMLSpanElement>(null);
+const NUMBER_CLASS =
+  "pointer-events-none absolute select-none font-display text-[40vw] font-black leading-none text-cream/10";
 
+/**
+ * The counting, drifting number. Holds every scroll hook in this file so that
+ * touch and reduced motion mount <StaticNumber /> instead and no scroll
+ * listener is attached at all.
+ */
+function ScrubbedNumber({ target }: { target: React.RefObject<HTMLElement | null> }) {
+  const numberRef = useRef<HTMLSpanElement>(null);
   const { scrollYProgress } = useScroll({
-    target: ref,
+    target,
     offset: ["start end", "center center"],
   });
 
@@ -28,9 +34,31 @@ export default function TheNumber() {
 
   // Update the giant number's text directly — no per-frame re-render.
   useMotionValueEvent(count, "change", (v) => {
-    if (reduce || !numberRef.current) return;
+    if (!numberRef.current) return;
     numberRef.current.textContent = Math.round(v).toString();
   });
+
+  return (
+    <motion.span aria-hidden style={{ y: numberY }} className={NUMBER_CLASS}>
+      <span ref={numberRef}>0</span>
+    </motion.span>
+  );
+}
+
+/** The settled state: the number it counts up to, sitting still. */
+function StaticNumber() {
+  return (
+    <span aria-hidden className={NUMBER_CLASS}>
+      100
+    </span>
+  );
+}
+
+export default function TheNumber() {
+  const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
+  const ref = useRef<HTMLElement>(null);
+  const scrub = !reduce && !isTouch;
 
   return (
     <section
@@ -38,13 +66,7 @@ export default function TheNumber() {
       className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-background py-24 md:min-h-screen md:py-0"
     >
       {/* The counting number IS the texture — massive, faint, parallaxed */}
-      <motion.span
-        aria-hidden
-        style={reduce ? undefined : { y: numberY }}
-        className="pointer-events-none absolute select-none font-display text-[40vw] font-black leading-none text-cream/10"
-      >
-        <span ref={numberRef}>{reduce ? "100" : "0"}</span>
-      </motion.span>
+      {scrub ? <ScrubbedNumber target={ref} /> : <StaticNumber />}
 
       {/* Foreground statement */}
       <div className="relative z-10 px-6 text-center">

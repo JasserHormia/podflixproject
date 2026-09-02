@@ -13,7 +13,7 @@ export default function Grain() {
       {/* Grain */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-[55] opacity-[0.04] mix-blend-overlay"
+        className="touch-hide pointer-events-none fixed inset-0 z-[55] opacity-[0.04] mix-blend-overlay"
         style={{
           backgroundImage: `url("data:image/svg+xml,${GRAIN_SVG}")`,
           backgroundSize: "160px 160px",
@@ -22,7 +22,7 @@ export default function Grain() {
       {/* Vignette — darkens the edges for depth */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-[54]"
+        className="touch-hide pointer-events-none fixed inset-0 z-[54]"
         style={{
           background:
             "radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,0.5) 100%)",

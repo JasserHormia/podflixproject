@@ -3,6 +3,7 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import { FROM_PRICE, formatPrice } from "@/lib/booking";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const TICKER =
   "3-Camera Setup · Professional Audio · Studio Operator · 12 Themed Sets · 4K Export · Color Grading · Animated Captions · Motion Graphics · ";
@@ -17,6 +18,7 @@ const STATS = [
 
 export default function AlwaysIncluded() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   const statContainer: Variants = {
     hidden: {},
@@ -41,7 +43,7 @@ export default function AlwaysIncluded() {
         <motion.div
           aria-hidden
           className="flex whitespace-nowrap font-display text-4xl font-black text-cream/20 md:text-5xl"
-          animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+          animate={reduce || isTouch ? undefined : { x: ["0%", "-50%"] }}
           transition={{ duration: 35, ease: "linear", repeat: Infinity }}
         >
           <span>{TICKER.repeat(2)}</span>

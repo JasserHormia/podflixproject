@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 const INCLUSIONS = [
   { name: "Acoustically Treated Room", detail: "Controlled recording environment" },
@@ -15,6 +16,7 @@ const INCLUSIONS = [
 
 export default function StudioIncluded() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   const rowVariants: Variants = {
     hidden: { opacity: 0, x: reduce ? 0 : 60 },
@@ -29,7 +31,7 @@ export default function StudioIncluded() {
           <motion.span
             aria-hidden
             className="mb-5 block h-2 w-2 rounded-full bg-gold"
-            animate={reduce ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
+            animate={reduce || isTouch ? undefined : { scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
             transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
           />
           <h2

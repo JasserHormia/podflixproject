@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useIsTouch } from "@/lib/useIsTouch";
 
 /**
  * Deterministic pseudo-random in [0, 1), seeded by bar index. Pure (Math.sin/
@@ -32,6 +33,7 @@ export default function AudioWaveform({
   maxHeight?: number;
 }) {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   const bars = useMemo(
     () =>
@@ -50,7 +52,7 @@ export default function AudioWaveform({
           key={i}
           className={`w-0.5 rounded-full ${barClassName}`}
           style={{ height: minHeight }}
-          animate={reduce ? undefined : { height: [minHeight, bar.peak, minHeight] }}
+          animate={reduce || isTouch ? undefined : { height: [minHeight, bar.peak, minHeight] }}
           transition={{
             duration: bar.duration,
             delay: bar.delay,

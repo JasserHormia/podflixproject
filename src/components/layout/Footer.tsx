@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { useIsTouch } from "@/lib/useIsTouch";
 import {
   BRAND_NAME,
   LOGO_SRC,
@@ -33,6 +34,7 @@ const COL_HEADING = "mb-6 text-[9px] uppercase tracking-[0.4em] text-cream/30";
 export default function Footer() {
   const pathname = usePathname();
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
   // The homepage ends with its own full-screen "Close" panel, which replaces
   // the footer there. Render nothing on home.
   if (pathname === "/") return null;
@@ -49,7 +51,7 @@ export default function Footer() {
           backgroundSize: "200% 100%",
         }}
         initial={false}
-        animate={reduce ? undefined : { backgroundPosition: ["200% 0", "-200% 0"] }}
+        animate={reduce || isTouch ? undefined : { backgroundPosition: ["200% 0", "-200% 0"] }}
         transition={{ duration: 3, ease: "linear", repeat: Infinity }}
       />
 
@@ -151,7 +153,7 @@ export default function Footer() {
           aria-hidden
           className="h-px w-15 bg-gold/30"
           initial={false}
-          animate={reduce ? undefined : { opacity: [0.3, 0.7, 0.3] }}
+          animate={reduce || isTouch ? undefined : { opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
         />
 
