@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 
 export default function StudioClose() {
   const reduce = useReducedMotion();
@@ -13,7 +13,7 @@ export default function StudioClose() {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gold">
       {/* Image reads as texture beneath the dominant gold */}
       <Image
-        src={IMAGES.quattro_2}
+        src={PHOTOS.studio_cream_quattro}
         alt=""
         fill
         sizes="100vw"

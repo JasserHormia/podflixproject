@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 
 const STATEMENTS = [
   {
@@ -77,8 +77,8 @@ export default function AboutStory() {
         <div className="md:sticky md:top-[10%]">
           <div className="relative min-h-[50vh] overflow-hidden md:h-[clamp(320px,42vh,400px)] md:min-h-0">
             <Image
-              src={IMAGES.quattro_1}
-              alt="The Quattro setup inside the Podflix studio"
+              src={PHOTOS.production_crew}
+              alt="A Podflix crew member marking a take with a clapperboard beside a softbox — Podflix Studio Dubai"
               fill
               sizes="(min-width: 768px) 35vw, 100vw"
               quality={85}

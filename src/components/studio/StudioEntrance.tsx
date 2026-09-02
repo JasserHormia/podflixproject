@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import { useIsTouch } from "@/lib/useIsTouch";
 
 const HEADING = ["The", "Studio."];
@@ -27,8 +27,8 @@ export default function StudioEntrance() {
     <section className="relative min-h-screen overflow-hidden bg-background">
       {/* Full-bleed background */}
       <Image
-        src={IMAGES.quattro_1}
-        alt="The Quattro setup inside the Podflix studio"
+        src={PHOTOS.studio_navy_duo}
+        alt="Navy-panelled podcast set with two ornate armchairs, brass floor lamps and boom microphones — Podflix Studio, Business Bay Dubai"
         fill
         priority
         sizes="100vw"

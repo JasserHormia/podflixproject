@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import IMAGES, { PHOTOS } from "@/lib/images";
 
 // Inline SVG noise — grain texture with no external asset.
 const NOISE = encodeURIComponent(
@@ -17,9 +17,9 @@ const grainStyle = {
 
 // Right column photo slots — one per setup, top to bottom.
 const SLOTS = [
-  { src: IMAGES.duo_1, alt: "The Duo setup — two armchairs and boom microphones" },
+  { src: PHOTOS.studio_cream_duo, alt: "Cream podcast set with two bouclé armchairs and Shure boom microphones — Podflix Studio, Business Bay Dubai" },
   { src: IMAGES.solo_1, alt: "The Solo setup — a host recording alone" },
-  { src: IMAGES.quattro_2, alt: "The Quattro setup — four armchairs arranged for a panel" },
+  { src: PHOTOS.studio_cream_quattro, alt: "Four-seat panel podcast set with bouclé armchairs around the studio table — Podflix Studio, Business Bay Dubai" },
 ];
 
 // Each column is ~half the viewport on desktop, full width on mobile.

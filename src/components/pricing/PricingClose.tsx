@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
 import { FROM_PRICE, formatPrice } from "@/lib/booking";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
 import MagneticButton from "@/components/ui/MagneticButton";
 
@@ -12,7 +12,7 @@ export default function PricingClose() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
       <Image
-        src={IMAGES.quattro_3}
+        src={PHOTOS.studio_cream_quattro}
         alt=""
         fill
         sizes="100vw"

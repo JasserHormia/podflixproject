@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import { SOCIAL } from "@/lib/brand";
 import TextWipe from "@/components/ui/TextWipe";
 
@@ -152,8 +152,8 @@ export default function AboutContact() {
         transition={{ duration: 0.8, ease: EASE_EXPO }}
       >
         <Image
-          src={IMAGES.solo_4}
-          alt="Microphone on the Solo desk at Podflix"
+          src={PHOTOS.detail_microphone}
+          alt="Close-up of a Shure broadcast microphone on a boom arm above the studio table — Podflix Studio Dubai"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

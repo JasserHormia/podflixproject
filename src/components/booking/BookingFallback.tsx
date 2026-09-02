@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import MagneticButton from "@/components/ui/MagneticButton";
 
 export default function BookingFallback() {
@@ -57,8 +57,8 @@ export default function BookingFallback() {
         transition={{ duration: 0.8, ease: EASE_EXPO }}
       >
         <Image
-          src={IMAGES.solo_2}
-          alt="Microphone on the Solo desk at Podflix"
+          src={PHOTOS.guest_blazer}
+          alt="A podcast host in a white blazer recording beside the studio bookshelf — Podflix Studio Dubai"
           fill
           sizes="(min-width: 768px) 50vw, 100vw"
           quality={85}

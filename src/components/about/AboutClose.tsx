@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
 import MagneticButton from "@/components/ui/MagneticButton";
 
@@ -11,7 +11,7 @@ export default function AboutClose() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gold">
       <Image
-        src={IMAGES.duo_1}
+        src={PHOTOS.studio_cream_duo}
         alt=""
         fill
         sizes="100vw"

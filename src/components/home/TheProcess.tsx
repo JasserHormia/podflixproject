@@ -12,7 +12,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import { useIsTouch } from "@/lib/useIsTouch";
 
 type Step = {
@@ -34,8 +34,8 @@ const STEPS: Step[] = [
     line: "Pick your setup, choose your theme, reserve your slot in minutes.",
     cta: "Start booking",
     href: "/booking",
-    src: IMAGES.solo_1,
-    alt: "A host recording in the Solo setup",
+    src: PHOTOS.studio_cream_quattro,
+    alt: "Four-seat panel podcast set with bouclé armchairs around the studio table — Podflix Studio, Business Bay Dubai",
     reverse: false,
   },
   {
@@ -44,8 +44,8 @@ const STEPS: Step[] = [
     line: "Walk in. Sit down. Our operator handles cameras, sound, and lighting — you just talk.",
     cta: "See the studio",
     href: "/studio",
-    src: IMAGES.duo_1,
-    alt: "The Duo setup with two armchairs and boom microphones",
+    src: PHOTOS.guest_amber,
+    alt: "A podcast host recording at the studio table under warm amber light — Podflix Studio, Business Bay Dubai",
     reverse: true,
   },
   {
@@ -54,8 +54,8 @@ const STEPS: Step[] = [
     line: "Leave with raw footage or a fully edited, 4K-ready episode. Your story, out in the world.",
     cta: "View packages",
     href: "/pricing",
-    src: IMAGES.quattro_1,
-    alt: "The Quattro setup around the studio table",
+    src: PHOTOS.production_editor,
+    alt: "A Podflix editor cutting a podcast episode in Premiere Pro — Podflix Studio, Business Bay Dubai",
     reverse: false,
   },
 ];

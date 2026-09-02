@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 
 const EQUIPMENT = [
   { name: "Shure Microphones", spec: "Up to ×4" },
@@ -96,8 +96,8 @@ export default function StudioEquipment() {
         {/* RIGHT — full-height image bleeding into the column */}
         <div className="relative min-h-[50vh] md:min-h-full">
           <Image
-            src={IMAGES.duo_2}
-            alt="The Duo setup in the navy panelled room"
+            src={PHOTOS.detail_microphone}
+            alt="Close-up of a Shure broadcast microphone on a boom arm above the studio table — Podflix Studio Dubai"
             fill
             sizes="(min-width: 768px) 45vw, 100vw"
             quality={85}

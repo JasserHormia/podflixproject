@@ -6,7 +6,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { EASE_EXPO } from "@/lib/motion";
 import { useIsTouch } from "@/lib/useIsTouch";
 import { FROM_PRICE, formatPrice } from "@/lib/booking";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 import TextWipe from "@/components/ui/TextWipe";
 import MagneticButton from "@/components/ui/MagneticButton";
 
@@ -74,7 +74,7 @@ export default function TheClose() {
       {/* Ghost photo — barely there, just enough to break the flat field */}
       <Image
         aria-hidden
-        src={IMAGES.duo_1}
+        src={PHOTOS.studio_navy_duo}
         alt=""
         fill
         sizes="100vw"

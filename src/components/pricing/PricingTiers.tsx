@@ -1,5 +1,5 @@
 import CategoryPanel from "@/components/pricing/CategoryPanel";
-import IMAGES from "@/lib/images";
+import IMAGES, { PHOTOS } from "@/lib/images";
 import { sessionsIn } from "@/lib/booking";
 
 /**
@@ -27,8 +27,8 @@ export default function PricingTiers() {
         title="Studio + Editing"
         subtitle="Record it. Edit it. Publish it."
         sessions={sessionsIn("editing")}
-        image={IMAGES.duo_1}
-        alt="Duo interview podcast set with two warm lounge armchairs — Podflix Studio Dubai"
+        image={PHOTOS.production_room}
+        alt="The Podflix production and editing room, editing desk beneath the studio signage — Business Bay Dubai"
         tone="gold"
         imageSide="left"
       />

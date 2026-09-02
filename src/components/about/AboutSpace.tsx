@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 
 /** Image with a hover overlay + label. Module-scope for stable identity. */
 function ImageTile({
@@ -44,8 +44,8 @@ export default function AboutSpace() {
           className="flex flex-col"
         >
           <ImageTile
-            src={IMAGES.solo_1}
-            alt="A host recording alone in the Solo setup"
+            src={PHOTOS.studio_navy_duo}
+            alt="Navy-panelled podcast set with two ornate armchairs, brass floor lamps and boom microphones — Podflix Studio, Business Bay Dubai"
             sizes={SIZES}
             className="aspect-video"
           />
@@ -59,8 +59,8 @@ export default function AboutSpace() {
             </p>
           </div>
           <ImageTile
-            src={IMAGES.duo_2}
-            alt="The Duo setup in the navy panelled room"
+            src={PHOTOS.detail_bookshelf}
+            alt="Studio shelf with art books, dried pampas and a brass Burj Khalifa model — Podflix Studio, Business Bay Dubai"
             sizes={SIZES}
             className="aspect-square"
           />
@@ -75,8 +75,8 @@ export default function AboutSpace() {
           className="relative min-h-[60vh] md:min-h-full"
         >
           <ImageTile
-            src={IMAGES.quattro_3}
-            alt="The Quattro setup arranged for a panel"
+            src={PHOTOS.detail_lamp}
+            alt="Brass floor lamp and carved wood sculpture beside a bouclé armchair — Podflix Studio, Business Bay Dubai"
             sizes={SIZES}
             className="absolute inset-0"
           />

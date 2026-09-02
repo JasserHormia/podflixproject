@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { EASE_EXPO } from "@/lib/motion";
-import IMAGES from "@/lib/images";
+import { PHOTOS } from "@/lib/images";
 
 const HEADING = ["Reserve", "Your", "Studio."];
 const OVERLAY =
@@ -66,8 +66,8 @@ export default function BookingMoment() {
   return (
     <section className="relative min-h-[70vh] overflow-hidden bg-background">
       <Image
-        src={IMAGES.duo_3}
-        alt="The Duo setup at the Podflix studio table"
+        src={PHOTOS.guest_kandura}
+        alt="A guest in a white kandura recording against the navy studio backdrop — Podflix Studio, Business Bay Dubai"
         fill
         priority
         sizes="100vw"

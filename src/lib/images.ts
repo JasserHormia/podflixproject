@@ -38,6 +38,40 @@ const IMAGES = {
   quattro_3: "/assets/setups/quattro/quattro-03.jpg",
 } as const;
 
+/**
+ * Editorial photography — the studio in use, the production room, the crew,
+ * and detail shots.
+ *
+ * Deliberately a separate object from IMAGES. Those 13 frames are bound
+ * one-to-one to the themed sets a customer picks by name in the booking flow,
+ * and their count is quoted in site copy ("12 Themed Sets"), so swapping one
+ * would show someone a room they are not booking. These carry no such
+ * contract — they fill decorative slots only.
+ *
+ * Sources were 105MB of PNG masters; re-encoded to WebP at 2400px (hero) or
+ * 1600px (supporting) for 1.2MB total, since nothing renders above 2400 CSS px.
+ */
+export const PHOTOS = {
+  /* Sets — cinematic room shots */
+  studio_navy_duo: "/assets/photos/studio-navy-duo-armchairs.webp",
+  studio_cream_duo: "/assets/photos/studio-cream-duo-boucle.webp",
+  studio_cream_quattro: "/assets/photos/studio-cream-quattro.webp",
+  /* Production & post */
+  production_room: "/assets/photos/production-room-desk.webp",
+  production_editor: "/assets/photos/production-editor-premiere.webp",
+  production_crew: "/assets/photos/production-crew-clapperboard.webp",
+  /* Details — all portrait, for the tall slots */
+  detail_microphone: "/assets/photos/detail-shure-microphone.webp",
+  detail_lamp: "/assets/photos/detail-brass-lamp-sculpture.webp",
+  detail_bookshelf: "/assets/photos/detail-bookshelf-dubai.webp",
+  /* The studio in use */
+  guest_amber: "/assets/photos/guest-host-recording-amber.webp",
+  guest_kandura: "/assets/photos/guest-kandura-navy-set.webp",
+  guest_blazer: "/assets/photos/guest-host-white-blazer.webp",
+} as const;
+
+export type PhotoKey = keyof typeof PHOTOS;
+
 export type ImageKey = keyof typeof IMAGES;
 export default IMAGES;
 
