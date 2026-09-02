@@ -58,9 +58,24 @@ export default function AboutStory() {
           ))}
         </motion.div>
 
-        {/* RIGHT — sticky image (desktop) */}
+        {/* RIGHT — sticky image (desktop)
+
+            The image has to be SHORTER than the text column beside it, or it
+            is itself what sets the grid row height and sticky has no room to
+            travel. That was the bug: at md:min-h-[80vh] the image was the
+            taller of the two at every desktop size — 720px against 535px of
+            text at 1440x900 — so the row was exactly as tall as the element
+            trying to stick inside it.
+
+            Height is capped in px rather than vh for the same reason. The text
+            column gets SHORTER as the viewport widens (767px at 768, floor of
+            495px past 1680) while a vh height gets taller, so the two diverge
+            exactly where the effect is most visible. clamp keeps it
+            proportional on smaller screens and caps it once the text stops
+            shrinking. Mobile is untouched — min-h-[50vh] still applies below
+            md, where the column is stacked and nothing is sticky. */}
         <div className="md:sticky md:top-[10%]">
-          <div className="relative min-h-[50vh] overflow-hidden md:min-h-[80vh]">
+          <div className="relative min-h-[50vh] overflow-hidden md:h-[clamp(320px,42vh,400px)] md:min-h-0">
             <Image
               src={IMAGES.quattro_1}
               alt="The Quattro setup inside the Podflix studio"
