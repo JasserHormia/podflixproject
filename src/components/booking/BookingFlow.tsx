@@ -135,6 +135,44 @@ export default function BookingFlow() {
   };
 
 
+  /**
+   * Every step change starts at the top of the step.
+   *
+   * There was no scroll management here at all, so the browser simply kept
+   * whatever offset the previous step left behind. Steps 1→2 and 2→3 happened
+   * to survive that because those steps are a similar height, but 3→4 did not:
+   * the Continue button sits below the session list and the add-ons, so by the
+   * time it is pressed the page is ~1800px down, and step 4 then renders with
+   * its heading and the whole date picker already scrolled past. Going Back
+   * had the same problem in reverse.
+   *
+   * The target is the steps wrapper, not the step's own heading, and that is
+   * deliberate: AnimatePresence runs in `mode="wait"`, so when `step` changes
+   * the new step has not mounted yet — the old one is still playing its exit.
+   * The wrapper is always mounted, and its top does not move, so this needs no
+   * timer and does not care that step 4's calendar fills in asynchronously
+   * afterwards. Scrolling to a point above the content is unaffected by the
+   * content below it growing.
+   *
+   * The offset lives in `scroll-mt-40` on the wrapper rather than in arithmetic
+   * here — scrollIntoView honours scroll-margin-top, and 160px clears the 64px
+   * navbar plus the 87px sticky progress bar with room to spare.
+   */
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const firstStepRender = useRef(true);
+  useEffect(() => {
+    // Not on mount. Someone arriving at /booking should land where the browser
+    // put them, not be yanked down to the flow.
+    if (firstStepRender.current) {
+      firstStepRender.current = false;
+      return;
+    }
+    stepsRef.current?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [step, reduce]);
+
   // ── Step transition ──
   const variants = reduce
     ? { initial: {}, animate: {}, exit: {} }
@@ -205,7 +243,7 @@ export default function BookingFlow() {
              overflow-hidden clips the ±40px slide between steps, which would
              otherwise widen the document mid-transition. The -mx-2/px-2 pair
              pushes the clip edge clear of focus rings without moving content. */}
-        <div className="-mx-2 min-h-136 overflow-hidden px-2">
+        <div ref={stepsRef} className="-mx-2 min-h-136 scroll-mt-40 overflow-hidden px-2">
           <AnimatePresence mode="wait">
             {/* ═══ STEP 1 — PEOPLE ═══ */}
             {step === 1 && (
