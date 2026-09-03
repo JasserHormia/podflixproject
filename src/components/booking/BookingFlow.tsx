@@ -16,7 +16,6 @@ import {
   originalHourlyRate,
   SESSIONS,
   SETS,
-  UNDECIDED_SET,
   formatPrice,
   headcountToFormat,
   sessionsIn,
@@ -91,8 +90,7 @@ export default function BookingFlow() {
   const sessionValid = session !== null;
 
   const chosenSet = sets.find((s) => s.id === setId) ?? null;
-  const setName =
-    setId === UNDECIDED_SET ? "Not sure yet — needs a recommendation" : chosenSet?.name ?? "—";
+  const setName = chosenSet?.name ?? "—";
   const sessionLabel = session
     ? `${session.name} · ${durationLabel(session.hours)}`
     : "—";
@@ -354,25 +352,6 @@ export default function BookingFlow() {
                       </button>
                     );
                   })}
-
-                  {/* Escape hatch for guests who would rather be advised */}
-                  <button
-                    type="button"
-                    onClick={() => setSetId(UNDECIDED_SET)}
-                    aria-pressed={setId === UNDECIDED_SET}
-                    className={`flex aspect-4/3 flex-col items-center justify-center border border-dashed bg-surface p-4 text-center transition-colors ${FOCUS} ${
-                      setId === UNDECIDED_SET
-                        ? "border-gold border-solid border-2"
-                        : "border-cream/20 hover:border-gold/50"
-                    }`}
-                  >
-                    <span className="font-display text-base font-black text-cream">
-                      Not sure
-                    </span>
-                    <span className="mt-1 text-[10px] uppercase tracking-widest text-cream/40">
-                      Help me choose
-                    </span>
-                  </button>
                 </div>
 
                 {setId && (
@@ -497,7 +476,11 @@ export default function BookingFlow() {
                                 className="font-display text-2xl font-black text-gold"
                                 strikeClassName="font-display text-sm font-semibold text-cream/30"
                               />
-                              {s.hours > 1 && (
+                              {/* Packages are fixed-price products, so a rate
+                                  derived by dividing gives a number nobody is
+                                  charged. Studio and editing are genuinely
+                                  hourly and keep it. */}
+                              {s.hours > 1 && s.category !== "package" && (
                                 <span className="mt-1 block text-xs text-cream/30">
                                   <PriceTag
                                     original={originalHourlyRate(s)}

@@ -75,9 +75,6 @@ export const SETS: Record<FormatId, StudioSet[]> = {
   ],
 };
 
-/** Chosen when the guest wants a recommendation instead of picking. */
-export const UNDECIDED_SET = "undecided";
-
 
 /* ── Pricing ─────────────────────────────────────────────────────────── */
 
