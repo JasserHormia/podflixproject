@@ -8,6 +8,7 @@ import BookingCheckout from "@/components/booking/checkout/BookingCheckout";
 import PriceTag from "@/components/ui/PriceTag";
 import PromoBadge from "@/components/ui/PromoBadge";
 import { promoPrice } from "@/lib/promo";
+import { PHOTOS } from "@/lib/images";
 import {
   ADDONS,
   FORMATS,
@@ -22,6 +23,19 @@ import {
   type FormatId,
   type SessionCategory,
 } from "@/lib/booking";
+
+/**
+ * The spotlight card's session, resolved from SESSIONS by id rather than
+ * described here — name, tagline, hours and price all come from the one
+ * pricing source, so the card cannot drift from the row in the Packages tab
+ * and PriceTag applies the promotion to it like everywhere else.
+ */
+const FEATURED_ID = "reels-10";
+
+/** Left-weighted so the copy sits on the darkest part of the photograph.
+ *  Same rgba(10,8,7) base as the hero and BookingMoment overlays. */
+const SPOTLIGHT_OVERLAY =
+  "linear-gradient(105deg, rgba(10,8,7,0.96) 0%, rgba(10,8,7,0.90) 40%, rgba(10,8,7,0.62) 72%, rgba(10,8,7,0.38) 100%)";
 
 const STEP_NAMES = ["People", "Set", "Session", "Confirm"] as const;
 const HEADCOUNTS = [1, 2, 3, 4] as const;
@@ -106,6 +120,21 @@ export default function BookingFlow() {
     setCategory(next);
     setSessionId(null);
     setHovered(null);
+  };
+
+  /**
+   * The single place a session becomes the selection.
+   *
+   * The spotlight card passes a tab because it is visible from every tab and
+   * has to leave the flow in exactly the state clicking the Packages row would
+   * — same sessionId, same visible tab — rather than a hybrid where the chosen
+   * session is not in the list on screen. setCategory rather than
+   * selectCategory: the latter clears sessionId, which is right for a tab click
+   * and wrong here.
+   */
+  const selectSession = (id: string, tab?: SessionCategory) => {
+    if (tab) setCategory(tab);
+    setSessionId(id);
   };
 
   const toggleAddon = (id: string) =>
@@ -425,7 +454,7 @@ export default function BookingFlow() {
                         <button
                           key={s.id}
                           type="button"
-                          onClick={() => setSessionId(s.id)}
+                          onClick={() => selectSession(s.id)}
                           onMouseEnter={hoverCapable ? () => setHovered(s.id) : undefined}
                           onMouseLeave={hoverCapable ? () => setHovered(null) : undefined}
                           onFocus={hoverCapable ? () => setHovered(s.id) : undefined}
@@ -554,6 +583,74 @@ export default function BookingFlow() {
                     })}
                   </motion.div>
                 </AnimatePresence>
+
+                {/* ── Featured spotlight ──
+                     Sits between the tab content and the add-ons, outside the
+                     tab AnimatePresence, so it stays on screen whichever tab is
+                     open — someone comparing Studio Only still sees it. */}
+                {(() => {
+                  const f = SESSIONS.find((x) => x.id === FEATURED_ID);
+                  if (!f) return null;
+                  const chosen = sessionId === f.id;
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => selectSession(f.id, f.category)}
+                      aria-pressed={chosen}
+                      className={`group relative mt-10 block w-full overflow-hidden border text-left transition-colors duration-300 ${FOCUS} ${
+                        chosen ? "border-gold" : "border-cream/15 hover:border-gold/50"
+                      }`}
+                    >
+                      <Image
+                        src={PHOTOS.production_crew}
+                        alt=""
+                        fill
+                        sizes="(min-width: 768px) 56rem, 100vw"
+                        quality={85}
+                        className="object-cover object-[60%_center]"
+                      />
+                      <span
+                        aria-hidden
+                        className="absolute inset-0"
+                        style={{ background: SPOTLIGHT_OVERLAY }}
+                      />
+
+                      <span className="relative block px-6 py-10 sm:px-10 sm:py-14">
+                        <span className="block text-[10px] uppercase tracking-[0.35em] text-gold">
+                          Best value
+                        </span>
+
+                        <span className="mt-5 block max-w-md font-display text-[clamp(28px,4.4vw,42px)] font-black leading-[1.03] tracking-[-0.02em] text-cream">
+                          One session in. Ten reels out.
+                        </span>
+
+                        <span className="mt-4 block font-display text-lg font-bold text-cream sm:text-xl">
+                          {f.name}
+                        </span>
+                        <span className="mt-1 block max-w-sm font-body text-sm text-cream/50">
+                          {f.tagline}
+                        </span>
+
+                        <span className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4">
+                          <PriceTag
+                            original={f.price}
+                            className="font-display text-3xl font-black text-gold"
+                            strikeClassName="font-display text-base font-semibold text-cream/40"
+                          />
+                          <span
+                            className={`inline-flex min-h-11 items-center border px-5 font-display text-xs font-semibold uppercase tracking-[0.2em] transition-colors duration-300 ${
+                              chosen
+                                ? "border-gold bg-gold text-background"
+                                : "border-gold text-gold group-hover:bg-gold group-hover:text-background"
+                            }`}
+                          >
+                            {chosen ? "Selected" : "Choose this"}
+                          </span>
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })()}
 
                 {/* ── Add-ons — stackable, any combination ── */}
                 <div className="mt-8 border border-gold/30 bg-gold/10 p-5">
