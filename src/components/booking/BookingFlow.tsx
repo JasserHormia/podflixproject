@@ -194,10 +194,40 @@ export default function BookingFlow() {
       firstStepRender.current = false;
       return;
     }
-    stepsRef.current?.scrollIntoView({
-      behavior: reduce ? "auto" : "smooth",
-      block: "start",
-    });
+    const el = stepsRef.current;
+    if (!el) return;
+
+    /** Absolute page offset that puts the wrapper below the fixed chrome. The
+     *  inset comes from the element's own scroll-margin-top, so it stays in
+     *  step with the `scroll-mt-40` class instead of being repeated here. */
+    const inset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    const target = () =>
+      window.scrollY + el.getBoundingClientRect().top - inset;
+
+    window.scrollTo({ top: target(), behavior: reduce ? "auto" : "smooth" });
+
+    /**
+     * Re-assert once the step swap has settled.
+     *
+     * A smooth scroll is not guaranteed: it is cancelled by a touch landing
+     * mid-animation, and older iOS Safari ignores `behavior: "smooth"` on
+     * programmatic scrolls outright, in which case the first call does
+     * nothing at all. Either way the browser is left clamping scrollY to the
+     * new step's maximum — and step 4 is now SHORTER than step 3 (5193 against
+     * 6564 at 390px, since the session list, add-ons and the spotlight card
+     * all live in step 3), so an abandoned scroll lands exactly at the bottom
+     * of the page. That is the reported symptom.
+     *
+     * This second pass is instant and unconditional in effect: it cannot be
+     * cancelled, and it only moves anything if the first attempt failed to
+     * land, so a scroll that worked is never interrupted by it.
+     */
+    const settle = setTimeout(() => {
+      if (Math.abs(el.getBoundingClientRect().top - inset) > 24) {
+        window.scrollTo({ top: target(), behavior: "auto" });
+      }
+    }, 700);
+    return () => clearTimeout(settle);
   }, [step, reduce]);
 
   // ── Step transition ──

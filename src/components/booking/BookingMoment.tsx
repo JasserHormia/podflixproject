@@ -66,8 +66,8 @@ export default function BookingMoment() {
   return (
     <section className="relative min-h-[70vh] overflow-hidden bg-background">
       <Image
-        src={PHOTOS.guest_kandura}
-        alt="A guest in a white kandura recording against the navy studio backdrop — Podflix Studio, Business Bay Dubai"
+        src={PHOTOS.studio_cream_duo}
+        alt="Cream podcast set with two bouclé armchairs and Shure boom microphones, ready for a session — Podflix Studio, Business Bay Dubai"
         fill
         priority
         sizes="100vw"
