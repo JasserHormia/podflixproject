@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import { cancelCalBooking, confirmCalBooking } from "@/lib/cal";
-import { sendBookingEmail, type BookingEmailData } from "@/lib/email";
+import { sendBookingEmail, sendStudioNotification, type BookingEmailData } from "@/lib/email";
 import { stripeClient } from "@/lib/stripe";
 
 /**
@@ -50,6 +50,7 @@ export function emailDataFrom(pi: Stripe.PaymentIntent): BookingEmailData {
   return {
     to: m.attendeeEmail ?? "",
     name: m.attendeeName ?? "there",
+    phone: m.phone || undefined,
     sessionName: m.sessionName ?? "your session",
     start: m.startsAt ?? new Date().toISOString(),
     hours: Number(m.hours) || 1,
@@ -72,14 +73,22 @@ async function mark(pi: Stripe.PaymentIntent, key: string) {
   }
 }
 
-export type FulfilResult = { done: boolean; skipped?: string; emailed?: boolean };
+export type FulfilResult = {
+  done: boolean;
+  skipped?: string;
+  emailed?: boolean;
+  studioEmailed?: boolean;
+};
 
 /**
- * Payment succeeded: confirm the booking and tell the customer.
+ * Payment succeeded: confirm the booking and tell both the customer and the
+ * studio.
  *
  * Our email is sent BEFORE confirming with Cal, deliberately. Confirming
  * triggers Cal's own notification, and the client accepts two emails per
- * booking for now — so ours must land first and be the one read first.
+ * booking for now — so ours must land first and be the one read first. The
+ * studio notification goes out alongside the customer one, on the same
+ * trigger, so the team never has to open Cal or Stripe to see what was booked.
  */
 export async function fulfilBooking(
   pi: Stripe.PaymentIntent,
@@ -94,6 +103,7 @@ export async function fulfilBooking(
 
   const data = emailDataFrom(pi);
   const emailed = data.to ? (await sendBookingEmail("confirmation", data)).ok : false;
+  const studioEmailed = (await sendStudioNotification(data)).ok;
 
   const res = await confirmCalBooking(uid);
   if (!res.ok) {
@@ -105,7 +115,7 @@ export async function fulfilBooking(
   }
 
   await mark(pi, MARK_FULFILLED);
-  return { done: true, emailed };
+  return { done: true, emailed, studioEmailed };
 }
 
 /** Payment failed, was cancelled, or never happened: release the slot. */

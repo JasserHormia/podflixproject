@@ -13,6 +13,11 @@ import { TIMEZONE } from "@/lib/cal";
  * Sending never fails a booking: every send is wrapped, and a failure is
  * logged and swallowed. A paid session that arrives without an email is
  * recoverable; a payment lost to an SMTP error is not.
+ *
+ * Two emails go out per successful booking: the branded confirmation below to
+ * the customer, and a plain studio-facing notification (see
+ * studioNotificationEmail) to STUDIO_EMAIL so the team has everything needed
+ * to act on the booking without opening Cal or Stripe.
  */
 
 const BRAND = {
@@ -35,6 +40,7 @@ const FONT =
 export type BookingEmailData = {
   to: string;
   name: string;
+  phone?: string;
   sessionName: string;
   start: string;
   hours: number;
@@ -43,6 +49,10 @@ export type BookingEmailData = {
   addons?: string[];
   total: number;
 };
+
+/** Studio-facing inbox for every successful booking. Override via env if the
+ *  team ever moves inboxes without a code change. */
+const STUDIO_EMAIL = process.env.STUDIO_NOTIFICATION_EMAIL || "podflix.finance@gmail.com";
 
 const fmtDate = (iso: string) =>
   new Intl.DateTimeFormat("en-GB", {
@@ -160,6 +170,44 @@ export function cancellationEmail(d: BookingEmailData & { reason?: string }) {
   );
 }
 
+/**
+ * Studio-facing notification — deliberately plain. Nobody on the studio side
+ * needs the branded shell; they need every field scannable in one glance.
+ */
+export function studioNotificationEmail(d: BookingEmailData) {
+  const fields: [string, string][] = [
+    ["Customer", d.name],
+    ["Phone", d.phone || "—"],
+    ["Email", d.to || "—"],
+    ["Format", d.format || "—"],
+    ["Set", d.setName || "—"],
+    ["Session", d.sessionName],
+    ["Duration", `${d.hours} hour${d.hours === 1 ? "" : "s"}`],
+    ["Date", fmtDate(d.start)],
+    ["Time", `${fmtTime(d.start)} (${TIMEZONE.split("/")[1]})`],
+    ["Add-ons", d.addons?.length ? d.addons.join(", ") : "None"],
+    ["Amount paid", formatPrice(d.total)],
+  ];
+
+  const rows = fields
+    .map(
+      ([label, value]) => `
+    <tr>
+      <td style="padding:6px 14px;border:1px solid #ccc;font-weight:600;white-space:nowrap;">${esc(label)}</td>
+      <td style="padding:6px 14px;border:1px solid #ccc;">${esc(value)}</td>
+    </tr>`
+    )
+    .join("");
+
+  return `<!doctype html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;color:#111;">
+  <h2 style="margin:0 0 12px;">New booking — ${esc(d.sessionName)}</h2>
+  <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">${rows}
+  </table>
+</body></html>`;
+}
+
 /** Resend's test sender works before the domain's DNS is verified. */
 const FROM = process.env.RESEND_FROM || "Podflix <onboarding@resend.dev>";
 
@@ -169,38 +217,53 @@ const FROM = process.env.RESEND_FROM || "Podflix <onboarding@resend.dev>";
  */
 export type EmailResult = { ok: boolean; id?: string; error?: string };
 
-export async function sendBookingEmail(
-  kind: "confirmation" | "cancellation",
-  data: BookingEmailData & { reason?: string }
+async function send(
+  label: string,
+  to: string,
+  subject: string,
+  html: string
 ): Promise<EmailResult> {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
-    console.warn(`[email] RESEND_API_KEY missing — skipped ${kind} to ${data.to}`);
+    console.warn(`[email] RESEND_API_KEY missing — skipped ${label} to ${to}`);
     return { ok: false, error: "RESEND_API_KEY missing" };
   }
   try {
     const resend = new Resend(key);
-    const { data: sent, error } = await resend.emails.send({
-      from: FROM,
-      to: data.to,
-      subject:
-        kind === "confirmation"
-          ? `Your Podflix session is confirmed — ${fmtDate(data.start)}`
-          : `Your Podflix booking has been cancelled`,
-      html:
-        kind === "confirmation"
-          ? confirmationEmail(data)
-          : cancellationEmail(data),
-    });
+    const { data: sent, error } = await resend.emails.send({ from: FROM, to, subject, html });
     if (error) {
-      console.error(`[email] ${kind} failed`, error);
+      console.error(`[email] ${label} failed`, error);
       return { ok: false, error: error.message ?? String(error) };
     }
     // The message id is what support needs to trace a delivery in Resend.
-    console.info(`[email] ${kind} sent`, sent?.id, "→", data.to);
+    console.info(`[email] ${label} sent`, sent?.id, "→", to);
     return { ok: true, id: sent?.id };
   } catch (err) {
-    console.error(`[email] ${kind} threw`, err);
+    console.error(`[email] ${label} threw`, err);
     return { ok: false, error: String(err) };
   }
+}
+
+export async function sendBookingEmail(
+  kind: "confirmation" | "cancellation",
+  data: BookingEmailData & { reason?: string }
+): Promise<EmailResult> {
+  return send(
+    kind,
+    data.to,
+    kind === "confirmation"
+      ? `Your Podflix session is confirmed — ${fmtDate(data.start)}`
+      : `Your Podflix booking has been cancelled`,
+    kind === "confirmation" ? confirmationEmail(data) : cancellationEmail(data)
+  );
+}
+
+/** Always to STUDIO_EMAIL, regardless of what `data.to` (the customer) holds. */
+export async function sendStudioNotification(data: BookingEmailData): Promise<EmailResult> {
+  return send(
+    "studio-notification",
+    STUDIO_EMAIL,
+    `New booking — ${data.sessionName} — ${fmtDate(data.start)}`,
+    studioNotificationEmail(data)
+  );
 }
