@@ -52,7 +52,7 @@ export type BookingEmailData = {
 
 /** Studio-facing inbox for every successful booking. Override via env if the
  *  team ever moves inboxes without a code change. */
-const STUDIO_EMAIL = process.env.STUDIO_NOTIFICATION_EMAIL || "podflix.finance@gmail.com";
+const STUDIO_EMAIL = process.env.STUDIO_NOTIFICATION_EMAIL || "Podflix.studio1@gmail.com";
 
 const fmtDate = (iso: string) =>
   new Intl.DateTimeFormat("en-GB", {
